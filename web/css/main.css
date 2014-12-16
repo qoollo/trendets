@@ -1,0 +1,42 @@
+body {
+    margin: 0;
+}
+
+#svgContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#svgContainer svg {
+    width: 100%;
+    height: 100%;
+}
+
+svg #timeScale line {
+    stroke: black;
+    stroke-width: 1;
+}
+
+svg #timeScale .day {
+    alignment-baseline: middle;
+}
+
+svg #graphics line {
+    stroke-width: 1;
+}
+
+svg .oil {
+    stroke: blue;
+}
+
+svg .dollar {
+    stroke: green;
+}
+
+svg .euro {
+    stroke: red;
+}
