@@ -18,6 +18,9 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator'],
 
             // quotes
             dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
+
+            // forecasts
+            dom.forecasts.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
         }
 
 
@@ -56,13 +59,38 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator'],
             drawQuote(quotes.euro, 'euro');
         }
 
+        function drawToday(today) {
+            var x = coordinator.datePosition(today);
+            dom.today.append('line')
+                .attr('id', 'today')
+                .attr('x1', x)
+                .attr('y1', 0)
+                .attr('x2', x)
+                .attr('y2', dom.containerHeight);
+        }
+
+        function drawOpenForecast(forecasts, today) {
+            var of = dom.forecasts.selectAll('.openForecast')
+                    .data(forecasts)
+                .enter().append('g')
+                    .classed('openForecast', true);
+
+            of.append('line')
+                .attr('x1', function(d) { return coordinator.datePosition(d.start.date) })
+                .attr('y1', 0)
+                .attr('x2', coordinator.datePosition(today))
+                .attr('y2', function(d,i) { return 20 + 30 * i; });
+        }
+
         return function() {
             var stop = coordinator.stopDate(),
                 start = coordinator.startDate();
 
             drawLayout()
-            drawTimeScale(start, stop);
+            drawTimeScale(start, coordinator.endTimelineDate());
+            drawToday(coordinator.stopDate());
             drawQuotes(dataProvider.loadQuotes(start, stop));
+            drawOpenForecast(dataProvider.loadOpenForecast(start, stop), stop);
         }
     }
 )

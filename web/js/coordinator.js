@@ -7,11 +7,18 @@ define(['libs/d3', 'settings', 'dom'], function(d3, settings, dom) {
 
     return {
         startDate: function() {
+            var count = parseInt((dom.containerWidth - settings.futureMargin) / settings.dayWidth);
             var res = new Date(today.getTime());
-            res.setDate(res.getDate() - 30);
+            res.setDate(res.getDate() - count);
             return res;
         },
         stopDate: function() { return new Date(today.getTime())},
+        endTimelineDate: function() {
+            var count = parseInt(settings.futureMargin / settings.dayWidth);
+            var res = new Date(today.getTime());
+            res.setDate(res.getDate() + count);
+            return res;
+        },     
         datePosition: function(d, type) {
             return dom.containerWidth - settings.futureMargin + dateDiff(d, today);
         },

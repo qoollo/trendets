@@ -10,6 +10,8 @@ define(['libs/d3'], function(d3) {
         timeScale: {
             container: d3.select('#timeScale'),
         },
+        today: d3.select('#today'),
+        forecasts: d3.select('#forecasts'),
     }
 
     result.containerWidth = result.container.node().offsetWidth;

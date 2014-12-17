@@ -25,6 +25,11 @@ svg #timeScale .day {
     alignment-baseline: middle;
 }
 
+svg #today {
+    stroke: black;
+    stroke-width: 1;
+}
+
 svg #graphics line {
     stroke-width: 1;
 }
@@ -39,4 +44,9 @@ svg .dollar {
 
 svg .euro {
     stroke: red;
+}
+
+svg .openForecast line {
+    stroke: black;
+    stroke-width: 1;
 }
