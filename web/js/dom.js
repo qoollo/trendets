@@ -1,5 +1,5 @@
 define(['libs/d3'], function(d3) {
-    return {
+    var result = {
         container: d3.select('#svgContainer'),
         svg: d3.select('#svgContainer svg'),
         everything: d3.select('#everything'),
@@ -11,4 +11,9 @@ define(['libs/d3'], function(d3) {
             container: d3.select('#timeScale'),
         },
     }
+
+    result.containerWidth = result.container.node().offsetWidth;
+    result.containerHeight = result.container.node().offsetHeight;
+
+    return result;
 });
