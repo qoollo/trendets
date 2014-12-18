@@ -111,9 +111,9 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             var force = d3.layout.force()
                 .nodes(forecasts)
                 .gravity(0)
-                .charge(-30)
+                .charge(-10)
                 .chargeDistance(30)
-                .friction(0.5);
+                .friction(0.9);
 
             var cf = dom.forecasts.selectAll('.closedForecast')
                     .data(forecasts)
@@ -137,11 +137,11 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             });
 
             force.start();
-            /*var k = 0;
+            var k = 0;
             while ((force.alpha() > 1e-2) && (k < 150)) {
                 force.tick(),
                 k = k + 1;
-            }*/
+            }
 
             cf.append('rect')
                 .classed('forecastStart', true)

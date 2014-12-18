@@ -53,7 +53,7 @@ define(['libs/d3'], function(d3) {
         },
         loadClosedForecast: function(start, end) {
             var result = [];
-            for (var i = 0; i < 205; i++) {
+            for (var i = 0; i < 15; i++) {
                 var k1 = 0.8 * Math.random();
                 var k2 = k1 + 0.1 + Math.random() * (0.9 - k1);
                 var d1 = parseInt(k1 * (end - start) / 86400000),
