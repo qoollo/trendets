@@ -50,3 +50,17 @@ svg .openForecast line {
     stroke: black;
     stroke-width: 1;
 }
+
+svg .photo circle {
+    fill: white;
+    stroke: black;
+    stroke-width: 2;
+}
+
+#forecastBubble {
+    position: absolute;
+    right: 10px;
+    width: 270px;
+    top: 340px;
+    border: 1px solid silver;
+}

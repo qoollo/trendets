@@ -37,16 +37,30 @@ define(['libs/d3'], function(d3) {
                 startDay.setDate(startDay.getDate() + d);
                 endDay.setDate(endDay.getDate() + parseInt(Math.random() * 100));
                 result.push({
-                    start: {
-                        date: startDay,
-                    },
-                    end: {
-                        estimateDate: endDay,
+                    startDate: startDay,
+                    expectedEndDate: endDay,
+                    personId: parseInt(10 * Math.random()),
+                    title: 'Герман Греф верит в Джа',
+                    cite: 'Футбольные команды армий Великобритании и Германии сыграли матч в память о рождественском перемирии 1914 года — необъявленном прекращении огня на многих участках западного фронта во время Первой мировой войны. Матч, состоявшийся на стадионе клуба «Олдершот Таун» в графстве Гэмпшир, завершился победой британской команды со счетом 1:0.',
+                    source: {
+                        name: 'Russia Today',
+                        link: 'http://citysoftgroup.ru',
                     },
                 })
             }
-            result.sort(function(a, b) { return a.end.estimateDate - b.end.estimateDate; });
+            result.sort(function(a, b) { return a.expectedEndDate - b.expectedEndDate; });
             return result;
         },
+        loadPersons: function() {
+            var result = [];
+            for (var i = 0; i < 10; i++) {
+                results.push({
+                    id: i,
+                    name: i % 2 ? 'Герман Германович Греф' : 'ЦБ РФ',
+                    photo: i % 2 ? '00001.png' : '00002.png',
+                });
+            }
+            return result;
+        }
     }
 });

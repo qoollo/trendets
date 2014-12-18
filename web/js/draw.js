@@ -1,5 +1,5 @@
-define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator'],
-    function(d3, dom, settings, dataProvider, coordinator) {
+define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
+    function(d3, dom, settings, dataProvider, coordinator, events) {
         function drawLayout() {
             // timescale
             dom.timeScale.container
@@ -74,12 +74,22 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator'],
                     .data(forecasts)
                 .enter().append('g')
                     .classed('openForecast', true);
+            
+            var todayX = coordinator.datePosition(today);
 
             of.append('line')
-                .attr('x1', function(d) { return coordinator.datePosition(d.start.date) })
+                .attr('x1', function(d) { return coordinator.datePosition(d.startDate) })
                 .attr('y1', 0)
-                .attr('x2', coordinator.datePosition(today))
+                .attr('x2', todayX)
                 .attr('y2', function(d,i) { return 20 + 30 * i; });
+
+            var photo = of.append('g').classed('photo', true);
+            photo.append('circle')
+                .attr('cx', todayX)
+                .attr('cy', function(d,i) { return 20 + 30 * i; })
+                .attr('r', 10);
+
+            photo.on('mouseover', events.showOpenForecast);
         }
 
         return function() {

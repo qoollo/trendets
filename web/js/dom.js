@@ -12,6 +12,14 @@ define(['libs/d3'], function(d3) {
         },
         today: d3.select('#today'),
         forecasts: d3.select('#forecasts'),
+        forecastBubble: {
+            container: d3.select('#forecastBubble'),
+            date: d3.select('#forecastBubble #date'),
+            name: d3.select('#forecastBubble #name'),
+            title: d3.select('#forecastBubble #title'),
+            cite: d3.select('#forecastBubble #cite'),
+            link: d3.select('#forecastBubble #link'),
+        }
     }
 
     result.containerWidth = result.container.node().offsetWidth;
