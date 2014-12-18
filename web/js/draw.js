@@ -92,6 +92,20 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             photo.on('mouseover', events.showOpenForecast);
         }
 
+        function drawClosedForecast(forecasts) {
+            var cf = dom.forecasts.selectAll('.closedForecast')
+                    .data(forecasts)
+                .enter().append('g')
+                    .classed('closedForecast', true);
+
+            cf.append('path')
+                .attr('d', function(d,i) {
+                    var startX = coordinator.datePosition(d.start.date),
+                        stopX = coordinator.datePosition(d.end.date);
+                    return 'M' + startX + ',0 L' + (startX + stopX) / 2 + ',100 L' + stopX + ',0';
+                });
+        }
+
         return function() {
             var stop = coordinator.stopDate(),
                 start = coordinator.startDate();
@@ -101,6 +115,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             drawToday(coordinator.stopDate());
             drawQuotes(dataProvider.loadQuotes(start, stop));
             drawOpenForecast(dataProvider.loadOpenForecast(start, stop), stop);
+            drawClosedForecast(dataProvider.loadClosedForecast(start, stop));
         }
     }
 )

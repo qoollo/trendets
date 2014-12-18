@@ -51,6 +51,12 @@ svg .openForecast line {
     stroke-width: 1;
 }
 
+svg .closedForecast path {
+    stroke: black;
+    stroke-width: 1;
+    fill: none;
+}
+
 svg .photo circle {
     fill: white;
     stroke: black;
