@@ -47,13 +47,19 @@ svg .euro {
 }
 
 svg .openForecast line {
-    stroke: black;
+    stroke: #eee;
     stroke-width: 1;
 }
 
 svg .closedForecast path {
     stroke: black;
     stroke-width: 1;
+    fill: none;
+}
+
+svg .forecastStart, svg .forecastStop {
+    stroke: blue;
+    stroke-width: 2;
     fill: none;
 }
 
