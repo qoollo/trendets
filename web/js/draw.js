@@ -20,7 +20,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
 
             // forecasts
-            dom.forecasts.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
+            dom.forecasts.container.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
         }
 
 
@@ -70,40 +70,45 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
         }
 
         function drawOpenForecast(forecasts, today) {
-            var of = dom.forecasts.selectAll('.openForecast')
+            var lines = dom.forecasts.lines.selectAll('.openForecast')
                     .data(forecasts)
                 .enter().append('g')
-                    .classed('openForecast', true);
+                    .classed('openForecast forecast', true);
+
+            var photos = dom.forecasts.photos.selectAll('.openForecast')
+                    .data(forecasts)
+                .enter().append('g')
+                    .classed('openForecast forecast', true);
             
             var todayX = coordinator.datePosition(today);
 
-            of.append('line')
-                .attr('x1', function(d) { return coordinator.datePosition(d.startDate) })
+            lines.append('line')
+                .attr('x1', function(d) { return coordinator.datePosition(d.start.date) })
                 .attr('y1', 0)
                 .attr('x2', todayX)
                 .attr('y2', function(d,i) { return 20 + 30 * i; });
 
 
-            of.append('rect')
+            var startRect = lines.append('rect')
                 .classed('forecastStart', true)
-                .attr('x', function(d) { return coordinator.datePosition(d.startDate) - 3; })
+                .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
                 .attr('y', -3)
                 .attr('width', 6)
                 .attr('height', 6);
 
-            var photo = of.append('g').classed('photo', true);
+            var photo = photos.append('g').classed('photo', true);
             photo.append('circle')
                 .attr('cx', todayX)
                 .attr('cy', function(d,i) { return 20 + 30 * i; })
                 .attr('r', 10);
 
+            startRect.on('mouseover', events.showOpenForecast);
             photo.on('mouseover', events.showOpenForecast);
         }
 
         function drawClosedForecast(forecasts) {
             for (var i = 0; i < forecasts.length; i++) {
                 var f = forecasts[i];
-                //f.index = i;
                 f.x = (coordinator.datePosition(f.start.date) + coordinator.datePosition(f.end.date)) / 2;
                 f.y = 30 + 0.2  *(coordinator.datePosition(f.end.date) - coordinator.datePosition(f.start.date));
                 f.fixed = false;
@@ -115,27 +120,6 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 .chargeDistance(30)
                 .friction(0.9);
 
-            var cf = dom.forecasts.selectAll('.closedForecast')
-                    .data(forecasts)
-                .enter().append('g')
-                    .classed('closedForecast', true);
-
-            var connections = cf.append('path');
-
-            var circles = cf.append('circle').attr('r', 10);
-            force.on("tick", function() {
-                connections
-                    .attr('d', function(d) {
-                        d.x = d.px;
-                        var startX = coordinator.datePosition(d.start.date),
-                            stopX = coordinator.datePosition(d.end.date);
-                        return 'M' + startX + ',0 L' + d.x + ',' + d.y + ' L' + stopX + ',0';
-                    });
-
-                circles.attr('cx', function(d) { return d.x; });
-                circles.attr('cy', function(d) { return d.y; });
-            });
-
             force.start();
             var k = 0;
             while ((force.alpha() > 1e-2) && (k < 150)) {
@@ -143,19 +127,48 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 k = k + 1;
             }
 
-            cf.append('rect')
+
+            var lines = dom.forecasts.lines.selectAll('.closedForecast')
+                    .data(forecasts)
+                .enter().append('g')
+                    .classed('closedForecast forecast', true);
+            var photos = dom.forecasts.photos.selectAll('.closedForecast')
+                    .data(forecasts)
+                .enter().append('g')
+                    .classed('closedForecast forecast', true);
+
+
+            lines.append('path')
+                .attr('d', function(d) {
+                    d.x = d.px;
+                    var startX = coordinator.datePosition(d.start.date),
+                        stopX = coordinator.datePosition(d.end.date);
+                    return 'M' + startX + ',0 L' + d.x + ',' + d.y + ' L' + stopX + ',0';
+                });
+
+            var startRect = lines.append('rect')
                 .classed('forecastStart', true)
                 .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
                 .attr('y', -3)
                 .attr('width', 6)
                 .attr('height', 6);
 
-            cf.append('rect')
+            var stopRect = lines.append('rect')
                 .classed('forecastStop', true)
                 .attr('x', function(d) { return coordinator.datePosition(d.end.date) - 3; })
                 .attr('y', -3)
                 .attr('width', 6)
                 .attr('height', 6);
+
+            var photo = photos.append('g').classed('photo', true);
+            photo.append('circle')
+                .attr('r', 10)
+                .attr('cx', function(d) { return d.x; })
+                .attr('cy', function(d) { return d.y; });
+
+            photo.on('mouseover', events.showClosedForecast);
+            startRect.on('mouseover', events.showClosedForecast);
+            stopRect.on('mouseover', events.showClosedForecast);
         }
 
         return function() {

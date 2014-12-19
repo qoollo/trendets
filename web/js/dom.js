@@ -11,7 +11,11 @@ define(['libs/d3'], function(d3) {
             container: d3.select('#timeScale'),
         },
         today: d3.select('#today'),
-        forecasts: d3.select('#forecasts'),
+        forecasts: {
+            container: d3.select('#forecasts'),
+            lines: d3.select('#forecasts #lines'),
+            photos: d3.select('#forecasts #photos'),
+        },
         forecastBubble: {
             container: d3.select('#forecastBubble'),
             date: d3.select('#forecastBubble #date'),

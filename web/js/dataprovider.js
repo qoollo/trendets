@@ -37,18 +37,23 @@ define(['libs/d3'], function(d3) {
                 startDay.setDate(startDay.getDate() + d);
                 endDay.setDate(endDay.getDate() + parseInt(Math.random() * 100));
                 result.push({
-                    startDate: startDay,
-                    expectedEndDate: endDay,
-                    personId: parseInt(10 * Math.random()),
-                    title: 'Герман Греф верит в Джа',
-                    cite: 'Футбольные команды армий Великобритании и Германии сыграли матч в память о рождественском перемирии 1914 года — необъявленном прекращении огня на многих участках западного фронта во время Первой мировой войны. Матч, состоявшийся на стадионе клуба «Олдершот Таун» в графстве Гэмпшир, завершился победой британской команды со счетом 1:0.',
-                    source: {
-                        name: 'Russia Today',
-                        link: 'http://citysoftgroup.ru',
+                    id: 'o' + i,
+                    start: {
+                        date: startDay,
+                        personId: parseInt(10 * Math.random()),
+                        title: 'Герман Греф верит в Джа',
+                        cite: 'Футбольные команды армий Великобритании и Германии сыграли матч в память о рождественском перемирии 1914 года — необъявленном прекращении огня на многих участках западного фронта во время Первой мировой войны. Матч, состоявшийся на стадионе клуба «Олдершот Таун» в графстве Гэмпшир, завершился победой британской команды со счетом 1:0.',
+                        source: {
+                            name: 'Russia Today',
+                            link: 'http://citysoftgroup.ru',
+                        },
+                    },
+                    end: {
+                        expectedDate: endDay,
                     },
                 })
             }
-            result.sort(function(a, b) { return a.expectedEndDate - b.expectedEndDate; });
+            result.sort(function(a, b) { return a.end.expectedDate - b.end.expectedDate; });
             return result;
         },
         loadClosedForecast: function(start, end) {
@@ -63,6 +68,7 @@ define(['libs/d3'], function(d3) {
                 startDay.setDate(startDay.getDate() + d1);
                 endDay.setDate(endDay.getDate() + d2);
                 result.push({
+                    id: 'c' + i,
                     start: {
                         date: startDay,
                         personId: parseInt(10 * Math.random()),

@@ -51,8 +51,12 @@ svg .openForecast line {
     stroke-width: 1;
 }
 
+svg .forecast.selected line, svg .forecast.selected path {
+    stroke: blue;
+}
+
 svg .closedForecast path {
-    stroke: black;
+    stroke: #eee;
     stroke-width: 1;
     fill: none;
 }
@@ -65,7 +69,13 @@ svg .forecastStart, svg .forecastStop {
 
 svg .photo circle {
     fill: white;
-    stroke: black;
+    stroke: #eee;
+    stroke-width: 2;
+}
+
+svg .selected .photo circle {
+    fill: white;
+    stroke: blue;
     stroke-width: 2;
 }
 
