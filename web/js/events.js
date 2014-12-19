@@ -1,12 +1,17 @@
 define(['libs/d3', 'dom'], function(d3, dom) {
     var zoom = d3.behavior.zoom()
-        .scaleExtent([1,1])
+        .scaleExtent([1, 1])
         .on('zoom', onMove);
+
+    var redrawCallback = undefined;
 
     dom.everything.call(zoom);
 
     function onMove() {
         dom.everything.attr('transform', 'translate(' + d3.event.translate[0] + ',0)');
+
+        if (redrawCallback !== undefined)
+            redrawCallback();
     }
 
     function updateBubble(x, y, date, personId, title, cite, link) {
@@ -35,5 +40,8 @@ define(['libs/d3', 'dom'], function(d3, dom) {
             d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
                 .classed('selected', true);
         },
+        setRedrawCallback: function(callback) {
+            redrawCallback = callback;
+        }
     }
 });
