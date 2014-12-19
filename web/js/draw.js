@@ -70,6 +70,13 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
         }
 
         function drawOpenForecast(forecasts, today) {
+            var todayX = coordinator.datePosition(today);
+
+            for (var i = 0; i < forecasts.length; i++) {
+                forecasts[i].x = todayX;
+                forecasts[i].y = 20 + 30 * i;
+            }
+
             var lines = dom.forecasts.lines.selectAll('.openForecast')
                     .data(forecasts)
                 .enter().append('g')
@@ -80,13 +87,12 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 .enter().append('g')
                     .classed('openForecast forecast', true);
             
-            var todayX = coordinator.datePosition(today);
 
             lines.append('line')
                 .attr('x1', function(d) { return coordinator.datePosition(d.start.date) })
                 .attr('y1', 0)
-                .attr('x2', todayX)
-                .attr('y2', function(d,i) { return 20 + 30 * i; });
+                .attr('x2', function(d) { return d.x; })
+                .attr('y2', function(d) { return d.y; });
 
 
             var startRect = lines.append('rect')
