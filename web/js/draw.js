@@ -185,6 +185,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
         }
 
         return function() {
+            coordinator.setTranslate(0);
             var stop = coordinator.stopDate(),
                 start = coordinator.startDate();
 
