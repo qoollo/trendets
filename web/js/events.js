@@ -1,4 +1,14 @@
 define(['libs/d3', 'dom'], function(d3, dom) {
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([1,1])
+        .on('zoom', onMove);
+
+    dom.everything.call(zoom);
+
+    function onMove() {
+        dom.everything.attr('transform', 'translate(' + d3.event.translate[0] + ',0)');
+    }
+
     function updateBubble(x, y, date, personId, title, cite, link) {
         dom.forecastBubble.container.style('display', 'block');
         dom.forecastBubble.container.style('left', x + 20 + 'px');

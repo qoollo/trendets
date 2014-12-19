@@ -23,6 +23,13 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             dom.forecasts.container.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
         }
 
+        function drawBackground() {
+            dom.background.append('rect')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', dom.containerWidth)
+                .attr('height', dom.containerHeight);
+        }
 
         function drawTimeScale(start, stop) {
             var days = [];
@@ -181,7 +188,8 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             var stop = coordinator.stopDate(),
                 start = coordinator.startDate();
 
-            drawLayout()
+            drawLayout();
+            drawBackground();
             drawTimeScale(start, coordinator.endTimelineDate());
             drawToday(coordinator.stopDate());
             drawQuotes(dataProvider.loadQuotes(start, stop));

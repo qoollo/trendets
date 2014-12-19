@@ -9,44 +9,46 @@ body {
   height: 100%;
   overflow: hidden; }
 
-#svgContainer svg {
+svg {
   width: 100%;
   height: 100%; }
-
-svg #timeScale line {
-  stroke: black;
-  stroke-width: 1; }
-svg #timeScale .day {
-  alignment-baseline: middle; }
-svg #today {
-  stroke: black;
-  stroke-width: 1; }
-svg #graphics line {
-  stroke-width: 1; }
-svg #graphics .oil {
-  stroke: blue; }
-svg #graphics .dollar {
-  stroke: green; }
-svg #graphics .euro {
-  stroke: red; }
-svg .forecast line, svg .forecast path {
-  stroke: #eee;
-  stroke-width: 1;
-  fill: none; }
-svg .forecast.selected line, svg .forecast.selected path {
-  stroke: blue; }
-svg .forecastStart, svg .forecastStop {
-  stroke: blue;
-  stroke-width: 2;
-  fill: none; }
-svg .photo circle {
-  fill: white;
-  stroke: #eee;
-  stroke-width: 2; }
-svg .selected .photo circle {
-  fill: white;
-  stroke: blue;
-  stroke-width: 2; }
+  svg #background rect {
+    stroke: none;
+    fill: white; }
+  svg #timeScale line {
+    stroke: black;
+    stroke-width: 1; }
+  svg #timeScale .day {
+    alignment-baseline: middle; }
+  svg #today {
+    stroke: black;
+    stroke-width: 1; }
+  svg #graphics line {
+    stroke-width: 1; }
+  svg #graphics .oil {
+    stroke: blue; }
+  svg #graphics .dollar {
+    stroke: green; }
+  svg #graphics .euro {
+    stroke: red; }
+  svg .forecast line, svg .forecast path {
+    stroke: #eee;
+    stroke-width: 1;
+    fill: none; }
+  svg .forecast.selected line, svg .forecast.selected path {
+    stroke: blue; }
+  svg .forecastStart, svg .forecastStop {
+    stroke: blue;
+    stroke-width: 2;
+    fill: none; }
+  svg .photo circle {
+    fill: white;
+    stroke: #eee;
+    stroke-width: 2; }
+  svg .selected .photo circle {
+    fill: white;
+    stroke: blue;
+    stroke-width: 2; }
 
 #forecastBubble {
   background: rgba(255, 255, 255, 0.9);
