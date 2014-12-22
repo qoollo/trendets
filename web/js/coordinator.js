@@ -24,8 +24,6 @@ define(['libs/d3', 'settings', 'dom'], function(d3, settings, dom) {
         loadingStopDate = new Date(stopDate.getTime());
         var bufferCount = parseInt(dom.containerWidth / settings.dayWidth);
         loadingStopDate.setDate(loadingStopDate.getDate() + bufferCount);
-        if (loadingStopDate > today)
-            loadingStopDate = today;
     }
 
     calcStartDate();
@@ -43,7 +41,12 @@ define(['libs/d3', 'settings', 'dom'], function(d3, settings, dom) {
         startDate: function() { return startDate; },
         stopDate: function() { return stopDate; },
         loadingStartDate: function() { return loadingStartDate; },
-        loadingStopDate: function() { return loadingStopDate; },
+        loadingStopDate: function(afterToday) {
+            if (afterToday || loadingStopDate < today)
+                return loadingStopDate;
+            else
+                return today;
+        },
         today: function() { return today; },   
         datePosition: function(d) { return xScale(d); },
         quotePosition: function(v, type) {

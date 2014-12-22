@@ -116,7 +116,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             var photo = photos.append('g').classed('photo', true);
             photo.append('circle')
                 .attr('cx', coordinator.datePosition(coordinator.today()))
-                .attr('cy', function(d,i) { return 20 + 30 * i; })
+                .attr('cy', function(d) { return d.y; })
                 .attr('r', 10);
 
             startRect.on('mouseover', events.showOpenForecast);
@@ -161,7 +161,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             for (var i = 0; i < forecasts.length; i++) {
                 forecasts[i].x = todayX;
-                forecasts[i].y = 20 + 30 * i;
+                forecasts[i].y = 20 + 15 * i;
             }
 
             var lines = dom.forecasts.lines.selectAll('.openForecast')
@@ -183,17 +183,17 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             for (var i = 0; i < forecasts.length; i++) {
                 var f = forecasts[i];
                 f.x = (coordinator.datePosition(f.start.date) + coordinator.datePosition(f.end.date)) / 2;
-                f.y = 30 + 0.2  *(coordinator.datePosition(f.end.date) - coordinator.datePosition(f.start.date));
+                f.y = 30 + 0.1  *(coordinator.datePosition(f.end.date) - coordinator.datePosition(f.start.date));
                 f.fixed = false;
             }
-            var force = d3.layout.force()
+            /*var force = d3.layout.force()
                 .nodes(forecasts)
                 .gravity(0)
                 .charge(-10)
                 .chargeDistance(30)
                 .friction(0.9);
 
-            /*force.start();
+            force.start();
             var k = 0;
             while ((force.alpha() > 1e-2) && (k < 150)) {
                 force.tick(),
@@ -217,15 +217,13 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
         }
 
         function redraw() {
-            var stop = coordinator.stopDate(),
-                start = coordinator.startDate(),
-                loadingStartDate = coordinator.loadingStartDate(),
+            var loadingStartDate = coordinator.loadingStartDate(),
                 loadingStopDate = coordinator.loadingStopDate();
 
-            drawTimeScale(start, stop);
+            drawTimeScale(loadingStartDate, coordinator.loadingStopDate(true));
             drawQuotes(dataProvider.loadQuotes(loadingStartDate, loadingStopDate));
-            drawOpenForecast(dataProvider.loadOpenForecast(start, loadingStopDate), coordinator.today());
-            drawClosedForecast(dataProvider.loadClosedForecast(start, loadingStopDate));
+            drawOpenForecast(dataProvider.loadOpenForecast(loadingStartDate, loadingStopDate), coordinator.today());
+            drawClosedForecast(dataProvider.loadClosedForecast(loadingStartDate, loadingStopDate));
         }
 
         return function() {
