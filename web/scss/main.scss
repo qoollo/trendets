@@ -55,23 +55,33 @@ svg {
     #today {
         stroke: rgba(255,255,255,0.4);
         stroke-width: 1px;
+
+        .today-footprint {
+            fill: url("#footprint-gradient");
+            stroke: none;
+        }
     }
 
     #graphics {
         line {
-            stroke-width: 1;
+            stroke-width: 2px;
+            /*filter: url("#gauss-blur");*/
         }
 
         .oil {
-            stroke: blue;
+            stroke: #7b6b8a;
         }
 
         .dollar {
-            stroke: green;
+            stroke: #179ac5;
         }
 
         .euro {
-            stroke: red;
+            stroke: #7b37bd;
+        }
+
+        .grid-bg {
+            fill: rgba(255,255,255,0.05);
         }
     }
 
@@ -91,9 +101,9 @@ svg {
     }
 
     .forecastStart, .forecastStop {
-        stroke: blue;
-        stroke-width: 2;
-        fill: none;
+        stroke: #3181C3;
+        stroke-width: 3;
+        fill: rgba(255,255,255,0.5);
     }
 
     .photo {

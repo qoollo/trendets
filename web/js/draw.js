@@ -27,6 +27,24 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 .attr('x2', x)
                 .attr('y2', dom.containerHeight);
 
+            // graph background grid
+            var grid = dom.graphics.container.append('g').attr('id','graph-bg-grid');
+            grid.append('rect')
+                .attr('x',0)            
+                .attr('y',-settings.graphicsHeight)            
+                .attr('height',settings.graphicsHeight)            
+                .attr('width',x)
+                .classed('grid-bg',true);
+
+            // today footprint
+            var footprintWidth = 300;
+            dom.today.append('rect')
+                     .classed('today-footprint',true)
+                     .attr('x',x-footprintWidth)
+                     .attr('y',0)
+                     .attr('width',footprintWidth)
+                     .attr('height',settings.graphicsHeight-1);
+
             // quotes
             dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
 
@@ -63,7 +81,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             elements.append('line')
                     .attr("x1",coordinator.datePosition)
-                    .attr("y1",0)
+                    .attr("y1",1)
                     .attr("x2",coordinator.datePosition)
                     .attr("y2",5)
                     .classed('ruler-marks',true);
@@ -72,7 +90,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                     .attr("x1",coordinator.datePosition)
                     .attr("y1",18)
                     .attr("x2",coordinator.datePosition)
-                    .attr("y2",settings.timeScaleHeight)
+                    .attr("y2",settings.timeScaleHeight-1)
                     .classed('ruler-marks',true);
 
             days.exit().remove();
@@ -96,6 +114,30 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             drawQuote(quotes.oil, 'oil');
             drawQuote(quotes.dollar, 'dollar');
             drawQuote(quotes.euro, 'euro');
+
+
+            // TEMPORARY! bobbies in the end of every graph
+                var boobies = dom.graphics.container.append('g').attr('id','boobies');
+                boobies.append('circle')
+                       .attr('cx',coordinator.datePosition(coordinator.today()))     
+                       .attr('cy',-settings.graphicsHeight+30)     
+                       .attr('r',4)
+                       .attr('style','fill:white;stroke:#7b6b8a;stroke-width:4');
+
+                var boobies = dom.graphics.container.append('g').attr('id','boobies');
+                boobies.append('circle')
+                       .attr('cx',coordinator.datePosition(coordinator.today()))     
+                       .attr('cy',-settings.graphicsHeight+50)     
+                       .attr('r',4)
+                       .attr('style','fill:white;stroke:#179ac5;stroke-width:4');
+
+                var boobies = dom.graphics.container.append('g').attr('id','boobies');
+                boobies.append('circle')
+                       .attr('cx',coordinator.datePosition(coordinator.today()))     
+                       .attr('cy',-settings.graphicsHeight+70)     
+                       .attr('r',4)
+                       .attr('style','fill:white;stroke:#7b37bd;stroke-width:4');
+            // TEMPORARY! 
         }
 
         function drawNewOpenForecasts(lines, photos) {
@@ -107,10 +149,10 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             var startRect = lines.append('rect')
                 .classed('forecastStart', true)
-                .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
-                .attr('y', -3)
-                .attr('width', 6)
-                .attr('height', 6);
+                .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 6; })
+                .attr('y', - 6)
+                .attr('width', 9)
+                .attr('height', 9);
 
 
             var photo = photos.append('g').classed('photo', true);
@@ -133,17 +175,17 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             var startRect = lines.append('rect')
                 .classed('forecastStart', true)
-                .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
-                .attr('y', -3)
-                .attr('width', 6)
-                .attr('height', 6);
+                .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 6; })
+                .attr('y', -6)
+                .attr('width', 9)
+                .attr('height', 9);
 
             var stopRect = lines.append('rect')
                 .classed('forecastStop', true)
-                .attr('x', function(d) { return coordinator.datePosition(d.end.date) - 3; })
-                .attr('y', -3)
-                .attr('width', 6)
-                .attr('height', 6);
+                .attr('x', function(d) { return coordinator.datePosition(d.end.date) - 6; })
+                .attr('y', -6)
+                .attr('width', 9)
+                .attr('height', 9);
 
             var photo = photos.append('g').classed('photo', true);
             photo.append('circle')

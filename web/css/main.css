@@ -36,14 +36,20 @@ svg {
   svg #today {
     stroke: rgba(255, 255, 255, 0.4);
     stroke-width: 1px; }
+    svg #today .today-footprint {
+      fill: url("#footprint-gradient");
+      stroke: none; }
   svg #graphics line {
-    stroke-width: 1; }
+    stroke-width: 2px;
+    /*filter: url("#gauss-blur");*/ }
   svg #graphics .oil {
-    stroke: blue; }
+    stroke: #7b6b8a; }
   svg #graphics .dollar {
-    stroke: green; }
+    stroke: #179ac5; }
   svg #graphics .euro {
-    stroke: red; }
+    stroke: #7b37bd; }
+  svg #graphics .grid-bg {
+    fill: rgba(255, 255, 255, 0.05); }
   svg .forecast line, svg .forecast path {
     stroke: #eee;
     stroke-width: 1;
@@ -51,9 +57,9 @@ svg {
   svg .forecast.selected line, svg .forecast.selected path {
     stroke: blue; }
   svg .forecastStart, svg .forecastStop {
-    stroke: blue;
-    stroke-width: 2;
-    fill: none; }
+    stroke: #3181C3;
+    stroke-width: 3;
+    fill: rgba(255, 255, 255, 0.5); }
   svg .photo circle {
     fill: white;
     stroke: #eee;
