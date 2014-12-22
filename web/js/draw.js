@@ -9,12 +9,14 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                     .attr('x1', 0)
                     .attr('y1', 0)
                     .attr('x2', dom.containerWidth)                
-                    .attr('y2', 0);
+                    .attr('y2', 0)
+                    .attr('class','divider');
             dom.timeScale.container.append('line')
                     .attr('x1', 0)
                     .attr('y1', settings.timeScaleHeight)
                     .attr('x2', dom.containerWidth)                
-                    .attr('y2', settings.timeScaleHeight);
+                    .attr('y2', settings.timeScaleHeight)
+                    .attr('class','axis');
 
             // today
             var x = coordinator.datePosition(coordinator.today());
@@ -52,11 +54,26 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             var days = dom.timeScale.container.selectAll('.day')
                     .data(days, function(d) { return d; });
 
-            days.enter().append('text')
-                    .classed('day', true)
+            var elements = days.enter().append('g').classed('day', true);
+            
+            elements.append('text')
                     .attr('x', coordinator.datePosition)
-                    .attr('y', settings.timeScaleHeight / 2)
+                    .attr('y', settings.timeScaleHeight - 15)
                     .text(function(d) { return d.getDate(); });
+
+            elements.append('line')
+                    .attr("x1",coordinator.datePosition)
+                    .attr("y1",0)
+                    .attr("x2",coordinator.datePosition)
+                    .attr("y2",5)
+                    .classed('ruler-marks',true);
+
+            elements.append('line')
+                    .attr("x1",coordinator.datePosition)
+                    .attr("y1",18)
+                    .attr("x2",coordinator.datePosition)
+                    .attr("y2",settings.timeScaleHeight)
+                    .classed('ruler-marks',true);
 
             days.exit().remove();
         }
