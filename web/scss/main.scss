@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Noto+Sans);
+
 body {
     margin: 0;
 }
@@ -25,6 +27,13 @@ svg {
     #timeScale {
         .day {
             alignment-baseline: middle;
+            font-family: 'Noto Sans';
+            font-size: 10px;
+            fill: white;
+            text {
+                text-anchor: middle;
+                fill: rgba(255,255,255,0.8);
+            }
         }
 
         .divider {
@@ -35,6 +44,11 @@ svg {
         .axis {
             stroke: rgba(255,255,255,0.4);
             stroke-width: 2px;
+        }
+
+        .ruler-marks {
+            stroke: rgba(255,255,255,0.3);
+            stroke-width: 1px;
         }
     }
 

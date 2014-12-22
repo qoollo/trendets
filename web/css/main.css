@@ -1,3 +1,4 @@
+@import url(http://fonts.googleapis.com/css?family=Noto+Sans);
 body {
   margin: 0; }
 
@@ -16,13 +17,22 @@ svg {
     stroke: none;
     fill: url(#lgrad); }
   svg #timeScale .day {
-    alignment-baseline: middle; }
+    alignment-baseline: middle;
+    font-family: 'Noto Sans';
+    font-size: 10px;
+    fill: white; }
+    svg #timeScale .day text {
+      text-anchor: middle;
+      fill: rgba(255, 255, 255, 0.8); }
   svg #timeScale .divider {
     stroke: rgba(255, 255, 255, 0.4);
     stroke-width: 1px; }
   svg #timeScale .axis {
     stroke: rgba(255, 255, 255, 0.4);
     stroke-width: 2px; }
+  svg #timeScale .ruler-marks {
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 1px; }
   svg #today {
     stroke: rgba(255, 255, 255, 0.4);
     stroke-width: 1px; }
