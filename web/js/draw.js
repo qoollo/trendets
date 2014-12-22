@@ -9,12 +9,14 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                     .attr('x1', 0)
                     .attr('y1', 0)
                     .attr('x2', dom.containerWidth)                
-                    .attr('y2', 0);
+                    .attr('y2', 0)
+                    .attr('class','divider');
             dom.timeScale.container.append('line')
                     .attr('x1', 0)
                     .attr('y1', settings.timeScaleHeight)
                     .attr('x2', dom.containerWidth)                
-                    .attr('y2', settings.timeScaleHeight);
+                    .attr('y2', settings.timeScaleHeight)
+                    .attr('class','axis');
 
             // quotes
             dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');

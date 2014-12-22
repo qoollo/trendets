@@ -23,19 +23,24 @@ svg {
     }
 
     #timeScale {
-        line {
-            stroke: black;
-            stroke-width: 1;
-        }
-
         .day {
             alignment-baseline: middle;
+        }
+
+        .divider {
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 1px;
+        }
+
+        .axis {
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 2px;
         }
     }
 
     #today {
-        stroke: black;
-        stroke-width: 1;
+        stroke: rgba(255,255,255,0.4);
+        stroke-width: 1px;
     }
 
     #graphics {

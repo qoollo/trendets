@@ -15,14 +15,17 @@ svg {
   svg #background rect {
     stroke: none;
     fill: url(#lgrad); }
-  svg #timeScale line {
-    stroke: black;
-    stroke-width: 1; }
   svg #timeScale .day {
     alignment-baseline: middle; }
+  svg #timeScale .divider {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 1px; }
+  svg #timeScale .axis {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 2px; }
   svg #today {
-    stroke: black;
-    stroke-width: 1; }
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 1px; }
   svg #graphics line {
     stroke-width: 1; }
   svg #graphics .oil {
