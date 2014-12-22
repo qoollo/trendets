@@ -37,7 +37,7 @@ define(['libs/d3'], function(d3) {
                 startDay.setDate(startDay.getDate() + d);
                 endDay.setDate(endDay.getDate() + parseInt(Math.random() * 100));
                 result.push({
-                    id: 'o' + i,
+                    id: 'o' + startDay,
                     start: {
                         date: startDay,
                         personId: parseInt(10 * Math.random()),
@@ -68,7 +68,7 @@ define(['libs/d3'], function(d3) {
                 startDay.setDate(startDay.getDate() + d1);
                 endDay.setDate(endDay.getDate() + d2);
                 result.push({
-                    id: 'c' + i,
+                    id: 'c' + startDay,
                     start: {
                         date: startDay,
                         personId: parseInt(10 * Math.random()),
