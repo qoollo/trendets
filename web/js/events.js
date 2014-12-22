@@ -1,15 +1,19 @@
-define(['libs/d3', 'dom'], function(d3, dom) {
+define(['libs/d3', 'dom', 'coordinator'], function(d3, dom, coordinator) {
     var zoom = d3.behavior.zoom()
         .scaleExtent([1, 1])
-        .on('zoom', onMove);
+        .on('zoom', onMove)
+        .on('zoomend', onMoveStop);
 
     var redrawCallback = undefined;
 
-    dom.everything.call(zoom);
+    dom.background.call(zoom);
 
     function onMove() {
         dom.everything.attr('transform', 'translate(' + d3.event.translate[0] + ',0)');
+        coordinator.setTranslate(d3.event.translate[0]);
+    }
 
+    function onMoveStop() {
         if (redrawCallback !== undefined)
             redrawCallback();
     }

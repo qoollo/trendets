@@ -16,6 +16,15 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                     .attr('x2', dom.containerWidth)                
                     .attr('y2', settings.timeScaleHeight);
 
+            // today
+            var x = coordinator.datePosition(coordinator.today());
+            dom.today.append('line')
+                .attr('id', 'today')
+                .attr('x1', x)
+                .attr('y1', 0)
+                .attr('x2', x)
+                .attr('y2', dom.containerHeight);
+
             // quotes
             dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
 
@@ -40,40 +49,36 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 d.setDate(d.getDate() + 1);
             }
 
-            dom.timeScale.container.selectAll('.day')
-                    .data(days)
-                .enter().append('text')
+            var days = dom.timeScale.container.selectAll('.day')
+                    .data(days, function(d) { return d; });
+
+            days.enter().append('text')
                     .classed('day', true)
                     .attr('x', coordinator.datePosition)
                     .attr('y', settings.timeScaleHeight / 2)
                     .text(function(d) { return d.getDate(); });
+
+            days.exit().remove();
         }
 
         function drawQuote(data, type) {
-            dom.graphics.container.selectAll('.' + type)
-                    .data(data)
-                .enter().append('line')
-                    .classed(type, true)
-                    .attr('x1', function(d) { return coordinator.datePosition(d.day); })
-                    .attr('y1', function(d) { return coordinator.quotePosition(d.value, type); })
-                    .attr('x2', function(d, i) { return coordinator.datePosition((i > 0 ? data[i-1] : d).day); })
-                    .attr('y2', function(d, i) { return coordinator.quotePosition((i > 0 ? data[i-1] : d).value, type); })
+            var q = dom.graphics.container.selectAll('.' + type)
+                    .data(data.slice(1), function(d) { return type + d.day; });
+                
+            q.enter().append('line')
+                .classed(type, true)
+                .attr('x1', function(d) { return coordinator.datePosition(d.day); })
+                .attr('y1', function(d) { return coordinator.quotePosition(d.value, type); })
+                .attr('x2', function(d, i) { return coordinator.datePosition(data[i].day); })
+                .attr('y2', function(d, i) { return coordinator.quotePosition(data[i].value, type); });
+
+            q.exit().remove();
         }
 
         function drawQuotes(quotes) {
             drawQuote(quotes.oil, 'oil');
             drawQuote(quotes.dollar, 'dollar');
             drawQuote(quotes.euro, 'euro');
-        }
-
-        function drawToday(today) {
-            var x = coordinator.datePosition(today);
-            dom.today.append('line')
-                .attr('id', 'today')
-                .attr('x1', x)
-                .attr('y1', 0)
-                .attr('x2', x)
-                .attr('y2', dom.containerHeight);
         }
 
         function drawOpenForecast(forecasts, today) {
@@ -184,18 +189,24 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             stopRect.on('mouseover', events.showClosedForecast);
         }
 
+        function redraw() {
+            var stop = coordinator.stopDate(),
+                start = coordinator.startDate(),
+                loadingStartDate = coordinator.loadingStartDate(),
+                loadingStopDate = coordinator.loadingStopDate();
+
+            drawTimeScale(start, stop);
+            drawQuotes(dataProvider.loadQuotes(loadingStartDate, loadingStopDate));
+            drawOpenForecast(dataProvider.loadOpenForecast(start, loadingStopDate), coordinator.today());
+            drawClosedForecast(dataProvider.loadClosedForecast(start, loadingStopDate));
+        }
+
         return function() {
             coordinator.setTranslate(0);
-            var stop = coordinator.stopDate(),
-                start = coordinator.startDate();
-
             drawLayout();
             drawBackground();
-            drawTimeScale(start, coordinator.endTimelineDate());
-            drawToday(coordinator.stopDate());
-            drawQuotes(dataProvider.loadQuotes(start, stop));
-            drawOpenForecast(dataProvider.loadOpenForecast(start, stop), stop);
-            drawClosedForecast(dataProvider.loadClosedForecast(start, stop));
+            events.setRedrawCallback(redraw);
+            redraw();
         }
     }
 )
