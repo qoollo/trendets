@@ -53,6 +53,9 @@ define(['libs/d3', 'settings', 'dom'], function(d3, settings, dom) {
             return -settings.graphicsHeight * (v - settings.scales[type].min) /
                 (settings.scales[type].max - settings.scales[type].min);
         },
+        forecastPosition: function(order) {
+            return 50 + 20 * order;
+        },
         leftPosition: function() {
             return -xTranslate;
         },

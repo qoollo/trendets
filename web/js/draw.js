@@ -128,11 +128,11 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             lines.append('path')
                 .attr('d', function(d, i) {
-                    var y = (20 + 10 * i);
+                    var y = coordinator.forecastPosition(d.order);
                     var startX = coordinator.datePosition(d.start.date),
                         stopX = coordinator.datePosition(d.end.date);
-                    return 'M' + startX + ',0 L' + startX + ',' + y + 
-                        ' L' + stopX + ',' + y + ' L' + stopX + ',0';
+                    return 'M' + startX + ',0 C' + startX + ',' + y + 
+                        ' ' + stopX + ',' + y + ' ' + stopX + ',0';
                 });
 
             var photoStart = photos.append('g').classed('photo', true);
@@ -156,11 +156,11 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             lines.append('path')
                 .attr('d', function(d, i) {
-                    var y = (20 + 10 * i);
+                    var y = coordinator.forecastPosition(d.order);
                     var startX = coordinator.datePosition(d.start.date),
                         stopX = coordinator.datePosition(d.end.date);
-                    return 'M' + startX + ',0 L' + startX + ',' + y + 
-                        ' L' + todayPosition + ',' + y;
+                    return 'M' + startX + ',0 Q' + startX + ',' + y + 
+                        ' ' + todayPosition + ',' + y;
                 });
 
             var photoStart = photos.append('g').classed('photo', true);
@@ -173,7 +173,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             photoEnd.append('circle')
                 .attr('r', 10)
                 .attr('cx', todayPosition)
-                .attr('cy', function(d, i) { return (20 + 10 * i); });
+                .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
 
             photoStart.on('mouseover', events.showForecast);
             photoEnd.on('mouseover', events.showForecast);
