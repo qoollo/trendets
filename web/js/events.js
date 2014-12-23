@@ -30,15 +30,8 @@ define(['libs/d3', 'dom', 'coordinator'], function(d3, dom, coordinator) {
     }
 
     return {
-        showOpenForecast: function(d, i) {
-            updateBubble(d.x, d.y, d.start.date, d.start.personId, d.start.title, d.start.cite, d.start.source);
-            d3.selectAll('.forecast')
-                .classed('selected', false);
-            d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
-                .classed('selected', true);
-        },
-        showClosedForecast: function(d, i) {
-            updateBubble(d.x, d.y, d.start.date, d.start.personId, d.start.title, d.start.cite, d.start.source);
+        showForecast: function(d, i) {
+            //updateBubble(d.x, d.y, d.start.date, d.start.personId, d.start.title, d.start.cite, d.start.source);
             d3.selectAll('.forecast')
                 .classed('selected', false);
             d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })

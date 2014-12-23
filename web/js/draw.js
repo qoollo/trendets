@@ -124,96 +124,79 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
         }
 
         function drawNewClosedForecasts(lines, photos) {
+            var minDate = coordinator.startDate();
+
             lines.append('path')
-                .attr('d', function(d) {
+                .attr('d', function(d, i) {
+                    var y = (20 + 10 * i);
                     var startX = coordinator.datePosition(d.start.date),
                         stopX = coordinator.datePosition(d.end.date);
-                    return 'M' + startX + ',0 L' + d.x + ',' + d.y + ' L' + stopX + ',0';
+                    return 'M' + startX + ',0 L' + startX + ',' + y + 
+                        ' L' + stopX + ',' + y + ' L' + stopX + ',0';
                 });
 
-            var startRect = lines.append('rect')
-                .classed('forecastStart', true)
-                .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
-                .attr('y', -3)
-                .attr('width', 6)
-                .attr('height', 6);
-
-            var stopRect = lines.append('rect')
-                .classed('forecastStop', true)
-                .attr('x', function(d) { return coordinator.datePosition(d.end.date) - 3; })
-                .attr('y', -3)
-                .attr('width', 6)
-                .attr('height', 6);
-
-            var photo = photos.append('g').classed('photo', true);
-            photo.append('circle')
+            var photoStart = photos.append('g').classed('photo', true);
+            photoStart.append('circle')
                 .attr('r', 10)
-                .attr('cx', function(d) { return d.x; })
-                .attr('cy', function(d) { return d.y; });
+                .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
+                .attr('cy', 0);
 
-            photo.on('mouseover', events.showClosedForecast);
-            startRect.on('mouseover', events.showClosedForecast);
-            stopRect.on('mouseover', events.showClosedForecast);
+            var photoEnd = photos.append('g').classed('photo', true);
+            photoEnd.append('circle')
+                .attr('r', 10)
+                .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
+                .attr('cy', 0);
+
+            photoStart.on('mouseover', events.showForecast);
+            photoEnd.on('mouseover', events.showForecast);
         }
 
-        function drawOpenForecast(forecasts) {
-            var todayX = coordinator.datePosition(coordinator.today());
+        function drawNewOpenForecasts(lines, photos) {
+            var todayPosition = coordinator.datePosition(coordinator.today()) + 30;
 
-            for (var i = 0; i < forecasts.length; i++) {
-                forecasts[i].x = todayX;
-                forecasts[i].y = 20 + 15 * i;
-            }
+            lines.append('path')
+                .attr('d', function(d, i) {
+                    var y = (20 + 10 * i);
+                    var startX = coordinator.datePosition(d.start.date),
+                        stopX = coordinator.datePosition(d.end.date);
+                    return 'M' + startX + ',0 L' + startX + ',' + y + 
+                        ' L' + todayPosition + ',' + y;
+                });
 
-            var lines = dom.forecasts.lines.selectAll('.openForecast')
-                    .data(forecasts, function(d) { return d.id; });
-            var newLines = lines.enter().append('g')
-                    .classed('openForecast forecast', true);
-            lines.exit().remove();
+            var photoStart = photos.append('g').classed('photo', true);
+            photoStart.append('circle')
+                .attr('r', 10)
+                .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
+                .attr('cy', 0);
 
-            var photos = dom.forecasts.photos.selectAll('.openForecast')
-                    .data(forecasts, function(d) { return d.id; });
-            var newPhotos = photos.enter().append('g')
-                    .classed('openForecast forecast', true);
-            photos.exit().remove();
+            var photoEnd = photos.append('g').classed('photo', true);
+            photoEnd.append('circle')
+                .attr('r', 10)
+                .attr('cx', todayPosition)
+                .attr('cy', function(d, i) { return (20 + 10 * i); });
 
-            drawNewOpenForecasts(newLines, newPhotos);
+            photoStart.on('mouseover', events.showForecast);
+            photoEnd.on('mouseover', events.showForecast);
         }
 
-        function drawClosedForecast(forecasts) {
-            for (var i = 0; i < forecasts.length; i++) {
-                var f = forecasts[i];
-                f.x = (coordinator.datePosition(f.start.date) + coordinator.datePosition(f.end.date)) / 2;
-                f.y = 30 + 0.1  *(coordinator.datePosition(f.end.date) - coordinator.datePosition(f.start.date));
-                f.fixed = false;
-            }
-            /*var force = d3.layout.force()
-                .nodes(forecasts)
-                .gravity(0)
-                .charge(-10)
-                .chargeDistance(30)
-                .friction(0.9);
+        function drawForecast(forecasts) {
+            function closedFilter(d) { return d.isCameTrue !== undefined; }
+            function openFilter(d) { return d.isCameTrue === undefined; }
 
-            force.start();
-            var k = 0;
-            while ((force.alpha() > 1e-2) && (k < 150)) {
-                force.tick(),
-                k = k + 1;
-            }*/
-
-
-            var lines = dom.forecasts.lines.selectAll('.closedForecast')
+            var lines = dom.forecasts.lines.selectAll('.forecast')
                     .data(forecasts, function(d) { return d.id; });
             var newLines = lines.enter().append('g')
-                    .classed('closedForecast forecast', true);
+                    .classed('forecast', true);
             lines.exit().remove();
 
-            var photos = dom.forecasts.photos.selectAll('.closedForecast')
+            var photos = dom.forecasts.photos.selectAll('.forecast')
                     .data(forecasts, function(d) { return d.id; });
             var newPhotos = photos.enter().append('g')
-                    .classed('closedForecast forecast', true);
+                    .classed('forecast', true);
             photos.exit().remove();
 
-            drawNewClosedForecasts(newLines, newPhotos);
+            drawNewClosedForecasts(newLines.filter(closedFilter), newPhotos.filter(closedFilter));
+            drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
         }
 
         function redraw() {
@@ -222,8 +205,8 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
 
             drawTimeScale(loadingStartDate, coordinator.loadingStopDate(true));
             drawQuotes(dataProvider.loadQuotes(loadingStartDate, loadingStopDate));
-            drawOpenForecast(dataProvider.loadOpenForecast(loadingStartDate, loadingStopDate), coordinator.today());
-            drawClosedForecast(dataProvider.loadClosedForecast(loadingStartDate, loadingStopDate));
+            var forecasts = dataProvider.loadForecast(loadingStartDate, loadingStopDate);
+            drawForecast(forecasts);
         }
 
         return function() {

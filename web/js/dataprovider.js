@@ -5,8 +5,7 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
         euro: []
     }
 
-    var closedForecasts = [];
-    var openForecasts = [];
+    var forecasts = [];
 
     for (var i = -200; i <= 0; i++) {
         var d = new Date(coordinator.today().getTime());
@@ -31,8 +30,9 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
             endDay = new Date(coordinator.today().getTime());
         startDay.setDate(startDay.getDate() - 200 + d);
         endDay.setDate(endDay.getDate() + parseInt(Math.random() * 200));
-        openForecasts.push({
+        forecasts.push({
             id: 'o' + i,
+            isCameTrue: undefined, 
             start: {
                 date: startDay,
                 personId: parseInt(10 * Math.random()),
@@ -44,11 +44,10 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
                 },
             },
             end: {
-                expectedDate: endDay,
+                date: endDay,
             },
         })
     }
-    openForecasts.sort(function(a, b) { return a.end.expectedDate - b.end.expectedDate; });
 
     for (var i = 0; i < 70; i++) {
         var startDay = new Date(coordinator.today().getTime());
@@ -60,8 +59,9 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
             continue;
         }
 
-        closedForecasts.push({
+        forecasts.push({
             id: 'c' + i,
+            isCameTrue: Math.random() > 0.5,
             start: {
                 date: startDay,
                 personId: parseInt(10 * Math.random()),
@@ -84,6 +84,8 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
         })
     }
 
+    forecasts.sort(function(a, b) { return a.end.expectedDate - b.end.expectedDate; });
+
 
     return {
         loadQuotes: function(start, end) {
@@ -93,17 +95,8 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
                 euro: quotes.euro.filter(function (d) { return d.day >= start && d.day <= end; }),
             };
         },
-        loadOpenForecast: function(start, end) {
-            console.log(openForecasts.length);
-            console.log(openForecasts.filter(function(d) {
-                return d.start.date <= end;
-            }).length);
-            return openForecasts.filter(function(d) {
-                return d.start.date <= end;
-            });
-        },
-        loadClosedForecast: function(start, end) {
-            return closedForecasts.filter(function(d) {
+        loadForecast: function(start, end) {
+            return forecasts.filter(function(d) {
                 return d.start.date <= end && d.end.date >= start;
             });
         },
