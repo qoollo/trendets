@@ -86,38 +86,35 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
     
 
     forecasts.sort(function(a, b) { return a.start.date - b.start.date; });
+
+    var children = [];
+
     var leafs = forecasts.slice();
 
     for (var i = 0; i < forecasts.length; i++) {
-        forecasts[i].children = [];
+        forecasts[i].order = 0;
+        children[i] = [];
         for (var j = i + 1; j < forecasts.length; j++)
             if (forecasts[i].start.date <= forecasts[j].start.date &&
                 (forecasts[i].end.date >= forecasts[j].end.date || forecasts[i].isCameTrue === undefined)) {
-                forecasts[i].children.push(forecasts[j]);
-                if (leafs.indexOf(forecasts[i]) != -1)
-                    leafs.splice(leafs.indexOf(forecasts[i]), 1);
-
-                if (forecasts[j].parents === undefined)
-                    forecasts[j].parents = [];
-                forecasts[j].parents.push(forecasts[i]);
+                children[i].push(j);
             }
     }
-    
-    var parents = [];
-    var c = 0;
-    while (leafs.length > 0) {
-        console.log(c++);
-        for (var i = 0; i < leafs.length; i++) {
-            if (leafs[i].children.length == 0)
-                leafs[i].order = 0;
-            else
-                leafs[i].order = d3.max(leafs[i].children, function(e) { return e.order; }) + 1;
+    console.log('123');
 
-            if (leafs[i].parents != undefined)
-                parents = parents.concat(leafs[i].parents);
+    for (var i = forecasts.length - 1; i >= 0; i--) {
+        var chI = children[i].slice();
+        console.log(children[i].length);
+        for (var j = 0; j < chI.length; j++) {
+            var chJ = children[chI[j]];
+            for (var k = 0; k < chJ.length; k++) {
+                var index = children[i].indexOf(chJ[k]);
+                if (index != -1)
+                    children[i].splice(index, 1);
+            }
         }
-        leafs = parents;
-        parents = [];
+        if (children[i].length > 0)
+            forecasts[i].order = d3.max(children[i], function(el) { return forecasts[el].order; }) + 1;
     }
 
 
