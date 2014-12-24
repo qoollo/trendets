@@ -3,20 +3,7 @@
     <head>
         <title>Trendets</title>
         <link rel="stylesheet" type="text/css" href="css/main.css">
-        <script src="js/libs/require.js"></script>
-        <script>
-            requirejs.config({
-                baseUrl: 'js/',
-                urlArgs: 'bust=' + (new Date()).getTime(),
-                paths: {
-                    'libs/d3': "libs/d3.min",
-                }
-            });
-
-            require(['main'], function(main) {
-                main();
-            });
-        </script>
+        <script src="js/libs/require.js" data-main="js/main.js"></script>
     </head>
     <body>
         <div id="svgContainer">

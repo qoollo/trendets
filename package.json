@@ -1,0 +1,37 @@
+{
+  "name": "trendets",
+  "version": "1.0.0",
+  "description": "Interactive website with trends of dollar, oil and gas prices",
+  "main": "server.js",
+  "dependencies": {
+    "browserify": "^8.0.1",
+    "gulp": "^3.8.10",
+    "gulp-sourcemaps": "^1.2.8",
+    "gulp-uglify": "^1.0.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qoollo/trendets.git"
+  },
+  "keywords": [
+    "trends",
+    "prediction",
+    "finance",
+    "dollar",
+    "oil",
+    "gas",
+    "price"
+  ],
+  "author": "",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/qoollo/trendets/issues"
+  },
+  "homepage": "https://github.com/qoollo/trendets"
+}
