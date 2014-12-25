@@ -1,5 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans);
 
+$forecastColor: #3181C3;
+
 body {
     margin: 0;
 }
@@ -87,40 +89,24 @@ svg {
 
 
     .forecast {
+        opacity: 0.6;
+
         line, path {
-            stroke: #eee;
-            stroke-width: 1;
+            opacity: 1;
+            stroke: $forecastColor;
+            stroke-width: 2;
             fill: none;
         }
 
         &.selected {
-            line, path {
-                stroke: blue;
-            }
+            opacity: 1;
         }
-    }
-
-    .forecastStart, .forecastStop {
-        stroke: #3181C3;
-        stroke-width: 3;
-        fill: rgba(255,255,255,0.5);
     }
 
     .photo {
         circle {
-            fill: white;
-            stroke: #eee;
+            stroke: #64b5f6;
             stroke-width: 2;
-        }
-    }
-
-    .selected {
-        .photo {
-            circle {
-                fill: white;
-                stroke: blue;
-                stroke-width: 2;
-            }
         }
     }
 }

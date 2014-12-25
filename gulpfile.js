@@ -89,7 +89,13 @@ gulp.task('html', function () {
                .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('develop', ['html', 'javascript', 'css'], function () {
+gulp.task('img', function () {
+    return gulp.src('./web/img/*')
+               .pipe(gulp.dest('./dist/img/'))
+               .pipe(browserSync.reload({ stream: true }));
+});
+
+gulp.task('develop', ['html', 'javascript', 'css', 'img'], function () {
 
     browserSync({
         server: {
@@ -99,6 +105,9 @@ gulp.task('develop', ['html', 'javascript', 'css'], function () {
 
     gulp.watch(['web/*.html'], [
       'html'
+    ]);
+    gulp.watch(['web/img/*'], [
+      'img'
     ]);
     gulp.watch(['web/scss/*.scss', 'web/scss/**/*.scss'], [
       'css'

@@ -5,6 +5,12 @@ var dataProvider = require('./dataprovider');
 var coordinator = require('./coordinator');
 var events = require('./events');
 
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+    this.parentNode.appendChild(this);
+    });
+};
+
 function drawLayout() {
     // timescale
     dom.timeScale.container
@@ -55,6 +61,24 @@ function drawLayout() {
 
     // forecasts
     dom.forecasts.container.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
+}
+
+function addPatterns() {
+    var persons = dataProvider.loadPersons();
+    console.log(persons);
+
+    var patterns = d3.select('svg defs').selectAll('pattern')
+            .data(persons)
+        .enter().append('pattern')
+            .attr('id', function(d) { return 'photo' + d.id; })
+            .attr('width', settings.photoSize * 2)
+            .attr('height', settings.photoSize * 2)
+            .attr('patternUnits', 'objectBoundingBox');
+    patterns.append('image')
+        .attr('xlink:href', function(d) { return 'img/' + d.photo; })
+        .attr('width', settings.photoSize * 2)
+        .attr('height', settings.photoSize * 2);
+
 }
 
 function drawBackground() {
@@ -145,31 +169,6 @@ function drawQuotes(quotes) {
     // TEMPORARY! 
 }
 
-function drawNewOpenForecasts(lines, photos) {
-    lines.append('line')
-        .attr('x1', function(d) { return coordinator.datePosition(d.start.date) })
-        .attr('y1', 0)
-        .attr('x2', function(d) { return d.x; })
-        .attr('y2', function(d) { return d.y; });
-
-    var startRect = lines.append('rect')
-        .classed('forecastStart', true)
-        .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
-        .attr('y', -3)
-        .attr('width', 6)
-        .attr('height', 6);
-
-
-    var photo = photos.append('g').classed('photo', true);
-    photo.append('circle')
-        .attr('cx', coordinator.datePosition(coordinator.today()))
-        .attr('cy', function(d) { return d.y; })
-        .attr('r', 10);
-
-    startRect.on('mouseover', events.showOpenForecast);
-    photo.on('mouseover', events.showOpenForecast);
-}
-
 function drawNewClosedForecasts(lines, photos) {
     var minDate = coordinator.startDate();
 
@@ -184,13 +183,15 @@ function drawNewClosedForecasts(lines, photos) {
 
     var photoStart = photos.append('g').classed('photo', true);
     photoStart.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
         .attr('cy', 0);
 
     var photoEnd = photos.append('g').classed('photo', true);
     photoEnd.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.end.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
         .attr('cy', 0);
 
@@ -214,13 +215,15 @@ function drawNewOpenForecasts(lines, photos) {
 
     var photoStart = photos.append('g').classed('photo', true);
     photoStart.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
         .attr('cy', 0);
 
     var photoEnd = photos.append('g').classed('photo', true);
     photoEnd.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', todayPosition)
         .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
 
@@ -253,8 +256,9 @@ function drawForecast(forecasts) {
 function highlightForecast(d) {
     hideHighlightedForecast();
 
-    d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
+    var f = d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
         .classed('selected', true);
+    f.moveToFront();
 }
 
 function hideHighlightedForecast(d) {
@@ -275,6 +279,8 @@ function showBubble(d) {
         return '<a href="' + d.start.source.link + '">' + d.start.source.name + '</a>';
     });
 
+    return;
+
     dom.forecastStartBubble.container.style('display', 'block');
     dom.forecastEndBubble.container.style('display', 'block');
 }
@@ -285,20 +291,22 @@ function hideBubble() {
 }
 
 function updateBubble() {
-    dom.forecastStartBubble.container.style('left', function(d) {
-        return coordinator.datePosition(d.start.date) - coordinator.leftPosition() + 'px';
-    });
-
     var datum = dom.forecastEndBubble.container.datum();
-    if (datum.isCameTrue !== undefined) {
-        dom.forecastEndBubble.container.style('left', function(d) {
-            return coordinator.datePosition(d.end.date) - coordinator.leftPosition() + 'px';
+    if (datum !== undefined) {
+        dom.forecastStartBubble.container.style('left', function(d) {
+            return coordinator.datePosition(d.start.date) - coordinator.leftPosition() + 'px';
         });
-    }
-    else {
-        dom.forecastEndBubble.container.style('left', function(d) {
-            return coordinator.datePosition(coordinator.today()) - coordinator.leftPosition() + 50 + 'px';
-        });
+
+        if (datum.isCameTrue !== undefined) {
+            dom.forecastEndBubble.container.style('left', function(d) {
+                return coordinator.datePosition(d.end.date) - coordinator.leftPosition() + 'px';
+            });
+        }
+        else {
+            dom.forecastEndBubble.container.style('left', function(d) {
+                return coordinator.datePosition(coordinator.today()) - coordinator.leftPosition() + 50 + 'px';
+            });
+        }
     }
 }
 
@@ -315,6 +323,7 @@ function redraw() {
 module.exports = function() {
     coordinator.setTranslate(0);
     drawLayout();
+    addPatterns();
     drawBackground();
     events.setRedrawCallback(redraw, updateBubble);
     redraw();

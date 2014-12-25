@@ -7,8 +7,8 @@
     </head>
     <body>
         <div id="svgContainer">
-            <svg>
-                <defs> 
+            <svg xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
                     <linearGradient id="lgrad" x1="0%" y1="50%" x2="100%" y2="50%" > 
                         <stop offset="0%" style="stop-color:rgb(128,81,76);stop-opacity:1" />
                         <stop offset="100%" style="stop-color:rgb(44,27,64);stop-opacity:1" />
@@ -21,6 +21,13 @@
                         <stop offset="0%" style="stop-color:rgb(0,111,162);stop-opacity:0.1" />
                         <stop offset="100%" style="stop-color:rgb(0,111,162);stop-opacity:0" />
                     </linearGradient>
+                    <filter id="darknessFilter" >
+                        <feComponentTransfer>
+                            <feFuncR type="linear" slope="0.5"/>
+                            <feFuncG type="linear" slope="0.5"/>
+                            <feFuncB type="linear" slope="0.5"/>
+                        </feComponentTransfer>
+                    </filter>
                 </defs>
                 <g id="background">
                 </g>

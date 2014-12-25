@@ -57,7 +57,7 @@ module.exports = {
             (settings.scales[type].max - settings.scales[type].min);
     },
     forecastPosition: function (order) {
-        return 50 + 20 * order;
+        return 30 + 30 * order;
     },
     leftPosition: function () {
         return -xTranslate;
