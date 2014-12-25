@@ -147,8 +147,10 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
                 .attr('cy', 0);
 
-            photoStart.on('mouseover', events.showForecast);
-            photoEnd.on('mouseover', events.showForecast);
+            photoStart.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
+            photoEnd.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
+            //photoStart.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
+            //photoEnd.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
         }
 
         function drawNewOpenForecasts(lines, photos) {
@@ -175,8 +177,10 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
                 .attr('cx', todayPosition)
                 .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
 
-            photoStart.on('mouseover', events.showForecast);
-            photoEnd.on('mouseover', events.showForecast);
+            photoStart.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
+            photoEnd.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
+            //photoStart.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
+            //photoEnd.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
         }
 
         function drawForecast(forecasts) {
@@ -199,6 +203,59 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
         }
 
+
+        function highlightForecast(d) {
+            hideHighlightedForecast();
+
+            d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
+                .classed('selected', true);
+        }
+
+        function hideHighlightedForecast(d) {
+            d3.selectAll('.forecast')
+                .classed('selected', false);
+        }
+
+        function showBubble(d) {
+            dom.forecastStartBubble.container.datum(d);
+            dom.forecastEndBubble.container.datum(d);
+            updateBubble();
+
+            dom.forecastStartBubble.getChild('date').text(function(d) { return d.start.date; });
+            dom.forecastStartBubble.getChild('name').text(function(d) { return d.start.personId; });
+            dom.forecastStartBubble.getChild('title').text(function(d) { return d.start.title; });
+            dom.forecastStartBubble.getChild('city').text(function(d) { return d.start.cite; });
+            dom.forecastStartBubble.getChild('link').text(function(d) {
+                return '<a href="' + d.start.source.link + '">' + d.start.source.name + '</a>';
+            });
+
+            dom.forecastStartBubble.container.style('display', 'block');
+            dom.forecastEndBubble.container.style('display', 'block');
+        }
+
+        function hideBubble() {
+            dom.forecastStartBubble.container.style('display', 'none');
+            dom.forecastEndBubble.container.style('display', 'none');
+        }
+
+        function updateBubble() {
+            dom.forecastStartBubble.container.style('left', function(d) {
+                return coordinator.datePosition(d.start.date) - coordinator.leftPosition() + 'px';
+            });
+
+            var datum = dom.forecastEndBubble.container.datum();
+            if (datum.isCameTrue !== undefined) {
+                dom.forecastEndBubble.container.style('left', function(d) {
+                    return coordinator.datePosition(d.end.date) - coordinator.leftPosition() + 'px';
+                });
+            }
+            else {
+                dom.forecastEndBubble.container.style('left', function(d) {
+                    return coordinator.datePosition(coordinator.today()) - coordinator.leftPosition() + 50 + 'px';
+                });
+            }
+        }
+
         function redraw() {
             var loadingStartDate = coordinator.loadingStartDate(),
                 loadingStopDate = coordinator.loadingStopDate();
@@ -213,7 +270,7 @@ define(['libs/d3', 'dom', 'settings', 'dataprovider', 'coordinator', 'events'],
             coordinator.setTranslate(0);
             drawLayout();
             drawBackground();
-            events.setRedrawCallback(redraw);
+            events.setRedrawCallback(redraw, updateBubble);
             redraw();
         }
     }

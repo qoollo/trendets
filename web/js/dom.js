@@ -16,14 +16,18 @@ define(['libs/d3'], function(d3) {
             lines: d3.select('#forecasts #lines'),
             photos: d3.select('#forecasts #photos'),
         },
-        forecastBubble: {
-            container: d3.select('#forecastBubble'),
-            date: d3.select('#forecastBubble #date'),
-            name: d3.select('#forecastBubble #name'),
-            title: d3.select('#forecastBubble #title'),
-            cite: d3.select('#forecastBubble #cite'),
-            link: d3.select('#forecastBubble #link'),
-        }
+        forecastStartBubble: {
+            container: d3.select('#forecastStartBubble'),
+            getChild: function(name) {
+                return d3.select('#forecastStartBubble').select('#' + name);
+            }
+        },
+        forecastEndBubble: {
+            container: d3.select('#forecastEndBubble'),
+            getChild: function(name) {
+                return d3.select('#forecastEndBubble').select('#' + name);
+            }
+        },
     }
 
     result.containerWidth = result.container.node().offsetWidth;

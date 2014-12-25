@@ -63,7 +63,7 @@ svg {
     stroke: blue;
     stroke-width: 2; }
 
-#forecastBubble {
+.forecastBubble {
   background: rgba(255, 255, 255, 0.9);
   display: none;
   position: absolute;
