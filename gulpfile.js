@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var prettify = require('gulp-jsbeautifier');
 
 //  for 'javascript' task
 var browserify = require('browserify');
@@ -17,6 +18,7 @@ var autoprefixer = require('gulp-autoprefixer');
 //  for 'html' task
 var inject = require("gulp-inject");
 
+//  for 'develop' task
 var browserSync = require('browser-sync');
 
 gulp.task('default', function () {
@@ -39,6 +41,7 @@ gulp.task('javascript', function () {
                         // Add transformation tasks to the pipeline here.
                       //  .pipe(uglify())
                       //.pipe(sourcemaps.write('./'))
+                      .pipe(prettify())
                       .pipe(gulp.dest('./dist/js/'))
                       .pipe(browserSync.reload({ stream: true }));
     };
@@ -66,6 +69,7 @@ gulp.task('css', function () {
     return gulp.src('web/scss/*.scss')
                .pipe(sass({ onError: function (e) { console.log(e); } }))
                .pipe(autoprefixer("last 2 versions", "> 1%", "ie 8"))
+               .pipe(prettify())
                .pipe(gulp.dest('dist/css/'))
                .pipe(browserSync.reload({ stream: true }));
 });
@@ -75,11 +79,12 @@ gulp.task('html', function () {
 
     return gulp.src('web/index.html')
                .pipe(inject(sources, { addRootSlash: false }))
+               .pipe(prettify())
                .pipe(gulp.dest('dist/'))
                .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('watch', ['html', 'javascript', 'css'], function () {
+gulp.task('develop', ['html', 'javascript', 'css'], function () {
 
     browserSync({
         server: {
