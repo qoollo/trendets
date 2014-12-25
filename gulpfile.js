@@ -71,16 +71,16 @@ var getName = function () {
 }
 
 gulp.task('css', function () {
-    return gulp.src('web/scss/*.scss')
+    return gulp.src('./web/scss/*.scss')
                .pipe(sass({ onError: function (e) { console.log(e); } }))
                .pipe(autoprefixer("last 2 versions", "> 1%", "ie 8"))
                .pipe(prettify())
-               .pipe(gulp.dest('dist/css/'))
+               .pipe(gulp.dest('./dist/css/'))
                .pipe(browserSync.reload({ stream: true }));
 });
 
 gulp.task('html', function () {
-    var sources = gulp.src(['css/*.css', 'js/' + getVersion() + '.*.js'], { read: false, cwd: 'dist' });
+    var sources = gulp.src(['css/*.css', 'js/' + getVersion() + '.*.js'], { read: false, cwd: './dist' });
 
     return gulp.src('web/index.html')
                .pipe(inject(sources, { addRootSlash: false }))

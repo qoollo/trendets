@@ -2,19 +2,21 @@ var d3 = require('./libs/d3');
 var dom = require('./dom');
 var coordinator = require('./coordinator');
 
+var redrawCallback = undefined,
+    updateBubble = undefined;
 
 var zoom = d3.behavior.zoom()
     .scaleExtent([1, 1])
     .on('zoom', onMove)
     .on('zoomend', onMoveStop);
 
-var redrawCallback = undefined;
-
 dom.background.call(zoom);
 
 function onMove() {
     dom.everything.attr('transform', 'translate(' + d3.event.translate[0] + ',0)');
     coordinator.setTranslate(d3.event.translate[0]);
+    if (updateBubble !== undefined)
+        updateBubble();
 }
 
 function onMoveStop() {
@@ -35,13 +37,13 @@ function updateBubble(x, y, date, personId, title, cite, link) {
 
 module.exports = {
     showForecast: function (d, i) {
-        //updateBubble(d.x, d.y, d.start.date, d.start.personId, d.start.title, d.start.cite, d.start.source);
         d3.selectAll('.forecast')
             .classed('selected', false);
         d3.selectAll('.forecast').filter(function (od) { return od.id == d.id })
             .classed('selected', true);
     },
-    setRedrawCallback: function (callback) {
-        redrawCallback = callback;
+    setRedrawCallback: function(redraw, bubble) {
+        redrawCallback = redraw;
+        updateBubble = bubble;
     }
 }
