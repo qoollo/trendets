@@ -1,4 +1,6 @@
-define(['libs/d3', 'coordinator'], function(d3, coordinator) {
+var d3 = require('./libs/d3');
+var coordinator = require('./coordinator');
+
     var quotes = {
         oil: [],
         dollar: [],
@@ -118,7 +120,7 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
     }
 
 
-    return {
+    module.exports = {
         loadQuotes: function(start, end) {
             return {
                 oil: quotes.oil.filter(function (d) { return d.day >= start && d.day <= end; }),
@@ -143,4 +145,3 @@ define(['libs/d3', 'coordinator'], function(d3, coordinator) {
             return result;
         },
     }
-});

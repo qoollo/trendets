@@ -1,6 +1,4 @@
-define(['draw'], function(draw) {
-    return function() {
-        console.log('Yo!');
-        draw();
-    }
-});
+var draw = require('./draw');
+
+console.log('Yo!');
+draw();

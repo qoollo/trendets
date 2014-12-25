@@ -2,21 +2,8 @@
 <html>
     <head>
         <title>Trendets</title>
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-        <script src="js/libs/require.js"></script>
-        <script>
-            requirejs.config({
-                baseUrl: 'js/',
-                urlArgs: 'bust=' + (new Date()).getTime(),
-                paths: {
-                    'libs/d3': "libs/d3.min",
-                }
-            });
-
-            require(['main'], function(main) {
-                main();
-            });
-        </script>
+        <!-- inject:css -->
+        <!-- endinject -->
     </head>
     <body>
         <div id="svgContainer">
@@ -49,13 +36,23 @@
                     </g>
                 </g>
             </svg>
-            <div id="forecastBubble">
-                <span id="date">12 декабря 2014</span>
-                <span id="name">Герман Греф</span>
-                <div id="title">Глава Сбербанка Герман Греф верит во все, что красного цвета</div>
-                <div id="cite">Ма́йкл Сти́вен Бубле́ — канадский певец-крунер, работающий в традиционной эстрадной манере. Ведущий современный исполнитель репертуара Great American Songbook, обладатель нескольких премий.</div>
-                <div id="link"><a href="#">До///дь</a></div>
+            <div id="forecastStartBubble" class="forecastBubble">
+                <span class="date">12 декабря 2014</span>
+                <span class="name">Герман Греф</span>
+                <div class="title">Глава Сбербанка Герман Греф верит во все, что красного цвета</div>
+                <div class="cite">Ма́йкл Сти́вен Бубле́ — канадский певец-крунер, работающий в традиционной эстрадной манере. Ведущий современный исполнитель репертуара Great American Songbook, обладатель нескольких премий.</div>
+                <div class="link"><a href="#">До///дь</a></div>
+            </div>
+            <div id="forecastEndBubble" class="forecastBubble">
+                <span class="date">12 декабря 2014</span>
+                <span class="name">Герман Греф</span>
+                <div class="title">Глава Сбербанка Герман Греф верит во все, что красного цвета</div>
+                <div class="cite">Ма́йкл Сти́вен Бубле́ — канадский певец-крунер, работающий в традиционной эстрадной манере. Ведущий современный исполнитель репертуара Great American Songbook, обладатель нескольких премий.</div>
+                <div class="link"><a href="#">До///дь</a></div>
             </div>
         </div>
+
+        <!-- inject:js -->
+        <!-- endinject -->
     </body>
 </html>
