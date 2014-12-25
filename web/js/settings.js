@@ -1,4 +1,4 @@
-define({
+module.exports = {
     graphicsHeight: 300,
     timeScaleHeight: 30,
     futureMargin: 300,
@@ -8,4 +8,4 @@ define({
         'dollar': { min: 0, max: 150 },
         'oil': { min: 0, max: 150 },
     }
-});
+};
