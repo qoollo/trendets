@@ -194,11 +194,6 @@ function drawNewClosedForecasts(lines, photos) {
         .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
         .attr('cy', 0);
-
-    photoStart.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    photoEnd.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    //photoStart.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
-    //photoEnd.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
 }
 
 function drawNewOpenForecasts(lines, photos) {
@@ -226,11 +221,6 @@ function drawNewOpenForecasts(lines, photos) {
         .attr('r', settings.photoSize)
         .attr('cx', todayPosition)
         .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
-
-    photoStart.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    photoEnd.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    //photoStart.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
-    //photoEnd.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
 }
 
 function drawForecast(forecasts) {
@@ -251,6 +241,15 @@ function drawForecast(forecasts) {
 
     drawNewClosedForecasts(newLines.filter(closedFilter), newPhotos.filter(closedFilter));
     drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
+
+    
+
+    lines.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
+    photos.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
+    lines.on('mousemove', moveBubble);
+    photos.on('mousemove', moveBubble);
+    lines.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
+    photos.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
 }
 
 function highlightForecast(d) {
@@ -267,47 +266,29 @@ function hideHighlightedForecast(d) {
 }
 
 function showBubble(d) {
-    dom.forecastStartBubble.container.datum(d);
-    dom.forecastEndBubble.container.datum(d);
-    updateBubble();
+    dom.forecastHoverBubble.container.datum(d);
 
-    dom.forecastStartBubble.getChild('date').text(function(d) { return d.start.date; });
-    dom.forecastStartBubble.getChild('name').text(function(d) { return d.start.personId; });
-    dom.forecastStartBubble.getChild('title').text(function(d) { return d.start.title; });
-    dom.forecastStartBubble.getChild('city').text(function(d) { return d.start.cite; });
-    dom.forecastStartBubble.getChild('link').text(function(d) {
+    dom.forecastHoverBubble.getChild('date').text(function(d) { return d.start.date; });
+    dom.forecastHoverBubble.getChild('name').text(function(d) { return d.start.personId; });
+    dom.forecastHoverBubble.getChild('title').text(function(d) { return d.start.title; });
+    dom.forecastHoverBubble.getChild('city').text(function(d) { return d.start.cite; });
+    dom.forecastHoverBubble.getChild('link').text(function(d) {
         return '<a href="' + d.start.source.link + '">' + d.start.source.name + '</a>';
     });
 
-    return;
+    dom.forecastHoverBubble.container.style('display', 'block');
+}
 
-    dom.forecastStartBubble.container.style('display', 'block');
-    dom.forecastEndBubble.container.style('display', 'block');
+function moveBubble() {
+    var x = d3.event.clientX + 10,
+        y = d3.event.clientY + 10;
+
+    dom.forecastHoverBubble.container.style('left', x + 'px');
+    dom.forecastHoverBubble.container.style('top', y + 'px');
 }
 
 function hideBubble() {
-    dom.forecastStartBubble.container.style('display', 'none');
-    dom.forecastEndBubble.container.style('display', 'none');
-}
-
-function updateBubble() {
-    var datum = dom.forecastEndBubble.container.datum();
-    if (datum !== undefined) {
-        dom.forecastStartBubble.container.style('left', function(d) {
-            return coordinator.datePosition(d.start.date) - coordinator.leftPosition() + 'px';
-        });
-
-        if (datum.isCameTrue !== undefined) {
-            dom.forecastEndBubble.container.style('left', function(d) {
-                return coordinator.datePosition(d.end.date) - coordinator.leftPosition() + 'px';
-            });
-        }
-        else {
-            dom.forecastEndBubble.container.style('left', function(d) {
-                return coordinator.datePosition(coordinator.today()) - coordinator.leftPosition() + 50 + 'px';
-            });
-        }
-    }
+    dom.forecastHoverBubble.container.style('display', 'none');
 }
 
 function redraw() {
@@ -325,6 +306,6 @@ module.exports = function() {
     drawLayout();
     addPatterns();
     drawBackground();
-    events.setRedrawCallback(redraw, updateBubble);
+    events.setRedrawCallback(redraw);
     redraw();
 }

@@ -17,16 +17,10 @@ var result = {
         lines: d3.select('#forecasts #lines'),
         photos: d3.select('#forecasts #photos'),
     },
-    forecastStartBubble: {
-        container: d3.select('#forecastStartBubble'),
+    forecastHoverBubble: {
+        container: d3.select('#forecastHoverBubble'),
         getChild: function(name) {
-            return d3.select('#forecastStartBubble').select('#' + name);
-        }
-    },
-    forecastEndBubble: {
-        container: d3.select('#forecastEndBubble'),
-        getChild: function(name) {
-            return d3.select('#forecastEndBubble').select('#' + name);
+            return d3.select('#forecastHoverBubble').select('#' + name);
         }
     },
 }
