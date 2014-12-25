@@ -17,6 +17,8 @@ var autoprefixer = require('gulp-autoprefixer');
 //  for 'html' task
 var inject = require("gulp-inject");
 
+var browserSync = require('browser-sync');
+
 gulp.task('default', function () {
     // place code for your default task here
 });
@@ -34,10 +36,11 @@ gulp.task('javascript', function () {
                       .pipe(source(getVersion() + '.' + getName() + '.min.js'))
                       .pipe(buffer())
                       //.pipe(sourcemaps.init({ loadMaps: true }))
-                      //  // Add transformation tasks to the pipeline here.
+                        // Add transformation tasks to the pipeline here.
                       //  .pipe(uglify())
                       //.pipe(sourcemaps.write('./'))
-                      .pipe(gulp.dest('./dist/js/'));
+                      .pipe(gulp.dest('./dist/js/'))
+                      .pipe(browserSync.reload({ stream: true }));
     };
 
     var namePart = getVersion() + '.' + getName(),
@@ -60,11 +63,11 @@ var getName = function () {
 }
 
 gulp.task('css', function () {
-    gulp.src('web/scss/*.scss')
-        .pipe(sass({ onError: function (e) { console.log(e); } }))
-        .pipe(autoprefixer("last 2 versions", "> 1%", "ie 8"))
-        .pipe(gulp.dest('dist/css/'))
-    //.pipe(refresh(lrserver));
+    return gulp.src('web/scss/*.scss')
+               .pipe(sass({ onError: function (e) { console.log(e); } }))
+               .pipe(autoprefixer("last 2 versions", "> 1%", "ie 8"))
+               .pipe(gulp.dest('dist/css/'))
+               .pipe(browserSync.reload({ stream: true }));
 });
 
 gulp.task('html', function () {
@@ -72,11 +75,19 @@ gulp.task('html', function () {
 
     return gulp.src('web/index.html')
                .pipe(inject(sources, { addRootSlash: false }))
-               .pipe(gulp.dest('dist/'));
+               .pipe(gulp.dest('dist/'))
+               .pipe(browserSync.reload({ stream: true }));
 });
 
 gulp.task('watch', ['html', 'javascript', 'css'], function () {
-    gulp.watch(['web/*.html', 'web/**/*.js'], [
+
+    browserSync({
+        server: {
+            baseDir: './dist'
+        }
+    });
+
+    gulp.watch(['web/*.html'], [
       'html'
     ]);
     gulp.watch(['web/scss/*.scss', 'web/scss/**/*.scss'], [
