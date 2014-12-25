@@ -12,22 +12,30 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 function drawLayout() {
+    // graph background grid
+    dom.bgGrid.append('rect')
+        .attr('x',0)            
+        .attr('y',-settings.graphicsHeight)            
+        .attr('height',settings.graphicsHeight)            
+        .attr('width',x)
+        .classed('grid-bg',true);
+
     // timescale
     dom.timeScale.container
         .attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
 
-    dom.timeScale.container.append('line')
+    dom.timeScale.background.append('line')
             .attr('x1', 0)
-            .attr('y1', 0)
+            .attr('y1', settings.graphicsHeight)
             .attr('x2', dom.containerWidth)                
-            .attr('y2', 0)
-            .attr('class','divider');
-    dom.timeScale.container.append('line')
+            .attr('y2', settings.graphicsHeight)
+            .attr('class', 'divider');
+    dom.timeScale.background.append('line')
             .attr('x1', 0)
-            .attr('y1', settings.timeScaleHeight)
+            .attr('y1', settings.graphicsHeight + settings.timeScaleHeight)
             .attr('x2', dom.containerWidth)                
-            .attr('y2', settings.timeScaleHeight)
-            .attr('class','axis');
+            .attr('y2', settings.graphicsHeight + settings.timeScaleHeight)
+            .attr('class', 'axis');
 
     // today
     var x = coordinator.datePosition(coordinator.today());
@@ -37,15 +45,6 @@ function drawLayout() {
         .attr('y1', 0)
         .attr('x2', x)
         .attr('y2', dom.containerHeight);
-
-    // graph background grid
-    var grid = dom.graphics.container.append('g').attr('id','graph-bg-grid');
-    grid.append('rect')
-        .attr('x',0)            
-        .attr('y',-settings.graphicsHeight)            
-        .attr('height',settings.graphicsHeight)            
-        .attr('width',x)
-        .classed('grid-bg',true);
 
     // today footprint
     var footprintWidth = 300;

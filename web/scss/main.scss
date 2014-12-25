@@ -19,10 +19,22 @@ svg {
     width: 100%;
     height: 100%;
 
-    #background {
-        rect {
-            stroke: none;
-            fill: url(#lgrad);
+    #static {
+        #background {
+            rect {
+                stroke: none;
+                fill: url(#lgrad);
+            }
+        }
+
+        .divider {
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 1px;
+        }
+
+        .axis {
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 2px;
         }
     }
 
@@ -36,16 +48,6 @@ svg {
                 text-anchor: middle;
                 fill: rgba(255,255,255,0.8);
             }
-        }
-
-        .divider {
-            stroke: rgba(255,255,255,0.4);
-            stroke-width: 1px;
-        }
-
-        .axis {
-            stroke: rgba(255,255,255,0.4);
-            stroke-width: 2px;
         }
 
         .ruler-marks {

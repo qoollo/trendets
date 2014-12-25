@@ -5,11 +5,13 @@ var result = {
     svg: d3.select('#svgContainer svg'),
     everything: d3.select('#everything'),
     background: d3.select('#background'),
+    bgGrid: d3.select('#graphBgGrid'),
     graphics: {
         container: d3.select('#graphics'),
     },
     timeScale: {
         container: d3.select('#timeScale'),
+        background: d3.select('#backTimeScale'),
     },
     today: d3.select('#today'),
     forecasts: {
