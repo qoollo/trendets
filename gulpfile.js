@@ -2,6 +2,7 @@
 
 var gulp = require('gulp');
 var prettify = require('gulp-jsbeautifier');
+var gulpif = require('gulp-if');
 
 //  for 'javascript' task
 var browserify = require('browserify');
@@ -20,6 +21,10 @@ var inject = require("gulp-inject");
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
+
+var settings = {
+    debug: true
+}
 
 gulp.task('default', function () {
     // place code for your default task here
@@ -41,7 +46,7 @@ gulp.task('javascript', function () {
                         // Add transformation tasks to the pipeline here.
                       //  .pipe(uglify())
                       //.pipe(sourcemaps.write('./'))
-                      .pipe(prettify())
+                      .pipe(gulpif(settings.debug, prettify(), uglify()))
                       .pipe(gulp.dest('./dist/js/'))
                       .pipe(browserSync.reload({ stream: true }));
     };
@@ -101,4 +106,10 @@ gulp.task('develop', ['html', 'javascript', 'css'], function () {
     gulp.watch(['web/js/*.js', 'web/js/**/*.js'], [
       'javascript'
     ]);
+});
+
+gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css']);
+
+gulp.task('_set-release-mode', function () {
+    settings.debug = false;
 });
