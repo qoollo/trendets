@@ -242,7 +242,7 @@ function drawForecast(forecasts) {
     drawNewClosedForecasts(newLines.filter(closedFilter), newPhotos.filter(closedFilter));
     drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
 
-    
+
 
     lines.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
     photos.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
@@ -256,13 +256,13 @@ function highlightForecast(d) {
     hideHighlightedForecast();
 
     var f = d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
-        .classed('selected', true);
+        .classed('hovered', true);
     f.moveToFront();
 }
 
 function hideHighlightedForecast(d) {
     d3.selectAll('.forecast')
-        .classed('selected', false);
+        .classed('hovered', false);
 }
 
 function showBubble(d) {
@@ -281,7 +281,7 @@ function showBubble(d) {
 
 function moveBubble() {
     var x = d3.event.clientX + 10,
-        y = d3.event.clientY + 10;
+        y = d3.event.clientY + 20;
 
     dom.forecastHoverBubble.container.style('left', x + 'px');
     dom.forecastHoverBubble.container.style('top', y + 'px');

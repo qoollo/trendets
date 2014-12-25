@@ -90,6 +90,7 @@ svg {
 
     .forecast {
         opacity: 0.6;
+        cursor: pointer;
 
         line, path {
             opacity: 1;
@@ -98,7 +99,7 @@ svg {
             fill: none;
         }
 
-        &.selected {
+        &.hovered {
             opacity: 1;
         }
     }

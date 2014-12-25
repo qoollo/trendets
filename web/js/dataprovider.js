@@ -138,8 +138,8 @@ var coordinator = require('./coordinator');
             for (var i = 0; i < 10; i++) {
                 results[i] = {
                     id: i,
-                    name: i % 2 ? 'Герман Германович Греф' : 'ЦБ РФ',
-                    photo: 'gref.jpg',
+                    name: i % 2 ? 'Герман Германович Греф' : 'Якунин',
+                    photo: i % 2 ? 'gref.jpg' : 'yakunin.jpg',
                 }
             }
             return results;

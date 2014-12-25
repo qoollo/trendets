@@ -2,7 +2,7 @@ module.exports = {
     graphicsHeight: 300,
     timeScaleHeight: 30,
     futureMargin: 300,
-    dayWidth: 50,
+    dayWidth: 30,
     photoSize: 18.5,
     scales: {
         'euro': { min: 0, max: 150 },
