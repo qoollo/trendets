@@ -70,8 +70,7 @@ svg {
     #graphics {
         .quoteDay {
             .hoverRect {
-                fill: white;
-                opacity: 0;
+                fill: rgba(0,0,0,0);
             }
 
             &.hovered .hoverRect {
@@ -80,7 +79,6 @@ svg {
 
             line {
                 stroke-width: 2px;
-                /*filter: url("#gauss-blur");*/
 
                 &.oil {
                     stroke: #7b6b8a;
@@ -116,6 +114,26 @@ svg {
             &.hovered .boobie, &.today .boobie {
                 display: block;
             }
+
+            &.hovered .boobie {
+                stroke-width: 0;
+            }
+
+            &.today .boobie {
+                stroke-width: 4;
+            }
+
+            .dotted {
+                stroke: rgba(255,255,255,0.16);
+                stroke-width: 1;
+                display: none;
+                stroke-dasharray: 4;
+            }
+
+            &.hovered .dotted {
+                display: block;
+            }
+
         }        
 
         .grid-bg {

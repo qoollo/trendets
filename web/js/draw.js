@@ -139,8 +139,17 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
     boobies.append('circle')
            .attr('cx', 0)     
            .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
-           .attr('r', 4)
+           .attr('r', function(d) { return d.day.getTime() == coordinator.today().getTime() ? 4 : 2; })
            .classed(type + "-boobie boobie", true);
+}
+
+function drawDottedLinesForDays(lines, data) {
+    lines.append('line')
+        .attr('x1',0)
+        .attr('y1',-settings.graphicsHeight)
+        .attr('x2',0) 
+        .attr('y2',0)
+        .attr('class','dotted');
 }
 
 function showDayQuotes(d) {
@@ -167,14 +176,19 @@ function drawQuoteLines(data) {
             .data(data, function(d) { return d.day; });
     var rects = dom.graphics.rects.selectAll('.quoteDay')
             .data(data, function(d) { return d.day; });
+    var dottedLines = dom.graphics.dottedLines.selectAll('.quoteDay')
+            .data(data, function(d) { return d.day; });
         
     var newLines = addNewQuoteDays(lines);
+    var newDottedLines = addNewQuoteDays(dottedLines);
     var newBoobies = addNewQuoteDays(boobies);
     var newRects = addNewQuoteDays(rects);
 
     drawQuoteLinesForDays(newLines, newBoobies, 'oil', data);
     drawQuoteLinesForDays(newLines, newBoobies, 'dollar', data);
     drawQuoteLinesForDays(newLines, newBoobies, 'euro', data);
+    
+    drawDottedLinesForDays(newDottedLines, data);
 
     newRects.append('rect')
         .classed('hoverRect', true)
@@ -188,6 +202,7 @@ function drawQuoteLines(data) {
     lines.exit().remove();
     boobies.exit().remove();
     rects.exit().remove();
+    dottedLines.exit().remove();
 }
 
 function drawQuotes(quotes) {

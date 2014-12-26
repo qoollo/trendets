@@ -10,6 +10,7 @@ var result = {
         container: d3.select('#graphics'),
         lines: d3.select('#graphics #lines'),
         boobies: d3.select('#graphics #boobies'),
+        dottedLines: d3.select('#graphics #dotted_lines'),
         rects: d3.select('#graphics #rects'),
     },
     timeScale: {
