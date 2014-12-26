@@ -119,31 +119,39 @@ svg {
         }        
 
         .grid-bg {
-            fill: rgba(255,255,255,0.05);
+            fill: rgba(255, 255, 255, 0.05);
         }
     }
 
 
     .forecast {
-        opacity: 0.6;
         cursor: pointer;
 
         line, path {
-            opacity: 1;
+            opacity: 0.6;
             stroke: $forecastColor;
             stroke-width: 2;
             fill: none;
         }
 
-        &.hovered {
-            opacity: 1;
+        .photo {
+            circle {
+                stroke: rgba(100, 181, 246, 0.6);
+                stroke-width: 2;
+            }
         }
-    }
 
-    .photo {
-        circle {
-            stroke: #64b5f6;
-            stroke-width: 2;
+        &.hovered {
+            line, path {
+                opacity: 1;
+            }
+
+            .photo {
+                circle {
+                    stroke: rgba(100, 181, 246, 1);
+                    stroke-width: 2;
+                }
+            }
         }
     }
 }
