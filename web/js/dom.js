@@ -25,7 +25,7 @@ var result = {
     forecastHoverBubble: {
         container: d3.select('#forecastHoverBubble'),
         getChild: function(name) {
-            return d3.select('#forecastHoverBubble').select('#' + name);
+            return d3.select('#forecastHoverBubble').select('.' + name);
         }
     },
 }

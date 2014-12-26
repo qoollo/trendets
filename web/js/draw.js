@@ -5,6 +5,10 @@ var dataProvider = require('./dataprovider');
 var coordinator = require('./coordinator');
 var events = require('./events');
 
+var drawing = {
+    bubble: require('./drawing/bubble'),
+}
+
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
     this.parentNode.appendChild(this);
@@ -264,13 +268,12 @@ function drawForecast(forecasts) {
     drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
 
 
-
-    lines.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    photos.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    lines.on('mousemove', moveBubble);
-    photos.on('mousemove', moveBubble);
-    lines.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
-    photos.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
+    lines.on('mouseover', function(d) { highlightForecast(d); drawing.bubble.showBubble(d); });
+    photos.on('mouseover', function(d) { highlightForecast(d); drawing.bubble.showBubble(d); });
+    lines.on('mousemove', drawing.bubble.moveBubble);
+    photos.on('mousemove', drawing.bubble.moveBubble);
+    lines.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
+    photos.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
 }
 
 function highlightForecast(d) {
@@ -282,32 +285,6 @@ function highlightForecast(d) {
 function hideHighlightedForecast(d) {
     d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
         .classed('hovered', false);
-}
-
-function showBubble(d) {
-    dom.forecastHoverBubble.container.datum(d);
-
-    dom.forecastHoverBubble.getChild('date').text(function(d) { return d.start.date; });
-    dom.forecastHoverBubble.getChild('name').text(function(d) { return d.start.personId; });
-    dom.forecastHoverBubble.getChild('title').text(function(d) { return d.start.title; });
-    dom.forecastHoverBubble.getChild('city').text(function(d) { return d.start.cite; });
-    dom.forecastHoverBubble.getChild('link').text(function(d) {
-        return '<a href="' + d.start.source.link + '">' + d.start.source.name + '</a>';
-    });
-
-    dom.forecastHoverBubble.container.style('display', 'block');
-}
-
-function moveBubble() {
-    var x = d3.event.clientX + 10,
-        y = d3.event.clientY + 20;
-
-    dom.forecastHoverBubble.container.style('left', x + 'px');
-    dom.forecastHoverBubble.container.style('top', y + 'px');
-}
-
-function hideBubble() {
-    dom.forecastHoverBubble.container.style('display', 'none');
 }
 
 function redraw() {
