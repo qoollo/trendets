@@ -133,7 +133,7 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
         .classed(type, true)
         .attr('x1', 0)
         .attr('y1', function(d) { return coordinator.quotePosition(d[type], type); })
-        .attr('x2', -settings.dayWidth)
+        .attr('x2', -settings.dayWidth - 0)
         .attr('y2', function(d, i) { return coordinator.quotePosition(data[i][type], type); });
 
     boobies.append('circle')
