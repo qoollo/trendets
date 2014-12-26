@@ -194,6 +194,20 @@ function drawQuotes(quotes) {
     drawQuoteLines(quotes);
 }
 
+function addPhoto(container, type) {
+    container.append('circle')
+        .classed('image', true)
+        .attr('fill', function(d) { return 'url(#photo' + d[type].personId + ')'; })
+        .attr('r', settings.photoSize)
+        .attr('cx', 0)
+        .attr('cy', 0);
+    container.append('circle')
+        .classed('curtain', true)
+        .attr('r', settings.photoSize)
+        .attr('cx', 0)
+        .attr('cy', 0);
+}
+
 function drawNewClosedForecasts(lines, photos) {
     var minDate = coordinator.startDate();
 
@@ -206,19 +220,17 @@ function drawNewClosedForecasts(lines, photos) {
                 ' ' + stopX + ',' + y + ' ' + stopX + ',0';
         });
 
-    var photoStart = photos.append('g').classed('photo', true);
-    photoStart.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
-        .attr('cy', 0);
+    var photoStart = photos.append('g').classed('photo', true)
+        .attr('transform', function(d) {
+            return 'translate(' + coordinator.datePosition(d.start.date) + ',0)';
+        });
+    addPhoto(photoStart, 'start');
 
-    var photoEnd = photos.append('g').classed('photo', true);
-    photoEnd.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.end.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
-        .attr('cy', 0);
+    var photoEnd = photos.append('g').classed('photo', true)
+        .attr('transform', function(d) {
+            return 'translate(' + coordinator.datePosition(d.end.date) + ',0)';
+        });
+    addPhoto(photoEnd, 'end');
 }
 
 function drawNewOpenForecasts(lines, photos) {
@@ -233,19 +245,18 @@ function drawNewOpenForecasts(lines, photos) {
                 ' ' + todayPosition + ',' + y;
         });
 
-    var photoStart = photos.append('g').classed('photo', true);
-    photoStart.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
-        .attr('cy', 0);
+    var photoStart = photos.append('g').classed('photo', true)
+        .attr('transform', function(d) {
+            return 'translate(' + coordinator.datePosition(d.start.date) + ',0)';
+        });
+    addPhoto(photoStart, 'start');
 
-    var photoEnd = photos.append('g').classed('photo', true);
-    photoEnd.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', todayPosition)
-        .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
+    var photoEnd = photos.append('g').classed('photo', true)
+        .attr('transform', function(d) {
+            return 'translate(' + todayPosition +
+                ',' + coordinator.forecastPosition(d.order) + ')';
+        });
+    addPhoto(photoEnd, 'start');
 }
 
 function drawForecast(forecasts) {
