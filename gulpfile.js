@@ -19,6 +19,9 @@ var autoprefixer = require('gulp-autoprefixer');
 //  for 'html' task
 var inject = require("gulp-inject");
 
+//  for 'data' task
+var dataGenerator = require('./server/data-generator');
+
 //  for 'develop' task
 var browserSync = require('browser-sync');
 
@@ -89,7 +92,11 @@ gulp.task('html', function () {
                .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('develop', ['html', 'javascript', 'css'], function () {
+gulp.task('data', function () {
+    dataGenerator.generate('./web/js/data.js');
+});
+
+gulp.task('develop', ['html', 'javascript', 'css', 'data'], function () {
 
     browserSync({
         server: {
@@ -108,7 +115,7 @@ gulp.task('develop', ['html', 'javascript', 'css'], function () {
     ]);
 });
 
-gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css']);
+gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css', 'data']);
 
 gulp.task('_set-release-mode', function () {
     settings.debug = false;
