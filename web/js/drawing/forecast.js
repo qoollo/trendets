@@ -2,6 +2,7 @@ var dom = require('./../dom');
 var d3 = require('./../libs/d3');
 var coordinator = require('./../coordinator');
 var settings = require('./../settings');
+var dataProvider = require('./../dataprovider');
 
 var drawing = {
     bubble: require('./bubble'),
@@ -9,14 +10,24 @@ var drawing = {
 
 
 function addPhoto(container, type) {
+    container.append('clipPath')
+        .attr('id', function(d) { return 'cp-' + d.id; })
+        .append('circle')
+            .attr('cx', 0)
+            .attr('cy', 0)
+            .attr('r', settings.photoSize);
+
+    container.append('image')
+        .attr('xlink:href', function(d) {
+            return 'img/' + dataProvider.getPersonById(d[type].personId).photo;
+        })
+        .attr('clip-path', function(d) { return 'url(#cp-' + d.id + ')'; })
+        .attr('width', 2 * settings.photoSize)
+        .attr('height', 2 * settings.photoSize)
+        .attr('x', -settings.photoSize)
+        .attr('y', -settings.photoSize);
+
     container.append('circle')
-        .classed('image', true)
-        .attr('fill', function(d) { return 'url(#photo' + d[type].personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', 0)
-        .attr('cy', 0);
-    container.append('circle')
-        .classed('curtain', true)
         .attr('r', settings.photoSize)
         .attr('cx', 0)
         .attr('cy', 0);

@@ -154,14 +154,10 @@ svg {
         }
 
         .photo {
-            .image {
+            circle {
+                fill: rgba(0, 0, 0, 0.2);
                 stroke: rgba(100, 181, 246, 0.6);
                 stroke-width: 2;
-            }
-            .curtain {
-                fill: black;
-                opacity: 0.2;
-                stroke: none;
             }
         }
 
@@ -171,11 +167,9 @@ svg {
             }
 
             .photo {
-                .image {
+                circle {
+                    fill: rgba(0, 0, 0, 0.1);
                     stroke: rgba(100, 181, 246, 0.8);
-                }
-                .curtain {
-                    opacity: 0.1;
                 }
             }
         }
@@ -186,11 +180,9 @@ svg {
             }
 
             .photo {
-                .image {
+                circle {
+                    fill: none;
                     stroke: rgba(100, 181, 246, 1);
-                }
-                .curtain {
-                    opacity: 0;
                 }
             }
         }

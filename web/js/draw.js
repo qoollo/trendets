@@ -66,24 +66,6 @@ function drawLayout() {
     dom.forecasts.container.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
 }
 
-function addPatterns() {
-    var persons = dataProvider.loadPersons();
-    console.log(persons);
-
-    var patterns = d3.select('svg defs').selectAll('pattern')
-            .data(persons)
-        .enter().append('pattern')
-            .attr('id', function(d) { return 'photo' + d.id; })
-            .attr('width', settings.photoSize * 2)
-            .attr('height', settings.photoSize * 2)
-            .attr('patternUnits', 'objectBoundingBox');
-    patterns.append('image')
-        .attr('xlink:href', function(d) { return 'img/' + d.photo; })
-        .attr('width', settings.photoSize * 2)
-        .attr('height', settings.photoSize * 2);
-
-}
-
 function drawBackground() {
     dom.background.append('rect')
         .attr('x', 0)
@@ -222,7 +204,6 @@ function redraw() {
 module.exports = function() {
     coordinator.setTranslate(0);
     drawLayout();
-    addPatterns();
     drawBackground();
     events.setRedrawCallback(redraw);
     redraw();
