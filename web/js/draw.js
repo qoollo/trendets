@@ -135,6 +135,22 @@ function drawQuote(data, type) {
         .attr('x2', function(d, i) { return coordinator.datePosition(data[i].day); })
         .attr('y2', function(d, i) { return coordinator.quotePosition(data[i].value, type); });
 
+    q.enter().append('circle')
+        .classed(type, true)
+        .attr('cx', function(d, i) { return coordinator.datePosition(data[i].day); })
+        .attr('cy', function(d, i) { return coordinator.quotePosition(data[i].value, type); })
+        .attr('r',2)
+        .attr('style','fill:white;');
+
+        var boobie_y = coordinator.quotePosition(data[data.length-1].value, type);
+        var boobies = dom.graphics.container.append('g').attr('id','boobies');
+        boobies.append('circle')
+               .attr('cx',coordinator.datePosition(coordinator.today()))     
+               .attr('cy',boobie_y)     
+               .attr('r',4)
+               .classed(type+"-boobie",true);
+
+
     q.exit().remove();
 }
 
@@ -142,30 +158,6 @@ function drawQuotes(quotes) {
     drawQuote(quotes.oil, 'oil');
     drawQuote(quotes.dollar, 'dollar');
     drawQuote(quotes.euro, 'euro');
-
-
-    // TEMPORARY! bobbies in the end of every graph
-        var boobies = dom.graphics.container.append('g').attr('id','boobies');
-        boobies.append('circle')
-               .attr('cx',coordinator.datePosition(coordinator.today()))     
-               .attr('cy',-settings.graphicsHeight+30)     
-               .attr('r',4)
-               .attr('style','fill:white;stroke:#7b6b8a;stroke-width:4');
-
-        var boobies = dom.graphics.container.append('g').attr('id','boobies');
-        boobies.append('circle')
-               .attr('cx',coordinator.datePosition(coordinator.today()))     
-               .attr('cy',-settings.graphicsHeight+50)     
-               .attr('r',4)
-               .attr('style','fill:white;stroke:#179ac5;stroke-width:4');
-
-        var boobies = dom.graphics.container.append('g').attr('id','boobies');
-        boobies.append('circle')
-               .attr('cx',coordinator.datePosition(coordinator.today()))     
-               .attr('cy',-settings.graphicsHeight+70)     
-               .attr('r',4)
-               .attr('style','fill:white;stroke:#7b37bd;stroke-width:4');
-    // TEMPORARY! 
 }
 
 function drawNewClosedForecasts(lines, photos) {
