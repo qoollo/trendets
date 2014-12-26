@@ -19,6 +19,9 @@ var autoprefixer = require('gulp-autoprefixer');
 //  for 'html' task
 var inject = require("gulp-inject");
 
+//  for 'data' task
+var dataGenerator = require('./server/data-generator');
+
 //  for 'develop' task
 var browserSync = require('browser-sync');
 
@@ -95,29 +98,36 @@ gulp.task('img', function () {
                .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('develop', ['html', 'javascript', 'css', 'img'], function () {
+gulp.task('data', function () {
+    dataGenerator.generate('./web/js/data.js');
+});
 
+gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
     browserSync({
         server: {
             baseDir: './dist'
         }
     });
 
-    gulp.watch(['web/*.html'], [
+    gulp.watch(['./web/*.html'], [
       'html'
     ]);
-    gulp.watch(['web/img/*'], [
+    gulp.watch(['./web/img/*'], [
       'img'
-    ]);
-    gulp.watch(['web/scss/*.scss', 'web/scss/**/*.scss'], [
+    ]);    
+    gulp.watch(['./web/scss/*.scss', './web/scss/**/*.scss'], [
       'css'
     ]);
-    gulp.watch(['web/js/*.js', 'web/js/**/*.js'], [
+    gulp.watch(['./web/js/*.js', './web/js/**/*.js'], [
       'javascript'
     ]);
+    //  doesn't work - does not refresh required data-generator
+    //gulp.watch(['./server/data-generator.js'], [
+    //  'data'
+    //]);
 });
 
-gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css']);
+gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css', 'data']);
 
 gulp.task('_set-release-mode', function () {
     settings.debug = false;
