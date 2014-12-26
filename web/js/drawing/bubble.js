@@ -27,8 +27,13 @@ function hideBubble() {
     dom.forecastHoverBubble.container.style('display', 'none');
 }
 
+function showDetails() {
+    dom.forecastDetails.container.style('display', 'block');
+}
+
 module.exports = {
     showBubble: showBubble,
     hideBubble: hideBubble,
-    moveBubble: moveBubble,    
+    moveBubble: moveBubble,
+    showDetails: showDetails,   
 }

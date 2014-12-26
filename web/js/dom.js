@@ -29,6 +29,9 @@ var result = {
             return d3.select('#forecastHoverBubble').select('.' + name);
         }
     },
+    forecastDetails: {
+        container: d3.select('#forecastDetails'),
+    },
 }
 
 result.containerWidth = result.container.node().offsetWidth;
