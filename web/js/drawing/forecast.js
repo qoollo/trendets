@@ -99,11 +99,18 @@ function drawForecast(forecasts) {
     photos.on('mousemove', drawing.bubble.moveBubble);
     lines.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
     photos.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
-    lines.on('click', function(d) { drawing.bubble.showDetails(d); });
-    photos.on('click', function(d) { drawing.bubble.showDetails(d); });
+    lines.on('click', function(d) { selectForecast(d); drawing.bubble.showDetails(d); });
+    photos.on('click', function(d) { selectForecast(d); drawing.bubble.showDetails(d); });
 }
 
 
+function selectForecast(d) {
+    d3.selectAll('.forecast.selected')
+        .classed('selected', false);
+
+    d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
+        .classed('selected', true);
+}
 
 function highlightForecast(d) {
     var f = d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })

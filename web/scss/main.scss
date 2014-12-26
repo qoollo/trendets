@@ -167,16 +167,30 @@ svg {
 
         &.hovered {
             line, path {
+                opacity: 0.8;
+            }
+
+            .photo {
+                .image {
+                    stroke: rgba(100, 181, 246, 0.8);
+                }
+                .curtain {
+                    opacity: 0.1;
+                }
+            }
+        }
+
+        &.selected {
+            line, path {
                 opacity: 1;
             }
 
             .photo {
                 .image {
                     stroke: rgba(100, 181, 246, 1);
-                    stroke-width: 2;
                 }
                 .curtain {
-                    display: none;
+                    opacity: 0;
                 }
             }
         }
@@ -217,7 +231,7 @@ svg {
 
 #forecastDetails {
     display: none;
-    
+
     position: absolute;
     top: 0px;
     right: 0px;
