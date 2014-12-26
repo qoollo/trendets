@@ -1,28 +1,17 @@
 var d3 = require('./libs/d3');
 var coordinator = require('./coordinator');
 
-    var quotes = {
-        oil: [],
-        dollar: [],
-        euro: []
-    }
-
+    var quotes = [];
     var forecasts = [];
 
     for (var i = -200; i <= 0; i++) {
         var d = new Date(coordinator.today().getTime());
         d.setDate(d.getDate() + i);
-        quotes.oil.push({
+        quotes.push({
             day: d,
-            value: Math.random() * 150,
-        });
-        quotes.dollar.push({
-            day: d,
-            value: Math.random() * 150,
-        });
-        quotes.euro.push({
-            day: d,
-            value: Math.random() * 150,
+            oil: Math.random() * 150,
+            dollar: Math.random() * 150,
+            euro: Math.random() * 150,
         });
     }
 
@@ -122,11 +111,7 @@ var coordinator = require('./coordinator');
 
     module.exports = {
         loadQuotes: function(start, end) {
-            return {
-                oil: quotes.oil.filter(function (d) { return d.day >= start && d.day <= end; }),
-                dollar: quotes.dollar.filter(function (d) { return d.day >= start && d.day <= end; }),
-                euro: quotes.euro.filter(function (d) { return d.day >= start && d.day <= end; }),
-            };
+            return quotes.filter(function (d) { return d.day >= start && d.day <= end; });
         },
         loadForecast: function(start, end) {
             return forecasts.filter(function(d) {

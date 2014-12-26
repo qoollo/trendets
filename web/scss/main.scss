@@ -67,40 +67,55 @@ svg {
     }
 
     #graphics {
-        line {
-            stroke-width: 2px;
-            /*filter: url("#gauss-blur");*/
-        }
+        .quoteDay {
+            .hoverRect {
+                fill: white;
+                opacity: 0;
+            }
 
-        .oil {
-            stroke: #7b6b8a;
-        }
+            &.hovered .hoverRect {
+                opacity: 0.1;
+            }
 
-        .dollar {
-            stroke: #179ac5;
-        }
+            line {
+                stroke-width: 2px;
+                /*filter: url("#gauss-blur");*/
 
-        .euro {
-            stroke: #7b37bd;
-        }
+                &.oil {
+                    stroke: #7b6b8a;
+                }
 
-        .oil-boobie {
-            fill:white;
-            stroke:#7b6b8a;
-            stroke-width:4;
-        }
+                &.dollar {
+                    stroke: #179ac5;
+                }
 
-        .dollar-boobie {
-            fill:white;
-            stroke:#179ac5;
-            stroke-width:4;
-        }
+                &.euro {
+                    stroke: #7b37bd;
+                }
+            }
 
-        .euro-boobie {
-            fill:white;
-            stroke:#7b37bd;
-            stroke-width:4;
-        }
+            .boobie {
+                fill:white;
+                stroke-width:4;
+                display: none;
+
+                &.oil-boobie {
+                    stroke:#7b6b8a;
+                }
+
+                &.dollar-boobie {
+                    stroke:#179ac5;
+                }
+
+                &.euro-boobie {
+                    stroke:#7b37bd;
+                }
+            }
+
+            &.hovered .boobie, &.today .boobie {
+                display: block;
+            }
+        }        
 
         .grid-bg {
             fill: rgba(255,255,255,0.05);

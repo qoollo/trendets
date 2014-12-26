@@ -47,13 +47,13 @@ function drawLayout() {
         .attr('y2', dom.containerHeight);
 
     // today footprint
-    var footprintWidth = 300;
+    /*var footprintWidth = 300;
     dom.today.append('rect')
              .classed('today-footprint',true)
              .attr('x',x-footprintWidth)
              .attr('y',0)
              .attr('width',footprintWidth)
-             .attr('height',settings.graphicsHeight-1);
+             .attr('height',settings.graphicsHeight-1);*/
 
     // quotes
     dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
@@ -124,40 +124,70 @@ function drawTimeScale(start, stop) {
     days.exit().remove();
 }
 
-function drawQuote(data, type) {
-    var q = dom.graphics.container.selectAll('.' + type)
-            .data(data.slice(1), function(d) { return type + d.day; });
+function drawQuoteLinesForDays(lines, boobies, type, data) {
+    lines.append('line')
+        .classed(type, true)
+        .attr('x1', 0)
+        .attr('y1', function(d) { return coordinator.quotePosition(d[type], type); })
+        .attr('x2', -settings.dayWidth)
+        .attr('y2', function(d, i) { return coordinator.quotePosition(data[i][type], type); });
+
+    boobies.append('circle')
+           .attr('cx', 0)     
+           .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
+           .attr('r', 4)
+           .classed(type + "-boobie boobie", true);
+}
+
+function showDayQuotes(d) {
+    d3.selectAll('.quoteDay').filter(function(od) { return od.day == d.day; })
+        .classed('hovered', true);
+}
+
+function hideDayQuotes(d) {
+    d3.selectAll('.quoteDay').filter(function(od) { return od.day == d.day; })
+        .classed('hovered', false);
+}
+
+function addNewQuoteDays(list) {
+    return list.enter().append('g')
+        .classed('quoteDay', true)
+        .classed('today', function(d) { return d.day.getTime() == coordinator.today().getTime(); })
+        .attr('transform', function(d) { return 'translate(' + coordinator.datePosition(d.day) + ',0)'; });
+}
+
+function drawQuoteLines(data) {
+    var lines = dom.graphics.lines.selectAll('.quoteDay')
+            .data(data.slice(1), function(d) { return d.day; });
+    var boobies = dom.graphics.boobies.selectAll('.quoteDay')
+            .data(data, function(d) { return d.day; });
+    var rects = dom.graphics.rects.selectAll('.quoteDay')
+            .data(data, function(d) { return d.day; });
         
-    q.enter().append('line')
-        .classed(type, true)
-        .attr('x1', function(d) { return coordinator.datePosition(d.day); })
-        .attr('y1', function(d) { return coordinator.quotePosition(d.value, type); })
-        .attr('x2', function(d, i) { return coordinator.datePosition(data[i].day); })
-        .attr('y2', function(d, i) { return coordinator.quotePosition(data[i].value, type); });
+    var newLines = addNewQuoteDays(lines);
+    var newBoobies = addNewQuoteDays(boobies);
+    var newRects = addNewQuoteDays(rects);
 
-    q.enter().append('circle')
-        .classed(type, true)
-        .attr('cx', function(d, i) { return coordinator.datePosition(data[i].day); })
-        .attr('cy', function(d, i) { return coordinator.quotePosition(data[i].value, type); })
-        .attr('r',2)
-        .attr('style','fill:white;');
+    drawQuoteLinesForDays(newLines, newBoobies, 'oil', data);
+    drawQuoteLinesForDays(newLines, newBoobies, 'dollar', data);
+    drawQuoteLinesForDays(newLines, newBoobies, 'euro', data);
 
-        var boobie_y = coordinator.quotePosition(data[data.length-1].value, type);
-        var boobies = dom.graphics.container.append('g').attr('id','boobies');
-        boobies.append('circle')
-               .attr('cx',coordinator.datePosition(coordinator.today()))     
-               .attr('cy',boobie_y)     
-               .attr('r',4)
-               .classed(type+"-boobie",true);
+    newRects.append('rect')
+        .classed('hoverRect', true)
+        .attr('x', -settings.dayWidth / 2)
+        .attr('y', -settings.graphicsHeight)
+        .attr('width', settings.dayWidth)
+        .attr('height', settings.graphicsHeight)
+        .on('mouseover', showDayQuotes)
+        .on('mouseout', hideDayQuotes);
 
-
-    q.exit().remove();
+    lines.exit().remove();
+    boobies.exit().remove();
+    rects.exit().remove();
 }
 
 function drawQuotes(quotes) {
-    drawQuote(quotes.oil, 'oil');
-    drawQuote(quotes.dollar, 'dollar');
-    drawQuote(quotes.euro, 'euro');
+    drawQuoteLines(quotes);
 }
 
 function drawNewClosedForecasts(lines, photos) {
@@ -244,15 +274,13 @@ function drawForecast(forecasts) {
 }
 
 function highlightForecast(d) {
-    hideHighlightedForecast();
-
     var f = d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
         .classed('hovered', true);
     f.moveToFront();
 }
 
 function hideHighlightedForecast(d) {
-    d3.selectAll('.forecast')
+    d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
         .classed('hovered', false);
 }
 
