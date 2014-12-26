@@ -104,15 +104,19 @@ gulp.task('develop', ['html', 'javascript', 'css', 'data'], function () {
         }
     });
 
-    gulp.watch(['web/*.html'], [
+    gulp.watch(['./web/*.html'], [
       'html'
     ]);
-    gulp.watch(['web/scss/*.scss', 'web/scss/**/*.scss'], [
+    gulp.watch(['./web/scss/*.scss', './web/scss/**/*.scss'], [
       'css'
     ]);
-    gulp.watch(['web/js/*.js', 'web/js/**/*.js'], [
+    gulp.watch(['./web/js/*.js', './web/js/**/*.js'], [
       'javascript'
     ]);
+    //  doesn't work - does not refresh required data-generator
+    //gulp.watch(['./server/data-generator.js'], [
+    //  'data'
+    //]);
 });
 
 gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css', 'data']);
