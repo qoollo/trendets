@@ -3,25 +3,15 @@ var coordinator = require('../web/js/coordinator');
 var d3 = require('d3');
 
 function getQuotes() {
-    var quotes = {
-        oil: [],
-        dollar: [],
-        euro: []
-    }
+    var quotes = [];
     for (var i = -200; i <= 0; i++) {
         var d = new Date(coordinator.today().getTime());
         d.setDate(d.getDate() + i);
-        quotes.oil.push({
+        quotes.push({
             day: d,
-            value: Math.random() * 150,
-        });
-        quotes.dollar.push({
-            day: d,
-            value: Math.random() * 150,
-        });
-        quotes.euro.push({
-            day: d,
-            value: Math.random() * 150,
+            oil: Math.random() * 150,
+            dollar: Math.random() * 150,
+            euro: Math.random() * 150,
         });
     }
     return quotes;
@@ -43,6 +33,7 @@ function getForecasts() {
                 date: startDay,
                 personId: parseInt(10 * Math.random()),
                 title: 'Герман Греф верит в Джа',
+                shortCite: 'Футбольные фанаты будут наказаны',
                 cite: 'Футбольные команды армий Великобритании и Германии сыграли матч в память о рождественском перемирии 1914 года — необъявленном прекращении огня на многих участках западного фронта во время Первой мировой войны. Матч, состоявшийся на стадионе клуба «Олдершот Таун» в графстве Гэмпшир, завершился победой британской команды со счетом 1:0.',
                 source: {
                     name: 'Russia Today',
@@ -72,6 +63,7 @@ function getForecasts() {
                 date: startDay,
                 personId: parseInt(10 * Math.random()),
                 title: 'Герман Греф верит в Джа',
+                shortCite: 'Директор Сбербанка предсказал укрупление юаня на фондовой бирже Севастополя',
                 cite: 'Футбольные команды армий Великобритании и Германии сыграли матч в память о рождественском перемирии 1914 года — необъявленном прекращении огня на многих участках западного фронта во время Первой мировой войны. Матч, состоявшийся на стадионе клуба «Олдершот Таун» в графстве Гэмпшир, завершился победой британской команды со счетом 1:0.',
                 source: {
                     name: 'Russia Today',
@@ -132,6 +124,7 @@ function getPeople() {
         result[i] = {
             id: i,
             name: i % 2 ? 'Герман Германович Греф' : 'ЦБ РФ',
+            shortName: i % 2 ? 'Г.Г. Греф' : 'В. Якунин',
             photo: i % 2 ? '00001.png' : '00002.png',
         }
     }
