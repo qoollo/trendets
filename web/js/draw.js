@@ -121,6 +121,26 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
            .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
            .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 0 : 10; })
            .classed(type + "-boobie boobie-big", true);
+
+    boobies.append('circle')
+           .attr('cx', 0)     
+           .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
+           .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 0 : 10; })
+           .classed(type + "-boobie boobie-big", true);
+
+    boobies.append('text')
+           .attr('x', 12)     
+           .attr('y', function(d) { return coordinator.quotePosition(d[type], type) + 4; })
+           .text(function(d) { return d[type].formatCurrency(type) })   
+           .classed(type + "-boobie quote-text", true);
+
+}
+
+Number.prototype.formatCurrency = function(curType) {
+    return this.toFixed(2).toString() + curSign(curType);
+    function curSign(sign) {
+        return sign == "oil" ? " $" : " ₽"
+    } 
 }
 
 function drawDottedLinesForDays(lines, data) {

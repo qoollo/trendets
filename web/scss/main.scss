@@ -26,7 +26,8 @@ svg {
     #static {
         #background {
             rect {
-                opacity: 0;
+                opacity: 0.02;
+                fill: white;
             }
         }
 
@@ -132,6 +133,17 @@ svg {
                 }
             }
 
+            .quote-text {
+                display: none;
+                fill: white;
+                font-size: 11px;
+                opacity: 0.9;
+            }
+
+            &.today .quote-text, &.hovered .quote-text {
+                display: block;
+            }
+
             &.hovered .boobie, &.today .boobie, &.hovered .boobie-big {
                 display: block;
             }
@@ -163,7 +175,7 @@ svg {
         cursor: pointer;
 
         line, path {
-            opacity: 0.6;
+            opacity: 0.3;
             stroke: $forecastColor;
             stroke-width: 2;
             fill: none;
