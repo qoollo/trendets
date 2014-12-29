@@ -16,14 +16,6 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 function drawLayout() {
-    // graph background grid
-    dom.bgGrid.append('rect')
-        .attr('x',0)            
-        .attr('y',-settings.graphicsHeight)            
-        .attr('height',settings.graphicsHeight)            
-        .attr('width',x)
-        .classed('grid-bg',true);
-
     // timescale
     dom.timeScale.container
         .attr('transform', 'translate(0,' + settings.graphicsHeight + ')');

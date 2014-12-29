@@ -12,9 +12,11 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     overflow: hidden;
+    background: linear-gradient(to right, rgb(128,81,76) 0%,rgb(44,27,64) 100%);
+    padding: 10px;
 }
 
 svg {
@@ -24,8 +26,7 @@ svg {
     #static {
         #background {
             rect {
-                stroke: none;
-                fill: url(#lgrad);
+                opacity: 0;
             }
         }
 
