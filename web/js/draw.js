@@ -113,8 +113,14 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
     boobies.append('circle')
            .attr('cx', 0)     
            .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
-           .attr('r', function(d) { return d.day.getTime() == coordinator.today().getTime() ? 4 : 2; })
+           .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 4 : 2; })
            .classed(type + "-boobie boobie", true);
+
+    boobies.append('circle')
+           .attr('cx', 0)     
+           .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
+           .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 0 : 10; })
+           .classed(type + "-boobie boobie-big", true);
 }
 
 function drawDottedLinesForDays(lines, data) {
@@ -139,8 +145,12 @@ function hideDayQuotes(d) {
 function addNewQuoteDays(list) {
     return list.enter().append('g')
         .classed('quoteDay', true)
-        .classed('today', function(d) { return d.day.getTime() == coordinator.today().getTime(); })
+        .classed('today', function(d) { return d.day.getDMY() == coordinator.today().getDMY(); })
         .attr('transform', function(d) { return 'translate(' + coordinator.datePosition(d.day) + ',0)'; });
+}
+
+Date.prototype.getDMY = function() {
+    return this.getDate() + "/" + this.getMonth() + "/" + this.getFullYear();
 }
 
 function drawQuoteLines(data) {

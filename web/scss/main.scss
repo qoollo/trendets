@@ -97,7 +97,6 @@ svg {
 
             .boobie {
                 fill:white;
-                stroke-width:4;
                 display: none;
 
                 &.oil-boobie {
@@ -113,16 +112,32 @@ svg {
                 }
             }
 
-            &.hovered .boobie, &.today .boobie {
+            .boobie-big {
+                display: none;
+                fill-opacity: 0.25;
+
+                &.oil-boobie {
+                    stroke:#7b6b8a;
+                    fill:#7b6b8a;
+                }
+
+                &.dollar-boobie {
+                    stroke:#179ac5;
+                    fill:#179ac5;
+                }
+
+                &.euro-boobie {
+                    stroke:#7b37bd;
+                    fill:#7b37bd;
+                }
+            }
+
+            &.hovered .boobie, &.today .boobie, &.hovered .boobie-big {
                 display: block;
             }
 
-            &.hovered .boobie {
-                stroke-width: 0;
-            }
-
             &.today .boobie {
-                stroke-width: 4;
+                stroke-width: 3;
             }
 
             .dotted {
