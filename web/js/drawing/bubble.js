@@ -57,12 +57,17 @@ function showDetails(d) {
     else
         dom.forecastDetails.getChild('.result').style('display', 'none');
 
-    dom.forecastDetails.container.style('display', 'block');
+    dom.forecastDetails.container.classed('shown', true);
+}
+
+function hideDetails() {
+    dom.forecastDetails.container.classed('shown', false);
 }
 
 module.exports = {
     showBubble: showBubble,
     hideBubble: hideBubble,
     moveBubble: moveBubble,
-    showDetails: showDetails,   
+    showDetails: showDetails,
+    hideDetails: hideDetails, 
 }

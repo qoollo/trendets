@@ -33,7 +33,8 @@ var result = {
         container: d3.select('#forecastDetails'),
         getChild: function(selector) {
             return d3.select('#forecastDetails').select(selector);
-        }
+        },
+        hideButton: d3.select('#forecastDetails #hideDetails'),
     },
 }
 
