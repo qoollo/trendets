@@ -25,12 +25,15 @@ var result = {
     },
     forecastHoverBubble: {
         container: d3.select('#forecastHoverBubble'),
-        getChild: function(name) {
-            return d3.select('#forecastHoverBubble').select('.' + name);
+        getChild: function(selector) {
+            return d3.select('#forecastHoverBubble').select(selector);
         }
     },
     forecastDetails: {
         container: d3.select('#forecastDetails'),
+        getChild: function(selector) {
+            return d3.select('#forecastDetails').select(selector);
+        }
     },
 }
 

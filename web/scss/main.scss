@@ -236,25 +236,37 @@ svg {
     color: white;
     font-size: 12px;
 
+    .start {
+        position: relative;
+    }
+
+    .result {
+        margin-top: 30px;
+        position: relative;
+    }
+
     .date {
-        position: absolute;
-        right: 10px;
-        top: 15px;
+        position: relative;
+        float: right;
+        right: 0px;
+        top: 0px;
         font-size: 10px;
     }
 
     .name {
-        position: absolute;
-        left: 10px;
-        top: 15px;
+        position: relative;
+        float: left;
+        left: 0px;
+        top: 0px;
         font-size: 10px;
     }
 
     .title {
         position: relative;
-        margin-top: 25px;
+        padding-top: 5px;
         font-size: 18px;
         line-height: 1.2em;
+        clear: both;
     }
 
     .cite {
