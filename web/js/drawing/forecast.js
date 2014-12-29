@@ -41,14 +41,21 @@ function drawNewClosedForecasts(lines, photos) {
     photos.classed('cameTrue', function(d) { return d.isCameTrue == true; })
         .classed('cameFalse', function(d) { return d.isCameTrue == false; });
 
+    function path(d, i) {
+        var y = coordinator.forecastPosition(d.order);
+        var startX = coordinator.datePosition(d.start.date),
+            stopX = coordinator.datePosition(d.end.date);
+        return 'M' + startX + ',0 C' + startX + ',' + y + 
+            ' ' + stopX + ',' + y + ' ' + stopX + ',0';
+    }
+
     lines.append('path')
-        .attr('d', function(d, i) {
-            var y = coordinator.forecastPosition(d.order);
-            var startX = coordinator.datePosition(d.start.date),
-                stopX = coordinator.datePosition(d.end.date);
-            return 'M' + startX + ',0 C' + startX + ',' + y + 
-                ' ' + stopX + ',' + y + ' ' + stopX + ',0';
-        });
+        .classed('visiblePath', true)
+        .attr('d', path);
+
+    lines.append('path')
+        .classed('hoverPath', true)
+        .attr('d', path);
 
     var photoStart = photos.append('g').classed('photo', true)
         .attr('transform', function(d) {
@@ -68,14 +75,20 @@ function drawNewClosedForecasts(lines, photos) {
 function drawNewOpenForecasts(lines, photos) {
     var todayPosition = coordinator.datePosition(coordinator.today()) + 30;
 
+    function path(d, i) {
+        var y = coordinator.forecastPosition(d.order);
+        var startX = coordinator.datePosition(d.start.date),
+            stopX = coordinator.datePosition(d.end.date);
+        return 'M' + startX + ',0 Q' + startX + ',' + y + 
+            ' ' + todayPosition + ',' + y;
+    }
+
     lines.append('path')
-        .attr('d', function(d, i) {
-            var y = coordinator.forecastPosition(d.order);
-            var startX = coordinator.datePosition(d.start.date),
-                stopX = coordinator.datePosition(d.end.date);
-            return 'M' + startX + ',0 Q' + startX + ',' + y + 
-                ' ' + todayPosition + ',' + y;
-        });
+        .classed('visiblePath', true)
+        .attr('d', path);
+    lines.append('path')
+        .classed('hoverPath', true)
+        .attr('d', path);
 
     var photoStart = photos.append('g').classed('photo', true)
         .attr('transform', function(d) {
