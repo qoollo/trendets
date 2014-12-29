@@ -131,12 +131,31 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
     boobies.append('text')
            .attr('x', 12)     
            .attr('y', function(d) { return coordinator.quotePosition(d[type], type) + 4; })
-           .text(function(d) { return d[type].formatCurrency(type) })   
+           .text(function(d) {
+                if (d.day.getDMY() == coordinator.today().getDMY()) {
+                    return d[type].formatQuote(type) + " за " + getRusQuote(type);  
+                } else {
+                    return d[type].formatQuote(type);
+                }
+            })   
            .classed(type + "-boobie quote-text", true);
-
 }
 
-Number.prototype.formatCurrency = function(curType) {
+function getRusQuote(type){
+    switch (type) {
+        case "oil":
+            return "нефть"
+            break
+        case "dollar":
+            return "доллар"
+            break
+        case "euro":
+            return "евро"
+            break
+    }
+}
+
+Number.prototype.formatQuote = function(curType) {
     return this.toFixed(2).toString() + curSign(curType);
     function curSign(sign) {
         return sign == "oil" ? " $" : " ₽"
