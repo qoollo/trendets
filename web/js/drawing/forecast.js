@@ -36,6 +36,11 @@ function addPhoto(container, type) {
 function drawNewClosedForecasts(lines, photos) {
     var minDate = coordinator.startDate();
 
+    lines.classed('cameTrue', function(d) { return d.isCameTrue == true; })
+        .classed('cameFalse', function(d) { return d.isCameTrue == false; });
+    photos.classed('cameTrue', function(d) { return d.isCameTrue == true; })
+        .classed('cameFalse', function(d) { return d.isCameTrue == false; });
+
     lines.append('path')
         .attr('d', function(d, i) {
             var y = coordinator.forecastPosition(d.order);
@@ -52,6 +57,8 @@ function drawNewClosedForecasts(lines, photos) {
     addPhoto(photoStart, 'start');
 
     var photoEnd = photos.append('g').classed('photo', true)
+        .classed('cameTrue', function(d) { return d.isCameTrue == true; })
+        .classed('cameFalse', function(d) { return d.isCameTrue == false; })
         .attr('transform', function(d) {
             return 'translate(' + coordinator.datePosition(d.end.date) + ',0)';
         });

@@ -157,8 +157,33 @@ svg {
         .photo {
             circle {
                 fill: rgba(0, 0, 0, 0.2);
-                stroke: rgba(100, 181, 246, 0.6);
+                stroke: rgb(100, 181, 246);
+                stroke-opacity: 0.6;
                 stroke-width: 2;
+            }
+        }
+
+        &.cameTrue {
+            .photo {
+                circle {
+                    stroke: #1b8955;
+                }
+            }
+
+            line, path {
+                stroke: #1b8955;
+            }
+        }
+
+        &.cameFalse {
+            .photo {
+                circle {
+                    stroke: #ee6133;
+                }
+            }
+
+            line, path {
+                stroke: #ee6133;
             }
         }
 
@@ -170,7 +195,7 @@ svg {
             .photo {
                 circle {
                     fill: rgba(0, 0, 0, 0.1);
-                    stroke: rgba(100, 181, 246, 0.8);
+                    stroke-opacity: 0.8;
                 }
             }
         }
@@ -183,7 +208,7 @@ svg {
             .photo {
                 circle {
                     fill: none;
-                    stroke: rgba(100, 181, 246, 1);
+                    stroke-opacity: 1;
                 }
             }
         }
