@@ -3,7 +3,9 @@ var coordinator = require('./coordinator');
 var data = require('./data');
 
 var quotes = fixDates(data.quotes),
-    forecasts = fixDates(data.forecasts);
+    forecasts = fixDates(data.forecasts),
+    people = fixDates(data.people);
+
 
 function fixDates(obj) {
     for (var f in obj) {
@@ -22,19 +24,18 @@ function isDateIsoString(str) {
 
 
 module.exports = {
-    loadQuotes: function (start, end) {
-        return {
-            oil: quotes.oil.filter(function (d) { return d.day >= start && d.day <= end; }),
-            dollar: quotes.dollar.filter(function (d) { return d.day >= start && d.day <= end; }),
-            euro: quotes.euro.filter(function (d) { return d.day >= start && d.day <= end; }),
-        };
+    loadQuotes: function(start, end) {
+        return quotes.filter(function (d) { return d.day >= start && d.day <= end; });
     },
-    loadForecast: function (start, end) {
-        return forecasts.filter(function (d) {
+    loadForecast: function(start, end) {
+        return forecasts.filter(function(d) {
             return d.start.date <= end && d.end.date >= start;
         });
     },
-    loadPersons: function () {
-        return data.people;
+    loadPersons: function() {
+        return people;
+    },
+    getPersonById: function(id) {
+        return people.filter(function(p) { return p.id == id; })[0];
     },
 }

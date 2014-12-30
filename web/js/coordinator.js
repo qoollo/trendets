@@ -57,7 +57,7 @@ module.exports = {
             (settings.scales[type].max - settings.scales[type].min);
     },
     forecastPosition: function (order) {
-        return 50 + 20 * order;
+        return 40 + 25 * order;
     },
     leftPosition: function () {
         return -xTranslate;
@@ -66,5 +66,5 @@ module.exports = {
         xTranslate = dX;
         calcStartDate();
         calcStopDate();
-    }
+    },
 }

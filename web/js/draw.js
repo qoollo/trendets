@@ -5,23 +5,41 @@ var dataProvider = require('./dataprovider');
 var coordinator = require('./coordinator');
 var events = require('./events');
 
+var drawing = {
+    bubble: require('./drawing/bubble'),
+}
+
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+    this.parentNode.appendChild(this);
+    });
+};
+
 function drawLayout() {
+    // graph background grid
+    dom.bgGrid.append('rect')
+        .attr('x',0)            
+        .attr('y',-settings.graphicsHeight)            
+        .attr('height',settings.graphicsHeight)            
+        .attr('width',x)
+        .classed('grid-bg',true);
+
     // timescale
     dom.timeScale.container
         .attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
-                
-    dom.timeScale.container.append('line')
+
+    dom.timeScale.background.append('line')
             .attr('x1', 0)
-            .attr('y1', 0)
+            .attr('y1', settings.graphicsHeight)
             .attr('x2', dom.containerWidth)                
-            .attr('y2', 0)
-            .attr('class','divider');
-    dom.timeScale.container.append('line')
+            .attr('y2', settings.graphicsHeight)
+            .attr('class', 'divider');
+    dom.timeScale.background.append('line')
             .attr('x1', 0)
-            .attr('y1', settings.timeScaleHeight)
+            .attr('y1', settings.graphicsHeight + settings.timeScaleHeight)
             .attr('x2', dom.containerWidth)                
-            .attr('y2', settings.timeScaleHeight)
-            .attr('class','axis');
+            .attr('y2', settings.graphicsHeight + settings.timeScaleHeight)
+            .attr('class', 'axis');
 
     // today
     var x = coordinator.datePosition(coordinator.today());
@@ -32,11 +50,38 @@ function drawLayout() {
         .attr('x2', x)
         .attr('y2', dom.containerHeight);
 
+    // today footprint
+    /*var footprintWidth = 300;
+    dom.today.append('rect')
+             .classed('today-footprint',true)
+             .attr('x',x-footprintWidth)
+             .attr('y',0)
+             .attr('width',footprintWidth)
+             .attr('height',settings.graphicsHeight-1);*/
+
     // quotes
     dom.graphics.container.attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
 
     // forecasts
     dom.forecasts.container.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
+}
+
+function addPatterns() {
+    var persons = dataProvider.loadPersons();
+    console.log(persons);
+
+    var patterns = d3.select('svg defs').selectAll('pattern')
+            .data(persons)
+        .enter().append('pattern')
+            .attr('id', function(d) { return 'photo' + d.id; })
+            .attr('width', settings.photoSize * 2)
+            .attr('height', settings.photoSize * 2)
+            .attr('patternUnits', 'objectBoundingBox');
+    patterns.append('image')
+        .attr('xlink:href', function(d) { return 'img/' + d.photo; })
+        .attr('width', settings.photoSize * 2)
+        .attr('height', settings.photoSize * 2);
+
 }
 
 function drawBackground() {
@@ -60,7 +105,7 @@ function drawTimeScale(start, stop) {
             .data(days, function(d) { return d; });
 
     var elements = days.enter().append('g').classed('day', true);
-            
+    
     elements.append('text')
             .attr('x', coordinator.datePosition)
             .attr('y', settings.timeScaleHeight - 15)
@@ -68,7 +113,7 @@ function drawTimeScale(start, stop) {
 
     elements.append('line')
             .attr("x1",coordinator.datePosition)
-            .attr("y1",0)
+            .attr("y1",1)
             .attr("x2",coordinator.datePosition)
             .attr("y2",5)
             .classed('ruler-marks',true);
@@ -77,55 +122,76 @@ function drawTimeScale(start, stop) {
             .attr("x1",coordinator.datePosition)
             .attr("y1",18)
             .attr("x2",coordinator.datePosition)
-            .attr("y2",settings.timeScaleHeight)
+            .attr("y2",settings.timeScaleHeight-1)
             .classed('ruler-marks',true);
 
     days.exit().remove();
 }
 
-function drawQuote(data, type) {
-    var q = dom.graphics.container.selectAll('.' + type)
-            .data(data.slice(1), function(d) { return type + d.day; });
-              
-    q.enter().append('line')
+function drawQuoteLinesForDays(lines, boobies, type, data) {
+    lines.append('line')
         .classed(type, true)
-        .attr('x1', function(d) { return coordinator.datePosition(d.day); })
-        .attr('y1', function(d) { return coordinator.quotePosition(d.value, type); })
-        .attr('x2', function(d, i) { return coordinator.datePosition(data[i].day); })
-        .attr('y2', function(d, i) { return coordinator.quotePosition(data[i].value, type); });
+        .attr('x1', 0)
+        .attr('y1', function(d) { return coordinator.quotePosition(d[type], type); })
+        .attr('x2', -settings.dayWidth)
+        .attr('y2', function(d, i) { return coordinator.quotePosition(data[i][type], type); });
 
-    q.exit().remove();
+    boobies.append('circle')
+           .attr('cx', 0)     
+           .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
+           .attr('r', 4)
+           .classed(type + "-boobie boobie", true);
+}
+
+function showDayQuotes(d) {
+    d3.selectAll('.quoteDay').filter(function(od) { return od.day == d.day; })
+        .classed('hovered', true);
+}
+
+function hideDayQuotes(d) {
+    d3.selectAll('.quoteDay').filter(function(od) { return od.day == d.day; })
+        .classed('hovered', false);
+}
+
+function addNewQuoteDays(list) {
+    return list.enter().append('g')
+        .classed('quoteDay', true)
+        .classed('today', function(d) { return d.day.getTime() == coordinator.today().getTime(); })
+        .attr('transform', function(d) { return 'translate(' + coordinator.datePosition(d.day) + ',0)'; });
+}
+
+function drawQuoteLines(data) {
+    var lines = dom.graphics.lines.selectAll('.quoteDay')
+            .data(data.slice(1), function(d) { return d.day; });
+    var boobies = dom.graphics.boobies.selectAll('.quoteDay')
+            .data(data, function(d) { return d.day; });
+    var rects = dom.graphics.rects.selectAll('.quoteDay')
+            .data(data, function(d) { return d.day; });
+        
+    var newLines = addNewQuoteDays(lines);
+    var newBoobies = addNewQuoteDays(boobies);
+    var newRects = addNewQuoteDays(rects);
+
+    drawQuoteLinesForDays(newLines, newBoobies, 'oil', data);
+    drawQuoteLinesForDays(newLines, newBoobies, 'dollar', data);
+    drawQuoteLinesForDays(newLines, newBoobies, 'euro', data);
+
+    newRects.append('rect')
+        .classed('hoverRect', true)
+        .attr('x', -settings.dayWidth / 2)
+        .attr('y', -settings.graphicsHeight)
+        .attr('width', settings.dayWidth)
+        .attr('height', settings.graphicsHeight)
+        .on('mouseover', showDayQuotes)
+        .on('mouseout', hideDayQuotes);
+
+    lines.exit().remove();
+    boobies.exit().remove();
+    rects.exit().remove();
 }
 
 function drawQuotes(quotes) {
-    drawQuote(quotes.oil, 'oil');
-    drawQuote(quotes.dollar, 'dollar');
-    drawQuote(quotes.euro, 'euro');
-}
-
-function drawNewOpenForecasts(lines, photos) {
-    lines.append('line')
-        .attr('x1', function(d) { return coordinator.datePosition(d.start.date) })
-        .attr('y1', 0)
-        .attr('x2', function(d) { return d.x; })
-        .attr('y2', function(d) { return d.y; });
-
-    var startRect = lines.append('rect')
-        .classed('forecastStart', true)
-        .attr('x', function(d) { return coordinator.datePosition(d.start.date) - 3; })
-        .attr('y', -3)
-        .attr('width', 6)
-        .attr('height', 6);
-
-
-    var photo = photos.append('g').classed('photo', true);
-    photo.append('circle')
-        .attr('cx', coordinator.datePosition(coordinator.today()))
-        .attr('cy', function(d) { return d.y; })
-        .attr('r', 10);
-
-    startRect.on('mouseover', events.showOpenForecast);
-    photo.on('mouseover', events.showOpenForecast);
+    drawQuoteLines(quotes);
 }
 
 function drawNewClosedForecasts(lines, photos) {
@@ -142,20 +208,17 @@ function drawNewClosedForecasts(lines, photos) {
 
     var photoStart = photos.append('g').classed('photo', true);
     photoStart.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
         .attr('cy', 0);
 
     var photoEnd = photos.append('g').classed('photo', true);
     photoEnd.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.end.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
         .attr('cy', 0);
-
-    photoStart.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    photoEnd.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    //photoStart.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
-    //photoEnd.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
 }
 
 function drawNewOpenForecasts(lines, photos) {
@@ -172,20 +235,17 @@ function drawNewOpenForecasts(lines, photos) {
 
     var photoStart = photos.append('g').classed('photo', true);
     photoStart.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
         .attr('cy', 0);
 
     var photoEnd = photos.append('g').classed('photo', true);
     photoEnd.append('circle')
-        .attr('r', 10)
+        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
+        .attr('r', settings.photoSize)
         .attr('cx', todayPosition)
         .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
-
-    photoStart.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    photoEnd.on('mouseover', function(d) { highlightForecast(d); showBubble(d); });
-    //photoStart.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
-    //photoEnd.on('mouseout', function(d) { hideHighlightedForecast(d); hideBubble(d); });
 }
 
 function drawForecast(forecasts) {
@@ -206,58 +266,25 @@ function drawForecast(forecasts) {
 
     drawNewClosedForecasts(newLines.filter(closedFilter), newPhotos.filter(closedFilter));
     drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
+
+
+    lines.on('mouseover', function(d) { highlightForecast(d); drawing.bubble.showBubble(d); });
+    photos.on('mouseover', function(d) { highlightForecast(d); drawing.bubble.showBubble(d); });
+    lines.on('mousemove', drawing.bubble.moveBubble);
+    photos.on('mousemove', drawing.bubble.moveBubble);
+    lines.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
+    photos.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
 }
 
 function highlightForecast(d) {
-    hideHighlightedForecast();
-
-    d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
-        .classed('selected', true);
+    var f = d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
+        .classed('hovered', true);
+    f.moveToFront();
 }
 
 function hideHighlightedForecast(d) {
-    d3.selectAll('.forecast')
-        .classed('selected', false);
-}
-
-function showBubble(d) {
-    dom.forecastStartBubble.container.datum(d);
-    dom.forecastEndBubble.container.datum(d);
-    updateBubble();
-
-    dom.forecastStartBubble.getChild('date').text(function(d) { return d.start.date; });
-    dom.forecastStartBubble.getChild('name').text(function(d) { return d.start.personId; });
-    dom.forecastStartBubble.getChild('title').text(function(d) { return d.start.title; });
-    dom.forecastStartBubble.getChild('city').text(function(d) { return d.start.cite; });
-    dom.forecastStartBubble.getChild('link').text(function(d) {
-        return '<a href="' + d.start.source.link + '">' + d.start.source.name + '</a>';
-    });
-
-    dom.forecastStartBubble.container.style('display', 'block');
-    dom.forecastEndBubble.container.style('display', 'block');
-}
-
-function hideBubble() {
-    dom.forecastStartBubble.container.style('display', 'none');
-    dom.forecastEndBubble.container.style('display', 'none');
-}
-
-function updateBubble() {
-    dom.forecastStartBubble.container.style('left', function(d) {
-        return coordinator.datePosition(d.start.date) - coordinator.leftPosition() + 'px';
-    });
-
-    var datum = dom.forecastEndBubble.container.datum();
-    if (datum.isCameTrue !== undefined) {
-        dom.forecastEndBubble.container.style('left', function(d) {
-            return coordinator.datePosition(d.end.date) - coordinator.leftPosition() + 'px';
-        });
-    }
-    else {
-        dom.forecastEndBubble.container.style('left', function(d) {
-            return coordinator.datePosition(coordinator.today()) - coordinator.leftPosition() + 50 + 'px';
-        });
-    }
+    d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
+        .classed('hovered', false);
 }
 
 function redraw() {
@@ -273,7 +300,8 @@ function redraw() {
 module.exports = function() {
     coordinator.setTranslate(0);
     drawLayout();
+    addPatterns();
     drawBackground();
-    events.setRedrawCallback(redraw, updateBubble);
+    events.setRedrawCallback(redraw);
     redraw();
 }

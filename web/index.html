@@ -4,20 +4,43 @@
         <title>Trendets</title>
         <!-- inject:css -->
         <!-- endinject -->
+        <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
     </head>
     <body>
         <div id="svgContainer">
-            <svg>
-                <defs> 
-                    <linearGradient id="lgrad" x1="0%" y1="100%" x2="100%" y2="0%" > 
+            <svg xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
+                    <linearGradient id="lgrad" x1="0%" y1="50%" x2="100%" y2="50%" > 
                         <stop offset="0%" style="stop-color:rgb(128,81,76);stop-opacity:1" />
                         <stop offset="100%" style="stop-color:rgb(44,27,64);stop-opacity:1" />
-                    </linearGradient> 
+                    </linearGradient>
+                    <!-- <filter id="gauss-blur" x="-2" y="-2" width="20" height="20">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
+                        <feBlend  in="SourceGraphic"/>
+                    </filter> -->
+                    <linearGradient id="footprint-gradient" x1="100%" y1="50%" x2="0%" y2="50%" > 
+                        <stop offset="0%" style="stop-color:rgb(0,111,162);stop-opacity:0.1" />
+                        <stop offset="100%" style="stop-color:rgb(0,111,162);stop-opacity:0" />
+                    </linearGradient>
+                    <filter id="darknessFilter" >
+                        <feComponentTransfer>
+                            <feFuncR type="linear" slope="0.5"/>
+                            <feFuncG type="linear" slope="0.5"/>
+                            <feFuncB type="linear" slope="0.5"/>
+                        </feComponentTransfer>
+                    </filter>
                 </defs>
-                <g id="background">
+                <g id="static">
+                    <g id="background"></g>
+                    <g id="graphBgGrid"></g>
+                    <g id="backTimeScale"></g>
                 </g>
                 <g id="everything">
-                    <g id="graphics"></g>
+                    <g id="graphics">
+                        <g id="lines"></g>
+                        <g id="boobies"></g>
+                        <g id="rects"></g>
+                    </g>
                     <g id="timeScale"></g>
                     <g id="today"></g>
                     <g id="bottom">
@@ -28,19 +51,10 @@
                     </g>
                 </g>
             </svg>
-            <div id="forecastStartBubble" class="forecastBubble">
+            <div id="forecastHoverBubble" class="forecastBubble">
                 <span class="date">12 декабря 2014</span>
                 <span class="name">Герман Греф</span>
-                <div class="title">Глава Сбербанка Герман Греф верит во все, что красного цвета</div>
-                <div class="cite">Ма́йкл Сти́вен Бубле́ — канадский певец-крунер, работающий в традиционной эстрадной манере. Ведущий современный исполнитель репертуара Great American Songbook, обладатель нескольких премий.</div>
-                <div class="link"><a href="#">До///дь</a></div>
-            </div>
-            <div id="forecastEndBubble" class="forecastBubble">
-                <span class="date">12 декабря 2014</span>
-                <span class="name">Герман Греф</span>
-                <div class="title">Глава Сбербанка Герман Греф верит во все, что красного цвета</div>
-                <div class="cite">Ма́йкл Сти́вен Бубле́ — канадский певец-крунер, работающий в традиционной эстрадной манере. Ведущий современный исполнитель репертуара Great American Songbook, обладатель нескольких премий.</div>
-                <div class="link"><a href="#">До///дь</a></div>
+                <div class="shortCite"></div>
             </div>
         </div>
 

@@ -2,8 +2,7 @@ var d3 = require('./libs/d3');
 var dom = require('./dom');
 var coordinator = require('./coordinator');
 
-var redrawCallback = undefined,
-    updateBubble = undefined;
+var redrawCallback = undefined;
 
 var zoom = d3.behavior.zoom()
     .scaleExtent([1, 1])
@@ -15,8 +14,6 @@ dom.background.call(zoom);
 function onMove() {
     dom.everything.attr('transform', 'translate(' + d3.event.translate[0] + ',0)');
     coordinator.setTranslate(d3.event.translate[0]);
-    if (updateBubble !== undefined)
-        updateBubble();
 }
 
 function onMoveStop() {
@@ -44,6 +41,5 @@ module.exports = {
     },
     setRedrawCallback: function(redraw, bubble) {
         redrawCallback = redraw;
-        updateBubble = bubble;
     }
 }

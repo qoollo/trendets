@@ -5,11 +5,16 @@ var result = {
     svg: d3.select('#svgContainer svg'),
     everything: d3.select('#everything'),
     background: d3.select('#background'),
+    bgGrid: d3.select('#graphBgGrid'),
     graphics: {
         container: d3.select('#graphics'),
+        lines: d3.select('#graphics #lines'),
+        boobies: d3.select('#graphics #boobies'),
+        rects: d3.select('#graphics #rects'),
     },
     timeScale: {
         container: d3.select('#timeScale'),
+        background: d3.select('#backTimeScale'),
     },
     today: d3.select('#today'),
     forecasts: {
@@ -17,16 +22,10 @@ var result = {
         lines: d3.select('#forecasts #lines'),
         photos: d3.select('#forecasts #photos'),
     },
-    forecastStartBubble: {
-        container: d3.select('#forecastStartBubble'),
+    forecastHoverBubble: {
+        container: d3.select('#forecastHoverBubble'),
         getChild: function(name) {
-            return d3.select('#forecastStartBubble').select('#' + name);
-        }
-    },
-    forecastEndBubble: {
-        container: d3.select('#forecastEndBubble'),
-        getChild: function(name) {
-            return d3.select('#forecastEndBubble').select('#' + name);
+            return d3.select('#forecastHoverBubble').select('.' + name);
         }
     },
 }

@@ -1,7 +1,10 @@
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans);
 
+$forecastColor: #3181C3;
+
 body {
     margin: 0;
+    font-family: 'PT Sans', sans-serif;
 }
 
 #svgContainer {
@@ -17,10 +20,22 @@ svg {
     width: 100%;
     height: 100%;
 
-    #background {
-        rect {
-            stroke: none;
-            fill: url(#lgrad);
+    #static {
+        #background {
+            rect {
+                stroke: none;
+                fill: url(#lgrad);
+            }
+        }
+
+        .divider {
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 1px;
+        }
+
+        .axis {
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 2px;
         }
     }
 
@@ -36,16 +51,6 @@ svg {
             }
         }
 
-        .divider {
-            stroke: rgba(255,255,255,0.4);
-            stroke-width: 1px;
-        }
-
-        .axis {
-            stroke: rgba(255,255,255,0.4);
-            stroke-width: 2px;
-        }
-
         .ruler-marks {
             stroke: rgba(255,255,255,0.3);
             stroke-width: 1px;
@@ -55,61 +60,97 @@ svg {
     #today {
         stroke: rgba(255,255,255,0.4);
         stroke-width: 1px;
+
+        .today-footprint {
+            fill: url("#footprint-gradient");
+            stroke: none;
+        }
     }
 
     #graphics {
-        line {
-            stroke-width: 1;
-        }
+        .quoteDay {
+            .hoverRect {
+                fill: white;
+                opacity: 0;
+            }
 
-        .oil {
-            stroke: blue;
-        }
+            &.hovered .hoverRect {
+                opacity: 0.1;
+            }
 
-        .dollar {
-            stroke: green;
-        }
+            line {
+                stroke-width: 2px;
+                /*filter: url("#gauss-blur");*/
 
-        .euro {
-            stroke: red;
+                &.oil {
+                    stroke: #7b6b8a;
+                }
+
+                &.dollar {
+                    stroke: #179ac5;
+                }
+
+                &.euro {
+                    stroke: #7b37bd;
+                }
+            }
+
+            .boobie {
+                fill:white;
+                stroke-width:4;
+                display: none;
+
+                &.oil-boobie {
+                    stroke:#7b6b8a;
+                }
+
+                &.dollar-boobie {
+                    stroke:#179ac5;
+                }
+
+                &.euro-boobie {
+                    stroke:#7b37bd;
+                }
+            }
+
+            &.hovered .boobie, &.today .boobie {
+                display: block;
+            }
+        }        
+
+        .grid-bg {
+            fill: rgba(255, 255, 255, 0.05);
         }
     }
 
 
     .forecast {
+        cursor: pointer;
+
         line, path {
-            stroke: #eee;
-            stroke-width: 1;
+            opacity: 0.6;
+            stroke: $forecastColor;
+            stroke-width: 2;
             fill: none;
         }
 
-        &.selected {
-            line, path {
-                stroke: blue;
-            }
-        }
-    }
-
-    .forecastStart, .forecastStop {
-        stroke: blue;
-        stroke-width: 2;
-        fill: none;
-    }
-
-    .photo {
-        circle {
-            fill: white;
-            stroke: #eee;
-            stroke-width: 2;
-        }
-    }
-
-    .selected {
         .photo {
             circle {
-                fill: white;
-                stroke: blue;
+                stroke: rgba(100, 181, 246, 0.6);
                 stroke-width: 2;
+            }
+        }
+
+        &.hovered {
+            line, path {
+                opacity: 1;
+            }
+
+            .photo {
+                circle {
+                    stroke: rgba(100, 181, 246, 1);
+                    stroke-width: 2;
+                }
             }
         }
     }
@@ -117,11 +158,31 @@ svg {
 
 
 .forecastBubble {
-    background: rgba(255, 255, 255, 0.9);
-    display: none;
     position: absolute;
-    left: 0px;
-    width: 270px;
-    top: 340px;
-    border: 1px solid silver;
+    width: 170px;
+
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 10px;
+    color: white;
+    display: none;
+    font-size: 12px;
+
+    .date {
+        position: absolute;
+        right: 10px;
+        top: 15px;
+        font-size: 10px;
+    }
+
+    .name {
+        position: absolute;
+        left: 10px;
+        top: 15px;
+        font-size: 10px;
+    }
+
+    .shortCite {
+        position: relative;
+        margin-top: 20px;
+    }
 }
