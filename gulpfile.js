@@ -21,6 +21,7 @@ var inject = require("gulp-inject");
 
 //  for 'data' task
 var dataGenerator = require('./server/data-generator');
+var TrendetsDb = require('./server/db');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
@@ -100,6 +101,10 @@ gulp.task('img', function () {
 
 gulp.task('data', function () {
     dataGenerator.generate('./web/js/data.js');
+
+    var db = new TrendetsDb();
+    db.delete();
+    db.create();
 });
 
 gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {

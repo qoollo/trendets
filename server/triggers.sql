@@ -69,8 +69,6 @@ END;
 
 
 /******************	          Forecasts		******************/
-ALTER TABLE Forecasts ADD CONSTRAINT FOREIGN KEY (FK_Forecasts_People) REFERENCES People(Id);
-
 DROP TRIGGER IF EXISTS OnForecastsCreate;
 CREATE TRIGGER OnForecastsCreate AFTER INSERT ON `Forecasts`
 BEGIN
