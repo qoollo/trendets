@@ -1,25 +1,14 @@
 var fs = require('fs');
 var path = require('path');
 var sqlite3 = require('sqlite3').verbose();
+var orm = require("orm");
+var q = require('q');
 
 var defaultDbPath = path.join(__dirname, 'trendets.db');
 
 function TrendetsDb(dbPath) {
 
     dbPath = dbPath || defaultDbPath;
-
-    function connect() {
-        var db = new sqlite3.Database(dbPath);
-        db.run('PRAGMA foreign_keys = ON;');
-        return db;
-    }
-
-    function disconnect(db) {
-        db.close(function (err) {
-            if (err)
-                console.error(err);
-        });
-    }
 
     this.exists = function exists() {
         return fs.existsSync(dbPath);
@@ -34,7 +23,7 @@ function TrendetsDb(dbPath) {
         db.exec(script);
         script = fs.readFileSync(path.join(__dirname, 'triggers.sql'), { encoding: 'utf8' });
         db.exec(script);
-        disconnect(db);
+        disconnect(db).then(ormConnect);
 
         console.info('Database at ' + dbPath + ' created.');
     }
@@ -46,7 +35,57 @@ function TrendetsDb(dbPath) {
         } else
             console.info('Database at ' + dbPath + ' not found - nothing to delete.');
     }
+    
+    function connect() {
+        var db = new sqlite3.Database(dbPath);
+        db.run('PRAGMA foreign_keys = ON;');
+        return db;
+    }
+
+    function disconnect(db) {
+        var d = q.defer();
+        db.close(function (err) {
+            if (err) {
+                console.error(err);
+                d.reject(err);
+            } else
+                d.resolve();
+        });
+        return d.promise;
+    }
+
+    function ormConnect() {
+        orm.connect('sqlite://' + dbPath, function (err, db) {
+            if (err)
+                return console.error('Connection error: ' + err);
+
+            console.log('Initialized ORM connection to db.');
+            defineModels(db);
+        });
+    }
+
+    function defineModels(db) {
+        var Quotes = db.define('Quotes', {
+            id: { mapsTo: 'Id', type: 'number', key: true },
+            date: { mapsTo: 'Date', type: 'date' },
+            oil: { mapsTo: 'Oil', type: 'number' },
+            usd: { mapsTo: 'USD', type: 'number' },
+            eur: { mapsTo: 'EUR', type: 'number' },
+        });
+        console.log('ORM models initialized.');
+
+        Quotes.create([{
+            date: new Date(),
+            oil: 49.07,
+            usd: 62.8,
+            eur: 74.65
+        }], function (err, items) {
+            if (err)
+                return console.error(err);
+        });
+    }
 }
+
 
 
 //var db = new sqlite3.Database(':memory:');

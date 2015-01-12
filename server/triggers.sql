@@ -10,13 +10,13 @@ CREATE TRIGGER OnQuotesUpdate UPDATE ON `Quotes`
 BEGIN
   UPDATE `Quotes` SET _update_time = CURRENT_TIMESTAMP WHERE Id = NEW.Id;
 END;
-
+/*
 DROP TRIGGER IF EXISTS OnQuotesInsertTimeUpdate;
 CREATE TRIGGER OnQuotesInsertTimeUpdate BEFORE UPDATE OF _insert_time ON `Quotes`
 BEGIN
   SELECT RAISE(ABORT, 'Column _insert_time is read only.');
 END;
-
+*/
 
 
 /******************		People		******************/
@@ -31,12 +31,13 @@ CREATE TRIGGER OnPeopleUpdate UPDATE ON `People`
 BEGIN
   UPDATE `People` SET _update_time = CURRENT_TIMESTAMP WHERE Id = NEW.Id;
 END;
-
+/*
 DROP TRIGGER IF EXISTS OnPeopleInsertTimeUpdate;
 CREATE TRIGGER OnPeopleInsertTimeUpdate BEFORE UPDATE OF _insert_time ON `People`
 BEGIN
   SELECT RAISE(ABORT, 'Column _insert_time is read only.');
 END;
+*/
 /*  Dunno not working
 DROP TRIGGER IF EXISTS OnPeopleDelete;
 CREATE TRIGGER OnPeopleDelete INSTEAD OF DELETE ON `People`
@@ -59,13 +60,13 @@ CREATE TRIGGER OnCitationSourcesUpdate UPDATE ON `CitationSources`
 BEGIN
   UPDATE `CitationSources` SET _update_time = CURRENT_TIMESTAMP WHERE Id = NEW.Id;
 END;
-
+/*
 DROP TRIGGER IF EXISTS OnCitationSourcesInsertTimeUpdate;
 CREATE TRIGGER OnCitationSourcesInsertTimeUpdate BEFORE UPDATE OF _insert_time ON `CitationSources`
 BEGIN
   SELECT RAISE(ABORT, 'Column _insert_time is read only.');
 END;
-
+*/
 
 
 /******************	          Forecasts		******************/
@@ -80,9 +81,10 @@ CREATE TRIGGER OnForecastsUpdate UPDATE ON `Forecasts`
 BEGIN
   UPDATE `Forecasts` SET _update_time = CURRENT_TIMESTAMP WHERE Id = NEW.Id;
 END;
-
+/*
 DROP TRIGGER IF EXISTS OnForecastsInsertTimeUpdate;
 CREATE TRIGGER OnForecastsInsertTimeUpdate BEFORE UPDATE OF _insert_time ON `Forecasts`
 BEGIN
   SELECT RAISE(ABORT, 'Column _insert_time is read only.');
 END;
+*/
