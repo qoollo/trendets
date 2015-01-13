@@ -38,19 +38,20 @@ function TrendetsDb(dbPath) {
 
     function connect() {
         var db = new sqlite3.Database(dbPath);
-        db.run('PRAGMA foreign_keys = ON;');
+        turnForeignKeysOn(db);
         return db;
+    }
+
+    function turnForeignKeysOn(db) {
+        var d = q.defer(),
+            rawDb = db.driver ? db.driver.db : db;
+        rawDb.run('PRAGMA foreign_keys = ON;', resolveDeferred(d, db));
+        return d.promise;
     }
 
     function disconnect(db) {
         var d = q.defer();
-        db.close(function (err) {
-            if (err) {
-                console.error(err);
-                d.reject(err);
-            } else
-                d.resolve();
-        });
+        db.close(resolveDeferred(d));
         return d.promise;
     }
 
@@ -59,14 +60,17 @@ function TrendetsDb(dbPath) {
             if (err)
                 return console.error('Connection error: ' + err);
 
-            db.driver.db.run('PRAGMA foreign_keys = ON;');
-
             console.log('Initialized ORM connection to db.');
-            defineModels(db);
+
+            turnForeignKeysOn(db).then(defineModels)
+                                 .then(insertTestData);
         });
     }
 
     function defineModels(db) {
+
+        var d = q.defer();
+
         var Quotes = db.define('Quotes', getColumnMapping({
             date: { type: 'date' },
             oil: { type: 'number' },
@@ -97,8 +101,33 @@ function TrendetsDb(dbPath) {
         Forecasts.hasOne('citationSource', People, { field: 'citationSourceId' });
 
         console.log('ORM models initialized.');
+        d.resolve(db);
 
-        var promises = [
+        
+
+        return d.promise;
+    }
+
+    function getColumnMapping(additionalColumnMapping) {
+        var commonMap = {
+            id: { type: 'serial', key: true, mapsTo: 'Id' },
+            insertTime: { type: 'date', mapsTo: '_insert_time' },
+            updateTime: { type: 'date', mapsTo: '_update_time' },
+            deleteTime: { type: 'date', mapsTo: '_delete_time' },
+        };
+        for (var f in additionalColumnMapping) {
+            commonMap[f] = additionalColumnMapping[f];
+            commonMap[f].mapsTo = f.substring(0, 1).toUpperCase() + f.substring(1, f.length);
+        }
+        return commonMap;
+    }
+
+    function insertTestData(db) {
+        var Quotes = db.models.Quotes,
+            People = db.models.People,
+            CitationSources = db.models.CitationSources,
+            Forecasts = db.models.Forecasts,
+            promises = [
             insert(Quotes, {
                 date: new Date(),
                 oil: 49.07,
@@ -129,7 +158,7 @@ function TrendetsDb(dbPath) {
                 name: 'ТАСС',
                 website: 'http://tass.ru/'
             }])
-        ];
+            ];
 
         q.all(promises).then(function () {
             q.all([one(People, { shortName: 'Улюкаев' }),
@@ -146,22 +175,6 @@ function TrendetsDb(dbPath) {
                  });
              });
         });
-
-
-    }
-
-    function getColumnMapping(additionalColumnMapping) {
-        var commonMap = {
-            id: { type: 'serial', key: true, mapsTo: 'Id' },
-            insertTime: { type: 'date', mapsTo: '_insert_time' },
-            updateTime: { type: 'date', mapsTo: '_update_time' },
-            deleteTime: { type: 'date', mapsTo: '_delete_time' },
-        };
-        for (var f in additionalColumnMapping) {
-            commonMap[f] = additionalColumnMapping[f];
-            commonMap[f].mapsTo = f.substring(0, 1).toUpperCase() + f.substring(1, f.length);
-        }
-        return commonMap;
     }
 
     function insert(model, obj) {
@@ -173,13 +186,7 @@ function TrendetsDb(dbPath) {
             return q.all(promises);
         } else {
             var d = q.defer();
-            model.create([obj], function (err, items) {
-                if (err) {
-                    d.reject(err);
-                    return console.error(err);
-                } else
-                    d.resolve();
-            });
+            model.create([obj], resolveDeferred(d));
             return d.promise;
         }
     }
@@ -217,15 +224,19 @@ function TrendetsDb(dbPath) {
     //  wraps obj[funcName] function into promise and calls.
     function deferFunc(obj, funcName, argsArray) {
         var d = q.defer();
-        argsArray.push(function (err, result) {
-            if (err) {
-                console.error(err);
-                d.reject(err);
-            } else
-                d.resolve(result);
-        });
+        argsArray.push(resolveDeferred(d));
         obj[funcName].apply(obj, argsArray);
         return d.promise;
+    }
+
+    function resolveDeferred(deferred, resolveValue) {
+        return function (err, res) {
+            if (err) {
+                console.error(err);
+                deferred.reject(err);
+            } else
+                deferred.resolve(resolveValue || res);
+        }
     }
 }
 
