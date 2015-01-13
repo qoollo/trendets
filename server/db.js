@@ -19,11 +19,9 @@ function TrendetsDb(dbPath) {
             throw new Error('Database at ' + dbPath + ' already exists.');
 
         var db = connect();
-        var script = fs.readFileSync(path.join(__dirname, 'tables.sql'), { encoding: 'utf8' });
-        db.exec(script);
-        script = fs.readFileSync(path.join(__dirname, 'triggers.sql'), { encoding: 'utf8' });
-        db.exec(script);
-        disconnect(db).then(ormConnect);
+        createTables(db).then(createTriggers)
+                        .then(disconnect)
+                        .then(ormConnect);
 
         console.info('Database at ' + dbPath + ' created.');
     }
@@ -55,16 +53,27 @@ function TrendetsDb(dbPath) {
         return d.promise;
     }
 
+    function createTables(db) {
+        return runSqlFile(db, path.join(__dirname, 'tables.sql'));
+    }
+
+    function createTriggers(db) {
+        return runSqlFile(db, path.join(__dirname, 'triggers.sql'));
+    }
+
+    function runSqlFile(db, filePath) {
+        var sql = fs.readFileSync(filePath, { encoding: 'utf8' }),
+            d = q.defer();
+        db.exec(sql, resolveDeferred(d, db));
+        return d.promise;
+    }
+
     function ormConnect() {
-        orm.connect('sqlite://' + dbPath, function (err, db) {
-            if (err)
-                return console.error('Connection error: ' + err);
-
-            console.log('Initialized ORM connection to db.');
-
-            turnForeignKeysOn(db).then(defineModels)
-                                 .then(insertTestData);
-        });
+        var d = q.defer();
+        orm.connect('sqlite://' + dbPath, resolveDeferred(d));
+        return d.promise.then(turnForeignKeysOn)
+                        .then(defineModels)
+                        .then(insertTestData);
     }
 
     function defineModels(db) {
