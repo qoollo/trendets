@@ -1,6 +1,8 @@
 ﻿var fs = require('fs');
 var coordinator = require('../web/js/coordinator');
 var d3 = require('d3');
+var TrendetsDb = require('./db');
+var q = require('q');
 
 function getQuotes() {
     var quotes = [];
@@ -132,21 +134,62 @@ function getPeople() {
     return result;
 }
 
+function getFileContents(objData) {
+    return 'module.exports = ' + JSON.stringify(objData, null, 4) + ';';
+}
+
 function getData() {
-    return 'module.exports = ' + JSON.stringify({
-        quotes: getQuotes(),
-        forecasts: getForecasts(),
-        people: getPeople()
-    }, null, 4) + ';';
+    var d = q.defer(),
+        res = getFileContents({
+            quotes: getQuotes(),
+            forecasts: getForecasts(),
+            people: getPeople()
+        });
+    d.resolve(res);
+    return d.promise;
+}
+
+function getDataFromDb() {
+    var db = new TrendetsDb();
+    return db.connect().then(function () {
+
+        return q.all([db.Quotes.all(), db.People.all(), db.CitationSources.all(), db.Forecasts.all()])
+                .then(function (results) {
+                    var quotes = results[0],
+                        forecasts = results[3],
+                        people = results[1];
+
+                    for (var i = 0; i < quotes.length; i++) {
+                        var c = quotes[i],
+                            q = {
+                                day: c.date,
+                                oil: c.oil,
+                                dollar: c.usd,
+                                euro: c.eur
+                            };
+                        quotes[i] = q;
+                    }
+
+                    return getFileContents({
+                        quotes: quotes,
+                        forecasts: forecasts,
+                        people: people
+                    });
+                }, console.error)
+
+    }, console.error);
 }
 
 module.exports = {
-    generate: function (destPath) {
-        fs.writeFile(destPath, getData(), function (err) {
-            if (err) 
-                console.error(err);
-            else
-                console.info(destPath + " file generated.");
-        });
+    generate: function (destPath, fromDb) {
+        var dataPromise = fromDb ? getDataFromDb() : getData();
+        dataPromise.then(function (data) {
+            fs.writeFile(destPath, data, function (err) {
+                if (err)
+                    console.error(err);
+                else
+                    console.info(destPath + " file generated.");
+            });
+        }, console.error);
     }
 }

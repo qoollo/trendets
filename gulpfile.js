@@ -100,11 +100,11 @@ gulp.task('img', function () {
 });
 
 gulp.task('data', function () {
-    dataGenerator.generate('./web/js/data.js');
-
     var db = new TrendetsDb();
     db.delete();
-    db.create();
+    db.create().then(function () {
+        dataGenerator.generate('./web/js/data.js', true);
+    }, console.error);
 });
 
 gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
@@ -119,7 +119,7 @@ gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
     ]);
     gulp.watch(['./web/img/*'], [
       'img'
-    ]);    
+    ]);
     gulp.watch(['./web/scss/*.scss', './web/scss/**/*.scss'], [
       'css'
     ]);
