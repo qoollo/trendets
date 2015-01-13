@@ -9,6 +9,19 @@ var defaultDbPath = path.join(__dirname, 'trendets.db');
 function TrendetsDb(dbPath) {
 
     dbPath = dbPath || defaultDbPath;
+    
+    var self = this;
+
+    this.connect = function () {
+        var d = q.defer();
+        connect().then(function (db) {
+            for (var f in db.models) {
+                self[f] = db.models[f];
+            }
+            d.resolve(self);
+        }, d.reject);
+        return d.promise;
+    }
 
     this.exists = function exists() {
         return fs.existsSync(dbPath);
@@ -18,10 +31,11 @@ function TrendetsDb(dbPath) {
         if (this.exists())
             throw new Error('Database at ' + dbPath + ' already exists.');
 
-        var db = connect();
-        createTables(db).then(createTriggers)
-                        .then(disconnect)
-                        .then(ormConnect);
+        connect().then(createTables)
+                 .then(createTriggers)
+                 .then(defineModels)
+                 .then(insertTestData)
+                 .then(disconnect);
 
         console.info('Database at ' + dbPath + ' created.');
     }
@@ -35,9 +49,9 @@ function TrendetsDb(dbPath) {
     }
 
     function connect() {
-        var db = new sqlite3.Database(dbPath);
-        turnForeignKeysOn(db);
-        return db;
+        var d = q.defer();
+        orm.connect('sqlite://' + dbPath, resolveDeferred(d));
+        return d.promise.then(turnForeignKeysOn);
     }
 
     function turnForeignKeysOn(db) {
@@ -64,16 +78,8 @@ function TrendetsDb(dbPath) {
     function runSqlFile(db, filePath) {
         var sql = fs.readFileSync(filePath, { encoding: 'utf8' }),
             d = q.defer();
-        db.exec(sql, resolveDeferred(d, db));
+        db.driver.db.exec(sql, resolveDeferred(d, db));
         return d.promise;
-    }
-
-    function ormConnect() {
-        var d = q.defer();
-        orm.connect('sqlite://' + dbPath, resolveDeferred(d));
-        return d.promise.then(turnForeignKeysOn)
-                        .then(defineModels)
-                        .then(insertTestData);
     }
 
     function defineModels(db) {
