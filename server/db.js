@@ -35,7 +35,7 @@ function TrendetsDb(dbPath) {
         } else
             console.info('Database at ' + dbPath + ' not found - nothing to delete.');
     }
-    
+
     function connect() {
         var db = new sqlite3.Database(dbPath);
         db.run('PRAGMA foreign_keys = ON;');
@@ -65,13 +65,31 @@ function TrendetsDb(dbPath) {
     }
 
     function defineModels(db) {
-        var Quotes = db.define('Quotes', {
-            id: { mapsTo: 'Id', type: 'number', key: true },
-            date: { mapsTo: 'Date', type: 'date' },
-            oil: { mapsTo: 'Oil', type: 'number' },
-            usd: { mapsTo: 'USD', type: 'number' },
-            eur: { mapsTo: 'EUR', type: 'number' },
-        });
+        var Quotes = db.define('Quotes', getColumnMapping({
+            date: { type: 'date' },
+            oil: { type: 'number' },
+            usd: { type: 'number' },
+            eur: { type: 'number' },
+        }));
+        var People = db.define('People', getColumnMapping({
+            name: { type: 'text' },
+            shortName: { type: 'text' },
+            photo: { type: 'binary' },
+        }));
+        var CitationSources = db.define('CitationSources', getColumnMapping({
+            name: { type: 'text' },
+            website: { type: 'text' },
+        }));
+        var Forecasts = db.define('Forecasts', getColumnMapping({
+            cameTrue: { type: 'boolean' },
+            occuranceDate: { type: 'date' },
+            targetDate: { type: 'date' },
+            personId: { type: 'number' },
+            citationSourceId: { type: 'number' },
+            title: { type: 'text' },
+            cite: { type: 'text' },
+            shortCite: { type: 'text' },
+        }));
         console.log('ORM models initialized.');
 
         Quotes.create([{
@@ -84,26 +102,19 @@ function TrendetsDb(dbPath) {
                 return console.error(err);
         });
     }
+
+    function getColumnMapping(additionalColumnMapping) {
+        var commonMap = {
+            id: { type: 'serial', key: true },
+            insertTime: { type: 'date', mapsTo: '_insert_time' },
+            updateTime: { type: 'date', mapsTo: '_update_time' },
+            deleteTime: { type: 'date', mapsTo: '_delete_time' },
+        };
+        for (var f in additionalColumnMapping) {
+            commonMap[f] = additionalColumnMapping[f];
+        }
+        return commonMap;
+    }
 }
-
-
-
-//var db = new sqlite3.Database(':memory:');
-
-//db.serialize(function () {
-//    db.run("CREATE TABLE lorem (info TEXT)");
-
-//    var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-//    for (var i = 0; i < 10; i++) {
-//        stmt.run("Ipsum " + i);
-//    }
-//    stmt.finalize();
-
-//    db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
-//        console.log(row.id + ": " + row.info);
-//    });
-//});
-
-//db.close();
 
 module.exports = TrendetsDb;
