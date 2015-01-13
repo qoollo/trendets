@@ -170,6 +170,17 @@ function getDataFromDb() {
                         quotes[i] = q;
                     }
 
+                    for (var i = 0; i < people.length; i++) {
+                        var c = people[i],
+                            p = {
+                                id: c.id,
+                                name: c.name,
+                                shortName: c.shortName,
+                                photo: c.photo,
+                            }; 
+                        people[i] = p;
+                    }
+
                     return getFileContents({
                         quotes: quotes,
                         forecasts: forecasts,
@@ -184,6 +195,7 @@ module.exports = {
     generate: function (destPath, fromDb) {
         var dataPromise = fromDb ? getDataFromDb() : getData();
         dataPromise.then(function (data) {
+            fs.unlinkSync(destPath);
             fs.writeFile(destPath, data, function (err) {
                 if (err)
                     console.error(err);
