@@ -1,7 +1,7 @@
 module.exports = {
     graphicsHeight: 300,
     timeScaleHeight: 30,
-    futureMargin: 300,
+    futureMargin: 400,
     dayWidth: 30,
     photoSize: 18.5,
     scales: {

@@ -1,6 +1,7 @@
 var d3 = require('./libs/d3');
 var dom = require('./dom');
 var coordinator = require('./coordinator');
+var bubble = require('./drawing/bubble');
 
 var redrawCallback = undefined;
 
@@ -9,7 +10,9 @@ var zoom = d3.behavior.zoom()
     .on('zoom', onMove)
     .on('zoomend', onMoveStop);
 
-dom.background.call(zoom);
+dom.container.call(zoom);
+
+dom.forecastDetails.hideButton.on('click', bubble.hideDetails);
 
 function onMove() {
     dom.everything.attr('transform', 'translate(' + d3.event.translate[0] + ',0)');

@@ -10,17 +10,13 @@
         <div id="svgContainer">
             <svg xmlns:xlink="http://www.w3.org/1999/xlink">
                 <defs>
-                    <linearGradient id="lgrad" x1="0%" y1="50%" x2="100%" y2="50%" > 
-                        <stop offset="0%" style="stop-color:rgb(128,81,76);stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:rgb(44,27,64);stop-opacity:1" />
-                    </linearGradient>
                     <!-- <filter id="gauss-blur" x="-2" y="-2" width="20" height="20">
                         <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
                         <feBlend  in="SourceGraphic"/>
                     </filter> -->
                     <linearGradient id="footprint-gradient" x1="100%" y1="50%" x2="0%" y2="50%" > 
-                        <stop offset="0%" style="stop-color:rgb(0,111,162);stop-opacity:0.1" />
-                        <stop offset="100%" style="stop-color:rgb(0,111,162);stop-opacity:0" />
+                        <stop offset="0%" style="stop-color:#AA00FF;stop-opacity:0.1" />
+                        <stop offset="100%" style="stop-color:#6A1B9A;stop-opacity:0" />
                     </linearGradient>
                     <filter id="darknessFilter" >
                         <feComponentTransfer>
@@ -39,6 +35,7 @@
                     <g id="graphics">
                         <g id="lines"></g>
                         <g id="boobies"></g>
+                        <g id="dotted_lines"></g>
                         <g id="rects"></g>
                     </g>
                     <g id="timeScale"></g>
@@ -51,11 +48,28 @@
                     </g>
                 </g>
             </svg>
-            <div id="forecastHoverBubble" class="forecastBubble">
-                <span class="date">12 декабря 2014</span>
-                <span class="name">Герман Греф</span>
-                <div class="shortCite"></div>
+        </div>
+        <div id="forecastDetails">
+            <div class="start">
+                <div class="date">12 декабря 2014</div>
+                <div class="name">Герман Греф</div>
+                <div class="title">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <div class="cite">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <a href="#" class="link">РБК Политика</a>
             </div>
+            <div class="result">
+                <div class="date">12 декабря 2014</div>
+                <div class="name">Герман Греф</div>
+                <div class="title">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <div class="cite">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <a href="#" class="link">РБК Политика</a>
+            </div>
+            <div id="hideDetails">Скрыть</div>
+        </div>
+        <div id="forecastHoverBubble" class="forecastBubble">
+            <span class="date">12 декабря 2014</span>
+            <span class="name">Герман Греф</span>
+            <div class="shortCite"></div>
         </div>
 
         <!-- inject:js -->

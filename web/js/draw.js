@@ -6,7 +6,7 @@ var coordinator = require('./coordinator');
 var events = require('./events');
 
 var drawing = {
-    bubble: require('./drawing/bubble'),
+    forecast: require('./drawing/forecast'),
 }
 
 d3.selection.prototype.moveToFront = function() {
@@ -16,14 +16,6 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 function drawLayout() {
-    // graph background grid
-    dom.bgGrid.append('rect')
-        .attr('x',0)            
-        .attr('y',-settings.graphicsHeight)            
-        .attr('height',settings.graphicsHeight)            
-        .attr('width',x)
-        .classed('grid-bg',true);
-
     // timescale
     dom.timeScale.container
         .attr('transform', 'translate(0,' + settings.graphicsHeight + ')');
@@ -64,24 +56,6 @@ function drawLayout() {
 
     // forecasts
     dom.forecasts.container.attr('transform', 'translate(0,' + (settings.graphicsHeight + settings.timeScaleHeight) + ')');
-}
-
-function addPatterns() {
-    var persons = dataProvider.loadPersons();
-    console.log(persons);
-
-    var patterns = d3.select('svg defs').selectAll('pattern')
-            .data(persons)
-        .enter().append('pattern')
-            .attr('id', function(d) { return 'photo' + d.id; })
-            .attr('width', settings.photoSize * 2)
-            .attr('height', settings.photoSize * 2)
-            .attr('patternUnits', 'objectBoundingBox');
-    patterns.append('image')
-        .attr('xlink:href', function(d) { return 'img/' + d.photo; })
-        .attr('width', settings.photoSize * 2)
-        .attr('height', settings.photoSize * 2);
-
 }
 
 function drawBackground() {
@@ -133,14 +107,68 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
         .classed(type, true)
         .attr('x1', 0)
         .attr('y1', function(d) { return coordinator.quotePosition(d[type], type); })
-        .attr('x2', -settings.dayWidth)
+        .attr('x2', -settings.dayWidth - 0)
         .attr('y2', function(d, i) { return coordinator.quotePosition(data[i][type], type); });
 
     boobies.append('circle')
            .attr('cx', 0)     
            .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
-           .attr('r', 4)
+           .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 4 : 2; })
            .classed(type + "-boobie boobie", true);
+
+    boobies.append('circle')
+           .attr('cx', 0)     
+           .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
+           .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 0 : 10; })
+           .classed(type + "-boobie boobie-big", true);
+
+    boobies.append('circle')
+           .attr('cx', 0)     
+           .attr('cy', function(d) { return coordinator.quotePosition(d[type], type); })     
+           .attr('r', function(d) { return d.day.getDMY() == coordinator.today().getDMY() ? 0 : 10; })
+           .classed(type + "-boobie boobie-big", true);
+
+    boobies.append('text')
+           .attr('x', 12)     
+           .attr('y', function(d) { return coordinator.quotePosition(d[type], type) + 4; })
+           .text(function(d) {
+                if (d.day.getDMY() == coordinator.today().getDMY()) {
+                    return d[type].formatQuote(type) + " за " + getRusQuote(type);  
+                } else {
+                    return d[type].formatQuote(type);
+                }
+            })   
+           .classed(type + "-boobie quote-text", true);
+}
+
+function getRusQuote(type){
+    switch (type) {
+        case "oil":
+            return "нефть марки Brent"
+            break
+        case "dollar":
+            return "доллар"
+            break
+        case "euro":
+            return "евро"
+            break
+    }
+}
+
+Number.prototype.formatQuote = function(curType) {
+    return this.toFixed(2).toString() + curSign(curType);
+    function curSign(sign) {
+        return sign == "oil" ? " $" : " ₽"
+    } 
+}
+
+function drawDottedLinesForDays(lines, data) {
+    lines.append('line')
+        .attr('x1',0)
+        .attr('y1',-settings.graphicsHeight)
+        .attr('x2',0) 
+        .attr('y2',0)
+        .attr('class','dotted');
 }
 
 function showDayQuotes(d) {
@@ -156,8 +184,12 @@ function hideDayQuotes(d) {
 function addNewQuoteDays(list) {
     return list.enter().append('g')
         .classed('quoteDay', true)
-        .classed('today', function(d) { return d.day.getTime() == coordinator.today().getTime(); })
+        .classed('today', function(d) { return d.day.getDMY() == coordinator.today().getDMY(); })
         .attr('transform', function(d) { return 'translate(' + coordinator.datePosition(d.day) + ',0)'; });
+}
+
+Date.prototype.getDMY = function() {
+    return this.getDate() + "/" + this.getMonth() + "/" + this.getFullYear();
 }
 
 function drawQuoteLines(data) {
@@ -167,14 +199,19 @@ function drawQuoteLines(data) {
             .data(data, function(d) { return d.day; });
     var rects = dom.graphics.rects.selectAll('.quoteDay')
             .data(data, function(d) { return d.day; });
+    var dottedLines = dom.graphics.dottedLines.selectAll('.quoteDay')
+            .data(data, function(d) { return d.day; });
         
     var newLines = addNewQuoteDays(lines);
+    var newDottedLines = addNewQuoteDays(dottedLines);
     var newBoobies = addNewQuoteDays(boobies);
     var newRects = addNewQuoteDays(rects);
 
     drawQuoteLinesForDays(newLines, newBoobies, 'oil', data);
     drawQuoteLinesForDays(newLines, newBoobies, 'dollar', data);
     drawQuoteLinesForDays(newLines, newBoobies, 'euro', data);
+    
+    drawDottedLinesForDays(newDottedLines, data);
 
     newRects.append('rect')
         .classed('hoverRect', true)
@@ -188,103 +225,11 @@ function drawQuoteLines(data) {
     lines.exit().remove();
     boobies.exit().remove();
     rects.exit().remove();
+    dottedLines.exit().remove();
 }
 
 function drawQuotes(quotes) {
     drawQuoteLines(quotes);
-}
-
-function drawNewClosedForecasts(lines, photos) {
-    var minDate = coordinator.startDate();
-
-    lines.append('path')
-        .attr('d', function(d, i) {
-            var y = coordinator.forecastPosition(d.order);
-            var startX = coordinator.datePosition(d.start.date),
-                stopX = coordinator.datePosition(d.end.date);
-            return 'M' + startX + ',0 C' + startX + ',' + y + 
-                ' ' + stopX + ',' + y + ' ' + stopX + ',0';
-        });
-
-    var photoStart = photos.append('g').classed('photo', true);
-    photoStart.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
-        .attr('cy', 0);
-
-    var photoEnd = photos.append('g').classed('photo', true);
-    photoEnd.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.end.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', function(d) { return coordinator.datePosition(d.end.date); })
-        .attr('cy', 0);
-}
-
-function drawNewOpenForecasts(lines, photos) {
-    var todayPosition = coordinator.datePosition(coordinator.today()) + 30;
-
-    lines.append('path')
-        .attr('d', function(d, i) {
-            var y = coordinator.forecastPosition(d.order);
-            var startX = coordinator.datePosition(d.start.date),
-                stopX = coordinator.datePosition(d.end.date);
-            return 'M' + startX + ',0 Q' + startX + ',' + y + 
-                ' ' + todayPosition + ',' + y;
-        });
-
-    var photoStart = photos.append('g').classed('photo', true);
-    photoStart.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', function(d) { return coordinator.datePosition(d.start.date); })
-        .attr('cy', 0);
-
-    var photoEnd = photos.append('g').classed('photo', true);
-    photoEnd.append('circle')
-        .attr('fill', function(d) { return 'url(#photo' + d.start.personId + ')'; })
-        .attr('r', settings.photoSize)
-        .attr('cx', todayPosition)
-        .attr('cy', function(d, i) { return coordinator.forecastPosition(d.order); });
-}
-
-function drawForecast(forecasts) {
-    function closedFilter(d) { return d.isCameTrue !== undefined; }
-    function openFilter(d) { return d.isCameTrue === undefined; }
-
-    var lines = dom.forecasts.lines.selectAll('.forecast')
-            .data(forecasts, function(d) { return d.id; });
-    var newLines = lines.enter().append('g')
-            .classed('forecast', true);
-    lines.exit().remove();
-
-    var photos = dom.forecasts.photos.selectAll('.forecast')
-            .data(forecasts, function(d) { return d.id; });
-    var newPhotos = photos.enter().append('g')
-            .classed('forecast', true);
-    photos.exit().remove();
-
-    drawNewClosedForecasts(newLines.filter(closedFilter), newPhotos.filter(closedFilter));
-    drawNewOpenForecasts(newLines.filter(openFilter), newPhotos.filter(openFilter));
-
-
-    lines.on('mouseover', function(d) { highlightForecast(d); drawing.bubble.showBubble(d); });
-    photos.on('mouseover', function(d) { highlightForecast(d); drawing.bubble.showBubble(d); });
-    lines.on('mousemove', drawing.bubble.moveBubble);
-    photos.on('mousemove', drawing.bubble.moveBubble);
-    lines.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
-    photos.on('mouseout', function(d) { hideHighlightedForecast(d); drawing.bubble.hideBubble(d); });
-}
-
-function highlightForecast(d) {
-    var f = d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
-        .classed('hovered', true);
-    f.moveToFront();
-}
-
-function hideHighlightedForecast(d) {
-    d3.selectAll('.forecast').filter(function(od) { return od.id == d.id })
-        .classed('hovered', false);
 }
 
 function redraw() {
@@ -294,13 +239,12 @@ function redraw() {
     drawTimeScale(loadingStartDate, coordinator.loadingStopDate(true));
     drawQuotes(dataProvider.loadQuotes(loadingStartDate, loadingStopDate));
     var forecasts = dataProvider.loadForecast(loadingStartDate, loadingStopDate);
-    drawForecast(forecasts);
+    drawing.forecast.drawForecast(forecasts);
 }
 
 module.exports = function() {
     coordinator.setTranslate(0);
     drawLayout();
-    addPatterns();
     drawBackground();
     events.setRedrawCallback(redraw);
     redraw();

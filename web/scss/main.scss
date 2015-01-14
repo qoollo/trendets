@@ -5,15 +5,18 @@ $forecastColor: #3181C3;
 body {
     margin: 0;
     font-family: 'PT Sans', sans-serif;
+    overflow: hidden;
 }
 
 #svgContainer {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     overflow: hidden;
+    background: linear-gradient(to right, #1F0037 0%, #2c1b40 100%);
+    padding: 10px;
 }
 
 svg {
@@ -23,8 +26,8 @@ svg {
     #static {
         #background {
             rect {
-                stroke: none;
-                fill: url(#lgrad);
+                opacity: 0.02;
+                fill: white;
             }
         }
 
@@ -70,8 +73,7 @@ svg {
     #graphics {
         .quoteDay {
             .hoverRect {
-                fill: white;
-                opacity: 0;
+                fill: rgba(0,0,0,0);
             }
 
             &.hovered .hoverRect {
@@ -80,7 +82,6 @@ svg {
 
             line {
                 stroke-width: 2px;
-                /*filter: url("#gauss-blur");*/
 
                 &.oil {
                     stroke: #7b6b8a;
@@ -97,7 +98,6 @@ svg {
 
             .boobie {
                 fill:white;
-                stroke-width:4;
                 display: none;
 
                 &.oil-boobie {
@@ -113,9 +113,56 @@ svg {
                 }
             }
 
-            &.hovered .boobie, &.today .boobie {
+            .boobie-big {
+                display: none;
+                fill-opacity: 0.25;
+
+                &.oil-boobie {
+                    stroke:#7b6b8a;
+                    fill:#7b6b8a;
+                }
+
+                &.dollar-boobie {
+                    stroke:#179ac5;
+                    fill:#179ac5;
+                }
+
+                &.euro-boobie {
+                    stroke:#7b37bd;
+                    fill:#7b37bd;
+                }
+            }
+
+            .quote-text {
+                display: none;
+                fill: white;
+                font-size: 11px;
+                opacity: 0.9;
+            }
+
+            &.today .quote-text, &.hovered .quote-text {
                 display: block;
             }
+
+            &.hovered .boobie, &.today .boobie, &.hovered .boobie-big {
+                display: block;
+            }
+
+            &.today .boobie {
+                stroke-width: 3;
+            }
+
+            .dotted {
+                stroke: rgba(255,255,255,0.16);
+                stroke-width: 1;
+                display: none;
+                stroke-dasharray: 4;
+            }
+
+            &.hovered .dotted {
+                display: block;
+            }
+
         }        
 
         .grid-bg {
@@ -127,29 +174,75 @@ svg {
     .forecast {
         cursor: pointer;
 
-        line, path {
-            opacity: 0.6;
+        .visiblePath {
+            opacity: 0.3;
             stroke: $forecastColor;
             stroke-width: 2;
             fill: none;
         }
 
+        .hoverPath {
+            opacity: 0;
+            stroke: white;
+            stroke-width: 10;
+            fill: none;
+        }
+
         .photo {
             circle {
-                stroke: rgba(100, 181, 246, 0.6);
+                fill: rgba(0, 0, 0, 0.2);
+                stroke: rgb(100, 181, 246);
+                stroke-opacity: 0.6;
                 stroke-width: 2;
             }
         }
 
+        &.cameTrue {
+            .photo {
+                circle {
+                    stroke: #1b8955;
+                }
+            }
+
+            .visiblePath {
+                stroke: #1b8955;
+            }
+        }
+
+        &.cameFalse {
+            .photo {
+                circle {
+                    stroke: #ee6133;
+                }
+            }
+
+            .visiblePath {
+                stroke: #ee6133;
+            }
+        }
+
         &.hovered {
-            line, path {
+            .visiblePath {
+                opacity: 0.6;
+            }
+
+            .photo {
+                circle {
+                    fill: rgba(0, 0, 0, 0.1);
+                    stroke-opacity: 0.6;
+                }
+            }
+        }
+
+        &.selected {
+            .visiblePath {
                 opacity: 1;
             }
 
             .photo {
                 circle {
-                    stroke: rgba(100, 181, 246, 1);
-                    stroke-width: 2;
+                    fill: none;
+                    stroke-opacity: 1;
                 }
             }
         }
@@ -161,7 +254,7 @@ svg {
     position: absolute;
     width: 170px;
 
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     padding: 15px 10px;
     color: white;
     display: none;
@@ -184,5 +277,86 @@ svg {
     .shortCite {
         position: relative;
         margin-top: 20px;
+    }
+}
+
+$detailsWidth: 300px;
+$detailsHorizontalPadding: 15px;
+
+#forecastDetails {
+    right: -2 * $detailsHorizontalPadding - $detailsWidth;
+    transition: right 0.1s ease 0s;
+
+    &.shown {
+        right: 0;
+    }
+
+    position: absolute;
+    top: 0px;
+    bottom: 0;
+    width: $detailsWidth;
+
+    padding: 15px $detailsHorizontalPadding;
+
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 12px;
+
+    .start {
+        position: relative;
+    }
+
+    .result {
+        margin-top: 30px;
+        position: relative;
+    }
+
+    .date {
+        position: relative;
+        float: right;
+        right: 0px;
+        top: 0px;
+        font-size: 10px;
+    }
+
+    .name {
+        position: relative;
+        float: left;
+        left: 0px;
+        top: 0px;
+        font-size: 10px;
+    }
+
+    .title {
+        position: relative;
+        padding-top: 5px;
+        font-size: 18px;
+        line-height: 1.2em;
+        clear: both;
+    }
+
+    .cite {
+        position: relative;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    a {
+        color: rgb(81, 191, 228);
+    
+        &:visited {
+            color: rgb(209, 143, 255);
+        }
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    #hideDetails {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        cursor: pointer;
     }
 }
