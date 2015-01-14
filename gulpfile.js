@@ -22,6 +22,7 @@ var inject = require("gulp-inject");
 //  for 'data' task
 var dataGenerator = require('./server/data-generator');
 var TrendetsDb = require('./server/db');
+var quotesRetriever = require('./server/quotes-retriever');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
@@ -105,6 +106,8 @@ gulp.task('data', function () {
     db.create().then(function () {
         dataGenerator.generate('./web/js/data.js', true);
     }, console.error);
+
+    quotesRetriever.getQuotes(new Date(2014, 0, 1), new Date(2014, 11, 31)).then(console.log);
 });
 
 gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
