@@ -1,5 +1,5 @@
 
-angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute'])
+angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
 
     .controller('NavbarController', ['$scope', '$location', '$route', function ($scope, $location, $route) {
         
@@ -19,19 +19,38 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute'])
 
     }])
 
+    .service('CitationSources', ['$resource', '$q', function ($resource, $q) {
+        return $resource('/api/citation-sources');
+    }])
+
+    .controller('ForecastsController', ['$scope', function ($scope) {
+    }])
+
+    .controller('PeopleController', ['$scope', function ($scope) {
+    }])
+
+    .controller('CitationSourcesController', ['$scope', 'CitationSources', function ($scope, CitationSources) {
+
+        $scope.citationSources = CitationSources.query();
+
+    }])
+
     .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
         $routeProvider
             .when('/admin/forecasts', {
                 title: 'Прогнозы',
-                templateUrl: '/html/forecasts.html'
+                templateUrl: '/html/forecasts.html',
+                controller: 'ForecastsController'
             })
             .when('/admin/people', {
                 title: 'Люди',
-                templateUrl: '/html/people.html'
+                templateUrl: '/html/people.html',
+                controller: 'PeopleController'
             })
             .when('/admin/citation-sources', {
                 title: 'Источники',
-                templateUrl: '/html/citation-sources.html'
+                templateUrl: '/html/citation-sources.html',
+                controller: 'CitationSourcesController'
             })
             .otherwise({
                 redirectTo: '/admin/forecasts'
