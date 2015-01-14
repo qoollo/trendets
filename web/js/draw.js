@@ -144,7 +144,7 @@ function drawQuoteLinesForDays(lines, boobies, type, data) {
 function getRusQuote(type){
     switch (type) {
         case "oil":
-            return "нефть"
+            return "нефть марки Brent"
             break
         case "dollar":
             return "доллар"
