@@ -25,6 +25,7 @@ var TrendetsDb = require('./server/db');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
+var express = require('express');
 
 var settings = {
     debug: true
@@ -112,6 +113,11 @@ gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
         server: {
             baseDir: './dist'
         }
+    }, function (err, bs) {
+        if (err)
+            console.error(err);
+        else 
+            require('./server/server');
     });
 
     gulp.watch(['./web/*.html'], [
