@@ -1,4 +1,5 @@
 var express = require('express'),
+    bodyParser = require('body-parser'),
     settings = require('./settings'),
     path = require('path'),
     TrendetsDb = require('./db');
@@ -17,6 +18,9 @@ app.use(express.static(path.join(settings.path, '/web/admin')));
 /************************************************************************/
 /*                              REST API                                */
 /************************************************************************/
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 router.get('/', function (req, res) {
     res.json({ message: 'Welcome to Qoollo Trendets API' });
 });
@@ -30,6 +34,15 @@ router.route('/citation-sources')
         db.connect()
             .then(function () {
                 return db.CitationSources.all()
+            }, responseError(res))
+            .then(responseJson(res), responseError(res));
+    })
+    .post(function (req, res) {
+        var db = new TrendetsDb();
+        db.connect()
+            .then(function () {
+                console.log('Request body: ', req.body);
+                return db.CitationSources.create(req.body)
             }, responseError(res))
             .then(responseJson(res), responseError(res));
     });

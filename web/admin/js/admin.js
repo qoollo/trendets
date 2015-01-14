@@ -19,7 +19,7 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
 
     }])
 
-    .service('CitationSources', ['$resource', '$q', function ($resource, $q) {
+    .service('CitationSource', ['$resource', '$q', function ($resource, $q) {
         return $resource('/api/citation-sources');
     }])
 
@@ -29,9 +29,23 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
     .controller('PeopleController', ['$scope', function ($scope) {
     }])
 
-    .controller('CitationSourcesController', ['$scope', 'CitationSources', function ($scope, CitationSources) {
+    .controller('CitationSourcesController', ['$scope', 'CitationSource', function ($scope, CitationSource) {
 
-        $scope.citationSources = CitationSources.query();
+        $scope.citationSources = CitationSource.query();
+        $scope.activeItem = null;
+        $scope.newItem = new CitationSource();
+
+        $scope.selectItem = function (item) {
+            $scope.activeItem = item;
+        }
+        $scope.isActive = function (item) {
+            return $scope.activeItem === item;
+        }
+        $scope.addItem = function (item) {
+            item.$save();
+            $scope.citationSources.push(item);
+            $scope.newItem = new CitationSource();
+        }
 
     }])
 

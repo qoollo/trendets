@@ -1,6 +1,33 @@
 <div>
-    <h1>Источники</h1>
-    <ul>
-        <li ng-repeat="src in citationSources">{{src.name}}</li>
-    </ul>
+
+    <form class="form-inline" name="form">
+        <div class="form-group">
+            <label class="sr-only" for="src-name">Название</label>
+            <input type="text" ng-model="newItem.name" required class="form-control" id="src-name" placeholder="Название">
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="src-webcite">Вебсайт</label>
+            <input type="url" ng-model="newItem.website" class="form-control" id="src-webcite" placeholder="Вебсайт">
+        </div>
+        <button type="submit" class="btn btn-default" ng-click="addItem(newItem)" ng-disabled="!form.$valid">Добавить</button>
+    </form>
+
+    <table class="table table-stripped table-hover table-clickable">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Название</th>
+                <th>Вебсайт</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="src in citationSources" 
+                ng-click="selectItem(src)" 
+                ng-class="{active: isActive(src)}">
+                <td>{{src.id}}</td>
+                <td>{{src.name}}</td>
+                <td><a ng-href="{{src.website}}" target="_blank">{{src.website}}</a></td>
+            </tr>
+        </tbody>
+    </table>
 </div>

@@ -1,0 +1,13 @@
+.table-clickable tbody tr {
+    cursor: pointer;
+}
+
+.table-clickable tr.active td,
+.table-clickable tr.active td a,
+.table-clickable tr.active:hover td {
+    z-index: 2;
+    color: rgb(255, 255, 255);
+    background-color: rgb(66, 139, 202) !important;
+    border-color: rgb(66, 139, 202);
+    cursor: auto;
+}

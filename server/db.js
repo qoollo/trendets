@@ -264,6 +264,7 @@ function TrendetsDb(dbPath) {
 
     function promisifyModel(model) {
         promisifyFunc(model, 'all');
+        promisifyFunc(model, 'create');
     }
 
     function promisifyFunc(obj, funcName) {

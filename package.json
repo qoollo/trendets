@@ -5,6 +5,7 @@
   "main": "./server/server.js",
   "dependencies": {},
   "devDependencies": {
+    "body-parser": "^1.10.1",
     "browser-sync": "^1.8.2",
     "browserify": "^8.0.1",
     "d3": "^3.5.2",
