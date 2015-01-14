@@ -146,12 +146,12 @@ function TrendetsDb(dbPath) {
             CitationSources = db.models.CitationSources,
             Forecasts = db.models.Forecasts,
             promises = [
-                insert(Quotes, {
-                    date: new Date(),
-                    oil: 49.07,
-                    usd: 62.8,
-                    eur: 74.65
-                }),
+                //insert(Quotes, {
+                //    date: new Date(),
+                //    oil: 49.07,
+                //    usd: 62.8,
+                //    eur: 74.65
+                //}),
 
                 insert(People, [{
                     name: 'Арсений Яценюк',
@@ -264,6 +264,7 @@ function TrendetsDb(dbPath) {
 
     function promisifyModel(model) {
         promisifyFunc(model, 'all');
+        promisifyFunc(model, 'create');
     }
 
     function promisifyFunc(obj, funcName) {

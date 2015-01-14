@@ -23,6 +23,8 @@ var inject = require("gulp-inject");
 var dataGenerator = require('./server/data-generator');
 var TrendetsDb = require('./server/db');
 var quotesRetriever = require('./server/quotes-retriever');
+require('date-utils');
+var q = require('q');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
@@ -101,13 +103,43 @@ gulp.task('img', function () {
 });
 
 gulp.task('data', function () {
-    var db = new TrendetsDb();
-    db.delete();
-    db.create().then(function () {
-        dataGenerator.generate('./web/js/data.js', true);
-    }, console.error);
-
-    quotesRetriever.getQuotes(new Date(2014, 0, 1), new Date(2014, 11, 31)).then(console.log);
+    var db = new TrendetsDb(),
+        startPromise = db.exists() ? 'ok' : db.create();
+    //db.delete();
+    return q(startPromise).then(db.connect)
+                          .then(function () {
+                              return db.Quotes.all();
+                          })
+                          .then(function (quotes) {
+                              var lastQuote = quotes.sort(function (a, b) { return b.date - a.date })[0];
+                              return lastQuote;
+                          })
+                          .then(function (lastQuote) {
+                              var from = lastQuote ? lastQuote.date.addDays(1).clearTime() : new Date(2014, 0, 1),
+                                  to = Date.today();
+                              if (from < to) {
+                                  console.log('Requesting quotes from', from, 'to', to);
+                                  return quotesRetriever.getQuotes(from, to)
+                              } else {
+                                  console.log('Quotes are up to date');
+                                  return []
+                              }
+                          })
+                          .then(function (newQuotes) {
+                              var promises = [];
+                              if (newQuotes.length > 0)
+                                  console.log(newQuotes.length + ' Quotes received.');
+                              for (var i = 0; i < newQuotes.length; i++) {
+                                  promises.push(db.Quotes.create(newQuotes[i]));
+                              }
+                              return q.all(promises).then(function () {
+                                  console.log(newQuotes.length + ' Quotes inserted into db.');
+                              }, console.error);
+                          })
+                          .then(function () {
+                              console.log('Generating data file.');
+                              return dataGenerator.generate('./web/js/data.js', true);
+                          }, console.error);
 });
 
 gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
