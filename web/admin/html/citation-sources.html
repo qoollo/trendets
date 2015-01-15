@@ -27,11 +27,11 @@
                 ng-class="{active: isActive(src)}">
                 <td>{{src.id}}</td>
                 <td>
-                    <span ng-show="isInNormalMode() || !isActive(src)">{{src.name}}</span>
+                    <span ng-show="!isInEditMode() || !isActive(src)">{{src.name}}</span>
                     <input ng-show="isActive(src) && isInEditMode()" type="text" class="form-control" ng-model="src.name" required placeholder="Название" />
                 </td>
                 <td>
-                    <a ng-show="isInNormalMode() || !isActive(src)" ng-href="{{src.website}}" target="_blank">{{src.website}}</a>
+                    <a ng-show="!isInEditMode() || !isActive(src)" ng-href="{{src.website}}" target="_blank">{{src.website}}</a>
                     <input ng-show="isActive(src) && isInEditMode()" type="url" ng-model="src.website" class="form-control" placeholder="Вебсайт">
                 </td>
                 <td>
@@ -40,6 +40,9 @@
 
                     <button class="btn btn-xs btn-success" ng-show="isActive(src) && isInEditMode()" ng-click="editItem(src)">Сохранить</button>
                     <button class="btn btn-xs btn-default" ng-show="isActive(src) && isInEditMode()" ng-click="toggleEditMode()">Отмена</button>
+
+                    <button class="btn btn-xs btn-danger" ng-show="isActive(src) && isInDeleteMode()" ng-click="deleteItem(src)">Удалить</button>
+                    <button class="btn btn-xs btn-default" ng-show="isActive(src) && isInDeleteMode()" ng-click="toggleDeleteMode()">Отмена</button>
 
                 </td>
             </tr>

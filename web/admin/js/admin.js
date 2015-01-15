@@ -1,5 +1,5 @@
 
-angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
+angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnimate'])
 
     .controller('NavbarController', ['$scope', '$location', '$route', function ($scope, $location, $route) {
         
@@ -20,7 +20,7 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
     }])
 
     .service('CitationSource', ['$resource', '$q', function ($resource, $q) {
-        return $resource('/api/citation-sources');
+        return $resource('/api/citation-sources/:id', { id: '@id' });
     }])
 
     .controller('ForecastsController', ['$scope', function ($scope) {
@@ -51,6 +51,12 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
         $scope.editItem = function (item) {
             item.$save();
             $scope.toggleEditMode();
+        }
+        $scope.deleteItem = function (item) {
+            item.$delete(function () {
+                $scope.citationSources.splice($scope.citationSources.indexOf(item), 1);
+            });
+            $scope.toggleDeleteMode();
         }
         $scope.toggleEditMode = function (item) {
             if ($scope.isInEditMode())

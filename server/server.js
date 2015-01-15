@@ -53,7 +53,7 @@ router.route('/citation-sources')
                                                          //responseError(res)(err);
                                                      else
                                                          return item;
-                                                         //responseJson(res)(item);
+                                                     //responseJson(res)(item);
                                                  });
                                              });
                 } else {
@@ -61,6 +61,21 @@ router.route('/citation-sources')
                     return db.CitationSources.create(req.body);
                 }
             }, responseError(res))
+            .then(responseJson(res), responseError(res));
+    });
+router.route('/citation-sources/:id')
+    .delete(function (req, res) {
+        var db = new TrendetsDb();
+        db.connect()
+            .then(function () {
+                return db.CitationSources.get(req.params.id)
+            })
+            .then(function (item) {
+                return item.remove(function (err) {
+                    if (err)
+                        throw err;
+                })
+            })
             .then(responseJson(res), responseError(res));
     });
 function responseJson(resp) {
