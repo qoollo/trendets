@@ -42,7 +42,24 @@ router.route('/citation-sources')
         db.connect()
             .then(function () {
                 console.log('Request body: ', req.body);
-                return db.CitationSources.create(req.body)
+                if (req.body.id) {
+                    console.log('Updating CitationSource...');
+                    return db.CitationSources.get(req.body.id)
+                                             .then(function (item) {
+                                                 console.log('Found CitationSource with id =', item.id, '. Saving changes...', item);
+                                                 item.save(req.body, function (err) {
+                                                     if (err)
+                                                         throw err;
+                                                         //responseError(res)(err);
+                                                     else
+                                                         return item;
+                                                         //responseJson(res)(item);
+                                                 });
+                                             });
+                } else {
+                    console.log('Inserting CitationSource...');
+                    return db.CitationSources.create(req.body);
+                }
             }, responseError(res))
             .then(responseJson(res), responseError(res));
     });
@@ -52,8 +69,8 @@ function responseJson(resp) {
     }
 }
 function responseError(resp) {
-    return function () {
-        resp.status(500).json({ error: 'Serverside error' });
+    return function (err) {
+        resp.status(500).json({ error: 'Serverside error: ' + err });
     }
 }
 app.use('/api', router);

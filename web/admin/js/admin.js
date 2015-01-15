@@ -33,7 +33,9 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
 
         $scope.citationSources = CitationSource.query();
         $scope.activeItem = null;
-        $scope.newItem = new CitationSource();
+        $scope.toAdd = new CitationSource();
+        $scope.toEdit = null;
+        $scope.toDelete = null;
 
         $scope.selectItem = function (item) {
             $scope.activeItem = item;
@@ -44,9 +46,37 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource'])
         $scope.addItem = function (item) {
             item.$save();
             $scope.citationSources.push(item);
-            $scope.newItem = new CitationSource();
+            $scope.toAdd = new CitationSource();
         }
-
+        $scope.editItem = function (item) {
+            item.$save();
+            $scope.toggleEditMode();
+        }
+        $scope.toggleEditMode = function (item) {
+            if ($scope.isInEditMode())
+                $scope.toEdit = null;
+            else if (item !== undefined)
+                $scope.toEdit = item;
+            else
+                throw new Error('Specify item to enter edit mode.');
+        }
+        $scope.toggleDeleteMode = function (item) {
+            if ($scope.isInDeleteMode())
+                $scope.toDelete = null;
+            else if (item !== undefined)
+                $scope.toDelete = item;
+            else
+                throw new Error('Specify item to enter delete mode.');
+        }
+        $scope.isInNormalMode = function () {
+            return !$scope.isInEditMode() && !$scope.isInDeleteMode()
+        }
+        $scope.isInEditMode = function () {
+            return $scope.toEdit !== null;
+        }
+        $scope.isInDeleteMode = function () {
+            return $scope.toDelete !== null;
+        }
     }])
 
     .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {

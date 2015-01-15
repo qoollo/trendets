@@ -263,16 +263,23 @@ function TrendetsDb(dbPath) {
     }
 
     function promisifyModel(model) {
+        promisifyFunc(model, 'one');
+        promisifyFunc(model, 'get');
         promisifyFunc(model, 'all');
         promisifyFunc(model, 'create');
     }
 
     function promisifyFunc(obj, funcName) {
-        var original = {};
+        var original = {},
+            originalFunc = obj[funcName];
         original[funcName] = obj[funcName];
         obj[funcName] = function () {
-            var args = Array.prototype.slice.call(arguments);
-            return deferFunc(original, funcName, args);
+            var args = Array.prototype.slice.call(arguments),
+                d = q.defer();
+            args.push(resolveDeferred(d));
+            originalFunc.apply(obj, args);
+            return d.promise;
+            //return deferFunc(original, funcName, args);
         }
     }
 }

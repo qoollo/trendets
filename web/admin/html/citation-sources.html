@@ -3,13 +3,13 @@
     <form class="form-inline" name="form">
         <div class="form-group">
             <label class="sr-only" for="src-name">Название</label>
-            <input type="text" ng-model="newItem.name" required class="form-control" id="src-name" placeholder="Название">
+            <input type="text" ng-model="toAdd.name" required class="form-control" id="src-name" placeholder="Название">
         </div>
         <div class="form-group">
             <label class="sr-only" for="src-webcite">Вебсайт</label>
-            <input type="url" ng-model="newItem.website" class="form-control" id="src-webcite" placeholder="Вебсайт">
+            <input type="url" ng-model="toAdd.website" class="form-control" id="src-webcite" placeholder="Вебсайт">
         </div>
-        <button type="submit" class="btn btn-default" ng-click="addItem(newItem)" ng-disabled="!form.$valid">Добавить</button>
+        <button type="submit" class="btn btn-default" ng-click="addItem(toAdd)" ng-disabled="!form.$valid">Добавить</button>
     </form>
 
     <table class="table table-stripped table-hover table-clickable">
@@ -18,6 +18,7 @@
                 <th>Id</th>
                 <th>Название</th>
                 <th>Вебсайт</th>
+                <th class="col-md-2"></th>
             </tr>
         </thead>
         <tbody>
@@ -25,8 +26,22 @@
                 ng-click="selectItem(src)" 
                 ng-class="{active: isActive(src)}">
                 <td>{{src.id}}</td>
-                <td>{{src.name}}</td>
-                <td><a ng-href="{{src.website}}" target="_blank">{{src.website}}</a></td>
+                <td>
+                    <span ng-show="isInNormalMode() || !isActive(src)">{{src.name}}</span>
+                    <input ng-show="isActive(src) && isInEditMode()" type="text" class="form-control" ng-model="src.name" required placeholder="Название" />
+                </td>
+                <td>
+                    <a ng-show="isInNormalMode() || !isActive(src)" ng-href="{{src.website}}" target="_blank">{{src.website}}</a>
+                    <input ng-show="isActive(src) && isInEditMode()" type="url" ng-model="src.website" class="form-control" placeholder="Вебсайт">
+                </td>
+                <td>
+                    <button class="btn btn-xs btn-warning" ng-show="isActive(src) && isInNormalMode()" ng-click="toggleEditMode(src)">Редактировать</button>
+                    <button class="btn btn-xs btn-danger" ng-show="isActive(src) && isInNormalMode()" ng-click="toggleDeleteMode(src)">Удалить</button>
+
+                    <button class="btn btn-xs btn-success" ng-show="isActive(src) && isInEditMode()" ng-click="editItem(src)">Сохранить</button>
+                    <button class="btn btn-xs btn-default" ng-show="isActive(src) && isInEditMode()" ng-click="toggleEditMode()">Отмена</button>
+
+                </td>
             </tr>
         </tbody>
     </table>
