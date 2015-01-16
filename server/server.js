@@ -19,7 +19,7 @@ app.use(express.static(path.join(settings.path, '/web/admin')));
 /*                              REST API                                */
 /************************************************************************/
 app.use(bodyParser({ limit: '5mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 router.get('/', function (req, res) {
