@@ -28,54 +28,68 @@ router.use(function (req, res, next) {
     console.log('// [' + req.method + '] ' + req.originalUrl);
     next();
 });
-router.route('/citation-sources')
-    .get(function (req, res) {
-        var db = new TrendetsDb();
-        db.connect()
-            .then(function () {
-                return db.CitationSources.all()
-            }, responseError(res))
-            .then(responseJson(res), responseError(res));
-    })
-    .post(function (req, res) {
-        new TrendetsDb().connect()
-            .then(function (db) {
-                return db.CitationSources.create(req.body);
-            })
-            .then(responseJson(res), responseError(res));
-    });
-router.route('/citation-sources/:id')
-    .put(function (req, res) {
-        new TrendetsDb().connect()
-            .then(function (db) {
-                return db.CitationSources.get(req.params.id);
-            })
-            .then(function (item) {
-                console.log('Found CitationSource with id =', item.id, '. Saving changes...', item);
-                item.save(req.body, function (err) {
-                    if (err)
-                        responseError(res)(err);
-                    else
-                        responseJson(res)(item);
-                });
-            })
-            .catch(responseError(res))
-    })
-    .delete(function (req, res) {
-        new TrendetsDb().connect()
-            .then(function (db) {
-                return db.CitationSources.get(req.params.id)
-            })
-            .then(function (item) {
-                return item.remove(function (err) {
-                    if (err)
-                        responseError(res)(err);
-                    else
-                        responseJson(res)(item);
+
+addRestResource('Forecasts');
+addRestResource({ resource: 'citation-sources', model: 'CitationSources' });
+addRestResource('People');
+
+//  Adds REST resouce for db model with GET, POST, UPDATE, DELETE handlers
+function addRestResource(name) {
+
+    var settings = {
+        resource: name,
+        model: name
+    };
+    if (typeof name === 'object') 
+        settings = name; 
+
+    router.route('/' + settings.resource)
+        .get(function (req, res) {
+            new TrendetsDb().connect()
+                .then(function (db) {
+                    return db[settings.model].all()
                 })
-            })
-            .catch(responseError(res));
-    });
+                .then(responseJson(res), responseError(res));
+        })
+        .post(function (req, res) {
+            new TrendetsDb().connect()
+                .then(function (db) {
+                    return db[settings.model].create(req.body);
+                })
+                .then(responseJson(res), responseError(res));
+        });
+    router.route('/' + settings.resource + '/:id')
+        .put(function (req, res) {
+            new TrendetsDb().connect()
+                .then(function (db) {
+                    return db[settings.model].get(req.params.id);
+                })
+                .then(function (item) {
+                    item.save(req.body, function (err) {
+                        if (err)
+                            responseError(res)(err);
+                        else
+                            responseJson(res)(item);
+                    });
+                })
+                .catch(responseError(res))
+        })
+        .delete(function (req, res) {
+            new TrendetsDb().connect()
+                .then(function (db) {
+                    return db[settings.model].get(req.params.id)
+                })
+                .then(function (item) {
+                    return item.remove(function (err) {
+                        if (err)
+                            responseError(res)(err);
+                        else
+                            responseJson(res)(item);
+                    })
+                })
+                .catch(responseError(res));
+        });
+}
 function responseJson(resp) {
     return function (result) {
         resp.json(result);
