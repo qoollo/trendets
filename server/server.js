@@ -38,45 +38,43 @@ router.route('/citation-sources')
             .then(responseJson(res), responseError(res));
     })
     .post(function (req, res) {
-        var db = new TrendetsDb();
-        db.connect()
-            .then(function () {
-                console.log('Request body: ', req.body);
-                if (req.body.id) {
-                    console.log('Updating CitationSource...');
-                    return db.CitationSources.get(req.body.id)
-                                             .then(function (item) {
-                                                 console.log('Found CitationSource with id =', item.id, '. Saving changes...', item);
-                                                 item.save(req.body, function (err) {
-                                                     if (err)
-                                                         throw err;
-                                                         //responseError(res)(err);
-                                                     else
-                                                         return item;
-                                                     //responseJson(res)(item);
-                                                 });
-                                             });
-                } else {
-                    console.log('Inserting CitationSource...');
-                    return db.CitationSources.create(req.body);
-                }
-            }, responseError(res))
+        new TrendetsDb().connect()
+            .then(function (db) {
+                return db.CitationSources.create(req.body);
+            })
             .then(responseJson(res), responseError(res));
     });
 router.route('/citation-sources/:id')
+    .put(function (req, res) {
+        new TrendetsDb().connect()
+            .then(function (db) {
+                return db.CitationSources.get(req.params.id);
+            })
+            .then(function (item) {
+                console.log('Found CitationSource with id =', item.id, '. Saving changes...', item);
+                item.save(req.body, function (err) {
+                    if (err)
+                        responseError(res)(err);
+                    else
+                        responseJson(res)(item);
+                });
+            })
+            .catch(responseError(res))
+    })
     .delete(function (req, res) {
-        var db = new TrendetsDb();
-        db.connect()
-            .then(function () {
+        new TrendetsDb().connect()
+            .then(function (db) {
                 return db.CitationSources.get(req.params.id)
             })
             .then(function (item) {
                 return item.remove(function (err) {
                     if (err)
-                        throw err;
+                        responseError(res)(err);
+                    else
+                        responseJson(res)(item);
                 })
             })
-            .then(responseJson(res), responseError(res));
+            .catch(responseError(res));
     });
 function responseJson(resp) {
     return function (result) {
@@ -85,6 +83,8 @@ function responseJson(resp) {
 }
 function responseError(resp) {
     return function (err) {
+        if (err && ('' + err).indexOf('SQLITE_CONSTRAINT: FOREIGN KEY constraint failed') !== -1)
+            err = 'Cannot delete entry because it is referenced by other entries.';
         resp.status(500).json({ error: 'Serverside error: ' + err });
     }
 }

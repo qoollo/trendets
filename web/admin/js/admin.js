@@ -20,7 +20,10 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
     }])
 
     .service('CitationSource', ['$resource', '$q', function ($resource, $q) {
-        return $resource('/api/citation-sources/:id', { id: '@id' });
+        return $resource('/api/citation-sources/:id', { id: '@id' },
+            {
+                update: { method: 'PUT' }
+            });
     }])
 
     .controller('ForecastsController', ['$scope', function ($scope) {
@@ -60,9 +63,6 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             }
             return match.errors;
         }
-        $scope.getErrorsView = function (item) {
-            return $scope.getErrors(item);
-        };
         $scope.removeError = function (item, error) {
             var itemErrors = $scope.getErrors(item),
                 index = itemErrors.indexOf(error);
@@ -82,12 +82,20 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             return $scope.activeItem === item;
         }
         $scope.addItem = function (item) {
-            item.$save();
-            $scope.citationSources.push(item);
-            $scope.toAdd = new CitationSource();
+            item.$save()
+                .then(function () {
+                    $scope.citationSources.push(item);
+                    $scope.toAdd = new CitationSource();
+                }, function (res) {
+                    addError(item, res.data);
+                })
+                .finally(function () {
+                    stopProgress(item);
+                });
+            startProgress(item);
         }
         $scope.editItem = function (item) {
-            item.$save()
+            item.$update()
                 .catch(function (res) {
                     addError(item, res.data);
                 })
@@ -98,11 +106,11 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             $scope.toggleEditMode();
         }
         $scope.deleteItem = function (item) {
-            item.$delete(f)
+            item.$delete()
                 .then(function () {
                     $scope.citationSources.splice($scope.citationSources.indexOf(item), 1);
                 }, function (res) {
-                    addError(item, res.data);
+                    addError(item, res.data.error || res.data);
                 })
                 .finally(function () {
                     stopProgress(item);
