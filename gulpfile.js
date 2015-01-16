@@ -115,8 +115,10 @@ gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
     }, function (err, bs) {
         if (err)
             console.error(err);
-        else 
+        else {
             require('./server/server');
+            open('http://localhost:' + settings.port + '/admin');
+        }
     });
 
     gulp.watch(['./web/*.html'], [
@@ -136,7 +138,6 @@ gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
     //  'data'
     //]);
 
-    open('http://localhost:' + settings.port + '/admin');
 });
 
 gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css', 'data']);
