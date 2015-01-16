@@ -47,7 +47,7 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
 
     .service('RestClient', ['$resource', function ($resource) {
 
-        function RestClient(resourceName, dependentResources) {
+        function RestClient(resourceName, dependentResources, itemTransform) {
 
             var Resource = $resource('/api/' + resourceName + '/:id', { id: '@id' }, { update: { method: 'PUT' } }),
                 self = this;
@@ -69,8 +69,20 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
                     }.bind(this[r]);
                 }
             }
+            if (!(itemTransform instanceof Function))
+                itemTransform = function (i) { return i };
 
             this.items = Resource.query();
+
+            this.items.$promise.then(function (items) {
+                for (var i = 0; i < items.length; i++) {
+                    var index = self.items.indexOf(items[i]),
+                        transformed = itemTransform(items[i]);
+                    if (transformed)
+                        self.items[index] = transformed;
+                }
+            });
+
             this.activeItem = null;
             this.toAdd = new Resource();
             this.toEdit = null;
@@ -120,7 +132,8 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             this.addItem = function (item) {
                 item.$save()
                     .then(function () {
-                        self.items.push(item);
+                        var transformed = itemTransform(item);
+                        self.items.push(transformed || item);
                         self.toAdd = new Resource();
                     }, function (res) {
                         addError(item, res.data);
@@ -132,7 +145,12 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             }
             this.editItem = function (item) {
                 item.$update()
-                    .catch(function (res) {
+                    .then(function () {
+                        var index = self.items.indexOf(item),
+                            transformed = itemTransform(item);
+                        if (transformed)
+                            self.items[index] = transformed;
+                    }, function (res) {
                         addError(item, res.data);
                     })
                     .finally(function () {
@@ -184,13 +202,16 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
     }])
 
     .controller('ForecastsController', ['$scope', 'RestClient', function ($scope, RestClient) {
-        $scope.rest = new RestClient('forecasts', ['people', 'citation-sources']);
-        $scope.rest.items.$promise.then(function (items) {
-            for (var i = 0; i < items.length; i++) {
-                items[i].occuranceDate = new Date(items[i].occuranceDate);
-                items[i].targetDate = new Date(items[i].targetDate);
-            }
-        })
+        $scope.rest = new RestClient('forecasts', ['people', 'citation-sources'], function (i) {
+            i.occuranceDate = new Date(i.occuranceDate);
+            i.targetDate = new Date(i.targetDate);
+        });
+        //$scope.rest.items.$promise.then(function (items) {
+        //    for (var i = 0; i < items.length; i++) {
+        //        items[i].occuranceDate = new Date(items[i].occuranceDate);
+        //        items[i].targetDate = new Date(items[i].targetDate);
+        //    }
+        //})
     }])
 
     .controller('PeopleController', ['$scope', 'RestClient', function ($scope, RestClient) {
