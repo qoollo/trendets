@@ -1,0 +1,79 @@
+@import url(http://fonts.googleapis.com/css?family=Noto+Sans);
+body {
+  margin: 0; }
+
+#svgContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; }
+
+svg {
+  width: 100%;
+  height: 100%; }
+  svg #background rect {
+    stroke: none;
+    fill: url(#lgrad); }
+  svg #timeScale .day {
+    alignment-baseline: middle;
+    font-family: 'Noto Sans';
+    font-size: 10px;
+    fill: white; }
+    svg #timeScale .day text {
+      text-anchor: middle;
+      fill: rgba(255, 255, 255, 0.8); }
+  svg #timeScale .divider {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 1px; }
+  svg #timeScale .axis {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 2px; }
+  svg #timeScale .ruler-marks {
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 1px; }
+  svg #today {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 1px; }
+    svg #today .today-footprint {
+      fill: url("#footprint-gradient");
+      stroke: none; }
+  svg #graphics line {
+    stroke-width: 2px;
+    /*filter: url("#gauss-blur");*/ }
+  svg #graphics .oil {
+    stroke: #7b6b8a; }
+  svg #graphics .dollar {
+    stroke: #179ac5; }
+  svg #graphics .euro {
+    stroke: #7b37bd; }
+  svg #graphics .grid-bg {
+    fill: rgba(255, 255, 255, 0.05); }
+  svg .forecast line, svg .forecast path {
+    stroke: #eee;
+    stroke-width: 1;
+    fill: none; }
+  svg .forecast.selected line, svg .forecast.selected path {
+    stroke: blue; }
+  svg .forecastStart, svg .forecastStop {
+    stroke: #3181C3;
+    stroke-width: 3;
+    fill: rgba(255, 255, 255, 0.5); }
+  svg .photo circle {
+    fill: white;
+    stroke: #eee;
+    stroke-width: 2; }
+  svg .selected .photo circle {
+    fill: white;
+    stroke: blue;
+    stroke-width: 2; }
+
+.forecastBubble {
+  background: rgba(255, 255, 255, 0.9);
+  display: none;
+  position: absolute;
+  left: 0px;
+  width: 270px;
+  top: 340px;
+  border: 1px solid silver; }
