@@ -47,10 +47,28 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
 
     .service('RestClient', ['$resource', function ($resource) {
 
-        function RestClient(resourceName) {
+        function RestClient(resourceName, dependentResources) {
 
             var Resource = $resource('/api/' + resourceName + '/:id', { id: '@id' }, { update: { method: 'PUT' } }),
                 self = this;
+
+            if (dependentResources) {
+                for (var i = 0; i < dependentResources.length; i++) {
+                    var r = dependentResources[i];
+                    if (this[r])
+                        throw new Error('RestClient already have defined ' + r);
+                    this[r] = $resource('/api/' + r).query();
+                    this[r].find = function (search) {
+                        return this.filter(function (e) {
+                            var match = true;
+                            for (var f in search) {
+                                match &= search[f] == e[f];
+                            }
+                            return match;
+                        })
+                    }.bind(this[r]);
+                }
+            }
 
             this.items = Resource.query();
             this.activeItem = null;
@@ -165,124 +183,22 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
         return RestClient;
     }])
 
-    .controller('ForecastsController', ['$scope', function ($scope) {
+    .controller('ForecastsController', ['$scope', 'RestClient', function ($scope, RestClient) {
+        $scope.rest = new RestClient('forecasts', ['people', 'citation-sources']);
+        $scope.rest.items.$promise.then(function (items) {
+            for (var i = 0; i < items.length; i++) {
+                items[i].occuranceDate = new Date(items[i].occuranceDate);
+                items[i].targetDate = new Date(items[i].targetDate);
+            }
+        })
     }])
 
     .controller('PeopleController', ['$scope', 'RestClient', function ($scope, RestClient) {
-
-        $scope.rest = new RestClient('people')
+        $scope.rest = new RestClient('people');
     }])
 
-    .controller('CitationSourcesController', ['$scope', 'CitationSource', function ($scope, CitationSource) {
-
-        $scope.citationSources = CitationSource.query();
-        $scope.activeItem = null;
-        $scope.toAdd = new CitationSource();
-        $scope.toEdit = null;
-        $scope.toDelete = null;
-
-        var itemsInProgress = [];
-        $scope.isInProgress = function (item) {
-            return itemsInProgress.indexOf(item) !== -1;
-        }
-        function startProgress(item) {
-            itemsInProgress.push(item);
-        }
-        function stopProgress(item) {
-            itemsInProgress.splice(itemsInProgress.indexOf(item), 1);
-        }
-
-        var errors = [];
-        $scope.getErrors = function (item) {
-            var match = errors.filter(function (e) { return e.item === item })[0];
-            if (!match) {
-                match = {
-                    item: item,
-                    errors: []
-                };
-                errors.push(match);
-            }
-            return match.errors;
-        }
-        $scope.removeError = function (item, error) {
-            var itemErrors = $scope.getErrors(item),
-                index = itemErrors.indexOf(error);
-            itemErrors.splice(index, 1);
-        }
-        function addError(item, error) {
-            $scope.getErrors(item).push({
-                time: new Date(),
-                error: error
-            });
-        }
-
-        $scope.selectItem = function (item) {
-            $scope.activeItem = item;
-        }
-        $scope.isActive = function (item) {
-            return $scope.activeItem === item;
-        }
-        $scope.addItem = function (item) {
-            item.$save()
-                .then(function () {
-                    $scope.citationSources.push(item);
-                    $scope.toAdd = new CitationSource();
-                }, function (res) {
-                    addError(item, res.data);
-                })
-                .finally(function () {
-                    stopProgress(item);
-                });
-            startProgress(item);
-        }
-        $scope.editItem = function (item) {
-            item.$update()
-                .catch(function (res) {
-                    addError(item, res.data);
-                })
-                .finally(function () {
-                    stopProgress(item);
-                });
-            startProgress(item);
-            $scope.toggleEditMode();
-        }
-        $scope.deleteItem = function (item) {
-            item.$delete()
-                .then(function () {
-                    $scope.citationSources.splice($scope.citationSources.indexOf(item), 1);
-                }, function (res) {
-                    addError(item, res.data.error || res.data);
-                })
-                .finally(function () {
-                    stopProgress(item);
-                });
-            $scope.toggleDeleteMode();
-        }
-        $scope.toggleEditMode = function (item) {
-            if ($scope.isInEditMode())
-                $scope.toEdit = null;
-            else if (item !== undefined)
-                $scope.toEdit = item;
-            else
-                throw new Error('Specify item to enter edit mode.');
-        }
-        $scope.toggleDeleteMode = function (item) {
-            if ($scope.isInDeleteMode())
-                $scope.toDelete = null;
-            else if (item !== undefined)
-                $scope.toDelete = item;
-            else
-                throw new Error('Specify item to enter delete mode.');
-        }
-        $scope.isInNormalMode = function () {
-            return !$scope.isInEditMode() && !$scope.isInDeleteMode()
-        }
-        $scope.isInEditMode = function () {
-            return $scope.toEdit !== null;
-        }
-        $scope.isInDeleteMode = function () {
-            return $scope.toDelete !== null;
-        }
+    .controller('CitationSourcesController', ['$scope', 'RestClient', function ($scope, RestClient) {
+        $scope.rest = new RestClient('citation-sources');
     }])
 
     .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
