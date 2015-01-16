@@ -11,3 +11,11 @@
     border-color: rgb(66, 139, 202);
     cursor: auto;
 }
+
+.form-inline input {
+    width: 100% !important;
+}
+
+.person-photo {
+    max-width: 300px;
+}

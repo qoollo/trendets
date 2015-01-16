@@ -18,7 +18,8 @@ app.use(express.static(path.join(settings.path, '/web/admin')));
 /************************************************************************/
 /*                              REST API                                */
 /************************************************************************/
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(bodyParser.json());
 
 router.get('/', function (req, res) {
@@ -32,6 +33,7 @@ router.use(function (req, res, next) {
 addRestResource('Forecasts');
 addRestResource({ resource: 'citation-sources', model: 'CitationSources' });
 addRestResource('People');
+addRestResource('Quotes');
 
 //  Adds REST resouce for db model with GET, POST, UPDATE, DELETE handlers
 function addRestResource(name) {
