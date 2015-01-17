@@ -226,7 +226,8 @@ module.exports = {
     generate: function (destPath, fromDb) {
         var dataPromise = fromDb ? getDataFromDb() : getData();
         dataPromise.then(function (data) {
-            fs.unlinkSync(destPath);
+            if(fs.existsSync(destPath))
+                fs.unlinkSync(destPath);
             fs.writeFile(destPath, data, function (err) {
                 if (err)
                     console.error(err);
