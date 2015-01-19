@@ -101,11 +101,9 @@ function getForecasts() {
                 children[i].push(j);
             }
     }
-    //console.log('123');
 
     for (var i = forecasts.length - 1; i >= 0; i--) {
         var chI = children[i].slice();
-        //console.log(children[i].length);
         for (var j = 0; j < chI.length; j++) {
             var chJ = children[chI[j]];
             for (var k = 0; k < chJ.length; k++) {
@@ -160,6 +158,8 @@ function getDataFromDb() {
                         citationSources = results[2],
                         forecasts = results[3];
 
+                    console.log('[DataGenerator] Preparing data from db. Quotes:', quotes.length, ', People:', people.length, ', Forecasts:', forecasts.length);
+
                     for (var i = 0; i < quotes.length; i++) {
                         var c = quotes[i],
                             q = {
@@ -171,6 +171,8 @@ function getDataFromDb() {
                         quotes[i] = q;
                     }
 
+                    console.log('[DataGenerator] Quotes ready.');
+
                     for (var i = 0; i < people.length; i++) {
                         var c = people[i],
                             p = {
@@ -178,14 +180,16 @@ function getDataFromDb() {
                                 name: c.name,
                                 shortName: c.shortName,
                                 photo: c.photo,
-                            }; 
+                            };
                         people[i] = p;
                     }
+
+                    console.log('[DataGenerator] People ready.');
 
                     for (var i = 0; i < forecasts.length; i++) {
                         var c = forecasts[i],
                             s = citationSources.filter(function (e) { return e.id == c.citationSourceId })[0],
-                            source =  s ? {
+                            source = s ? {
                                 name: s.name,
                                 link: s.website
                             } : null,
@@ -212,6 +216,8 @@ function getDataFromDb() {
                         forecasts[i] = f;
                     }
 
+                    console.log('[DataGenerator] Forecasts ready.');
+
                     return getFileContents({
                         quotes: quotes,
                         forecasts: forecasts,
@@ -224,15 +230,22 @@ function getDataFromDb() {
 
 module.exports = {
     generate: function (destPath, fromDb) {
-        var dataPromise = fromDb ? getDataFromDb() : getData();
+        var dataPromise = fromDb ? getDataFromDb() : getData(),
+            d = q.defer();
         dataPromise.then(function (data) {
-            fs.unlinkSync(destPath);
+            console.log('[DataGenerator] Writing data file...');
             fs.writeFile(destPath, data, function (err) {
-                if (err)
+                if (err) {
                     console.error(err);
-                else
-                    console.info(destPath + " file generated.");
+                    d.reject(err);
+                }
+                else {
+                    console.info('[DataGenerator] Data file generated at', destPath);
+                    d.resolve();
+                }
             });
+
         }, console.error);
+        return d.promise;
     }
 }

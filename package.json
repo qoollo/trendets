@@ -10,6 +10,7 @@
     "browserify": "^8.0.1",
     "d3": "^3.5.2",
     "express": "^4.11.0",
+    "date-utils": "^1.2.16",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.0.0",
     "gulp-concat": "^2.4.2",
@@ -22,9 +23,11 @@
     "open": "0.0.5",
     "orm": "^2.1.21",
     "q": "^1.1.2",
+    "request": "^2.51.0",
     "sqlite3": "^3.0.4",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "xml-parser": "^1.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
