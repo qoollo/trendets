@@ -25,10 +25,10 @@ var TrendetsDb = require('./server/db');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
+var open = require('open');
+var settings = require('./server/settings');
 
-var settings = {
-    debug: true
-}
+settings.debug = true;
 
 gulp.task('default', function () {
     // place code for your default task here
@@ -112,6 +112,13 @@ gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
         server: {
             baseDir: './dist'
         }
+    }, function (err, bs) {
+        if (err)
+            console.error(err);
+        else {
+            require('./server/server');
+            open('http://localhost:' + settings.port + '/admin');
+        }
     });
 
     gulp.watch(['./web/*.html'], [
@@ -130,6 +137,7 @@ gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {
     //gulp.watch(['./server/data-generator.js'], [
     //  'data'
     //]);
+
 });
 
 gulp.task('release', ['_set-release-mode', 'html', 'javascript', 'css', 'data']);
