@@ -6,7 +6,7 @@
     <ProjectGuid>{3cb996a8-e8ff-43d5-a7b3-97710a78e625}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <ProjectView>ShowAllFiles</ProjectView>
+    <ProjectView>ProjectFiles</ProjectView>
     <StartupFile>server\server.js</StartupFile>
     <WorkingDirectory>../</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="server\data-generator.js" />
     <Compile Include="server\db.js" />
+    <Compile Include="server\quotes-retriever.js" />
     <Compile Include="server\server.js" />
     <Compile Include="server\settings.js" />
     <Compile Include="web\admin\js\admin.js" />
