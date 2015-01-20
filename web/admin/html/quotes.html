@@ -1,0 +1,22 @@
+<div>
+    <table class="table table-stripped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Дата</th>
+                <th>Доллар</th>
+                <th>Евро</th>
+                <th>Баррель нефти Brent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="src in rest.items">
+                <td>{{src.id}}</td>
+                <td>{{src.date|date:'dd MMMM yyyy'}}</td>
+                <td>{{src.usd}}</td>
+                <td>{{src.eur}}</td>
+                <td>{{src.oil}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
