@@ -45,9 +45,19 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             });
     }])
 
-    .service('RestClient', ['$resource', function ($resource) {
+    .service('RestClient', ['$resource', '$cacheFactory', function ($resource, $cacheFactory) {
+        
+        var cache = $cacheFactory('RestClient');
 
         function RestClient(resourceName, dependentResources, itemTransform) {
+            
+            var key = resourceName + (dependentResources || '[]') + (itemTransform || 'function () {}'),
+                cached = cache.get(key);
+            
+            if (cached)
+                return cached;
+            else
+                cache.put(key, this);
 
             var Resource = $resource('/api/' + resourceName + '/:id', { id: '@id' }, { update: { method: 'PUT' } }),
                 self = this;
@@ -57,7 +67,8 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
                     var r = dependentResources[i];
                     if (this[r])
                         throw new Error('RestClient already have defined ' + r);
-                    this[r] = $resource('/api/' + r).query();
+                    var childRest = new RestClient(r);
+                    this[r] = childRest.items;
                     this[r].find = function (search) {
                         return this.filter(function (e) {
                             var match = true;
@@ -222,6 +233,10 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
         $scope.rest = new RestClient('citation-sources');
     }])
 
+    .controller('QuotesController', ['$scope', 'RestClient', function ($scope, RestClient) {
+        $scope.rest = new RestClient('quotes');
+    }])
+
     .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
         $routeProvider
             .when('/admin/forecasts', {
@@ -238,6 +253,11 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
                 title: 'Источники',
                 templateUrl: '/html/citation-sources.html',
                 controller: 'CitationSourcesController'
+            })
+            .when('/admin/quotes', {
+                title: 'Котировки',
+                templateUrl: '/html/quotes.html',
+                controller: 'QuotesController'
             })
             .otherwise({
                 redirectTo: '/admin/forecasts'
