@@ -192,41 +192,43 @@ function getDataFromDb() {
 
                     // Generate images sprite
                     removeOneFile(__dirname + '/../web/img/sprite.png'); // remove existing sprite image
-                    removeOneFile(__dirname + '/../web/css/sprite.css'); // remove existing sprite css
-                    fs.exists(__dirname + '/temp_images', function(exists) {
-                        if (exists) {
-                            deleteFolderRecursive(__dirname + '/temp_images');
-                            createSprite();
-                        }
-                        else {
-                            createSprite();
-                        }
-                    });
-
+                    removeOneFile(__dirname + '/../web/scss/sprite.css'); // remove existing sprite css
+                    // deleteFolderRecursive(__dirname + '/temp_images').then(function(){
+                    //     createSprite();
+                    // });
+                    deleteFolderRecursive(__dirname + '/temp_images');
+                    createSprite();
                     function createSprite() {
-                        fs.mkdir(__dirname + '/temp_images', function(err){
+                        fs.mkdirSync(__dirname + '/temp_images', function(err){
                             console.log(err);
                         });
                         for (var i = 0; i < people.length; i++) {
                             var base64Data = people[i].photo.replace(/^data:image\/png;base64,/, "");
-                            fs.writeFile(__dirname + "/temp_images/photo_" + people[i].id + ".png", base64Data, 'base64', function(err) {
+                            fs.writeFileSync(__dirname + "/temp_images/photo_" + people[i].id + ".png", base64Data, 'base64', function(err) {
                                 console.log(err);
                             });
                         }
                         var spriteData = 
-                            gulp.src(__dirname + "/temp_images/*")
+                            gulp.src(__dirname + "/temp_images/*.png")
                                 .pipe(spritesmith({
                                     imgName: 'sprite.png',
                                     cssName: 'sprite.css'
                                 }));
                         spriteData.img.pipe(gulp.dest(__dirname + '/../web/img/'));
-                        spriteData.css.pipe(gulp.dest(__dirname + '/../web/css/'));
+                        spriteData.css.pipe(gulp.dest(__dirname + '/../web/scss/'));
                     }
                     
                     function deleteFolderRecursive(path) {
-                        rimraf.sync(path, function(err) {
-                            console.log(err);
-                        })
+                        // var d = q.defer();
+                        fs.exists(path, function(exists) {
+                            if (exists) {
+                                rimraf.sync(path, function(err) {
+                                    console.log(err);
+                                });
+                            }
+                        });
+
+                        // return d.promise;
                     };
 
                     function removeOneFile(path) {
