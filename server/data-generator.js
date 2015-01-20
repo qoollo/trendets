@@ -3,6 +3,9 @@ var coordinator = require('../web/js/coordinator');
 var d3 = require('d3');
 var TrendetsDb = require('./db');
 var q = require('q');
+var spritesmith = require('gulp.spritesmith');
+var gulp = require('gulp');
+var rimraf = require('rimraf');
 
 function getQuotes() {
     var quotes = [];
@@ -185,6 +188,60 @@ function getDataFromDb() {
                     }
 
                     console.log('[DataGenerator] People ready.');
+                    
+
+                    // Generate images sprite
+                    removeOneFile(__dirname + '/../web/img/sprite.png'); // remove existing sprite image
+                    removeOneFile(__dirname + '/../web/css/sprite.css'); // remove existing sprite css
+                    fs.exists(__dirname + '/temp_images', function(exists) {
+                        if (exists) {
+                            deleteFolderRecursive(__dirname + '/temp_images');
+                            createSprite();
+                        }
+                        else {
+                            createSprite();
+                        }
+                    });
+
+                    function createSprite() {
+                        fs.mkdir(__dirname + '/temp_images', function(err){
+                            console.log(err);
+                        });
+                        for (var i = 0; i < people.length; i++) {
+                            var base64Data = people[i].photo.replace(/^data:image\/png;base64,/, "");
+                            fs.writeFile(__dirname + "/temp_images/photo_" + people[i].id + ".png", base64Data, 'base64', function(err) {
+                                console.log(err);
+                            });
+                        }
+                        var spriteData = 
+                            gulp.src(__dirname + "/temp_images/*")
+                                .pipe(spritesmith({
+                                    imgName: 'sprite.png',
+                                    cssName: 'sprite.css'
+                                }));
+                        spriteData.img.pipe(gulp.dest(__dirname + '/../web/img/'));
+                        spriteData.css.pipe(gulp.dest(__dirname + '/../web/css/'));
+                    }
+                    
+                    function deleteFolderRecursive(path) {
+                        rimraf.sync(path, function(err) {
+                            console.log(err);
+                        })
+                    };
+
+                    function removeOneFile(path) {
+                        fs.exists(path, function(exists){
+                            if (exists) {
+                                fs.unlinkSync(path, function(err){
+                                    console.log(err);
+                                });
+                            };
+                        });
+                    };
+
+
+
+
 
                     for (var i = 0; i < forecasts.length; i++) {
                         var c = forecasts[i],
