@@ -165,13 +165,13 @@ function getDataFromDb() {
 
                     for (var i = 0; i < quotes.length; i++) {
                         var c = quotes[i],
-                            q = {
+                            cq = {
                                 day: c.date,
                                 oil: c.oil,
                                 dollar: c.usd,
                                 euro: c.eur
                             };
-                        quotes[i] = q;
+                        quotes[i] = cq;
                     }
 
                     console.log('[DataGenerator] Quotes ready.');
@@ -193,11 +193,11 @@ function getDataFromDb() {
                     // Generate images sprite
                     removeOneFile(__dirname + '/../web/img/sprite.png'); // remove existing sprite image
                     removeOneFile(__dirname + '/../web/scss/sprite.css'); // remove existing sprite css
-                    // deleteFolderRecursive(__dirname + '/temp_images').then(function(){
-                    //     createSprite();
-                    // });
-                    deleteFolderRecursive(__dirname + '/temp_images');
-                    createSprite();
+                    deleteFolderRecursive(__dirname + '/temp_images').then(function(){
+                        console.log('[SpriteGenerator] Creating sprite.');
+                        createSprite();
+                    });
+
                     function createSprite() {
                         fs.mkdirSync(__dirname + '/temp_images', function(err){
                             console.log(err);
@@ -215,20 +215,28 @@ function getDataFromDb() {
                                     cssName: 'sprite.css'
                                 }));
                         spriteData.img.pipe(gulp.dest(__dirname + '/../web/img/'));
+                        console.log('[SpriteGenerator] Sprite image created at'+__dirname + '/../web/img/');
                         spriteData.css.pipe(gulp.dest(__dirname + '/../web/scss/'));
+                        console.log('[SpriteGenerator] Sprite css created at'+__dirname + '/../web/scss/');
                     }
                     
                     function deleteFolderRecursive(path) {
-                        // var d = require('q').defer();
+                        var d = q.defer();
                         fs.exists(path, function(exists) {
                             if (exists) {
-                                rimraf.sync(path, function(err) {
-                                    console.log(err);
+                                rimraf(path, function(err) {
+                                    if (err) {
+                                        console.log(err);
+                                        d.reject(err);
+                                    } else {
+                                        d.resolve();
+                                    }
                                 });
+                            } else {
+                                d.resolve();
                             }
                         });
-                        // d.resolve(true);
-                        // return d.promise;
+                        return d.promise;
                     };
 
                     function removeOneFile(path) {
@@ -240,9 +248,6 @@ function getDataFromDb() {
                             };
                         });
                     };
-
-
-
 
 
                     for (var i = 0; i < forecasts.length; i++) {
