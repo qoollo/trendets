@@ -43,3 +43,20 @@ Also you can use
 $ gulp develop
 ```
 This task also starts server and opens admin page in your browser.
+
+
+## Database
+
+### Migrations
+
+Migrations are managed with [db-migrate](https://www.npmjs.com/package/db-migrate). To install it run
+```sh
+$ npm install -g db-migrate
+```
+
+Create, up and down migrations using following commands:
+```
+$ db-migrate create MIGRATION_NAME --sql-file --config=./server/database.json --migrations-dir=./server/migrations
+$ db-migrate up
+$ db-migrate down
+```
