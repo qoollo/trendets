@@ -233,6 +233,8 @@ module.exports = {
         var dataPromise = fromDb ? getDataFromDb() : getData(),
             d = q.defer();
         dataPromise.then(function (data) {
+            if(fs.existsSync(destPath))
+                fs.unlinkSync(destPath);
             console.log('[DataGenerator] Writing data file...');
             fs.writeFile(destPath, data, function (err) {
                 if (err) {
