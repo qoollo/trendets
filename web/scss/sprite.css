@@ -5,33 +5,45 @@ Icon classes can be used entirely standalone. They are named after their origina
 <i class="icon-home"></i>
 ```
 */
-.icon-photo_3 {
+.icon-photo_10 {
   background-image: url(../img/sprite.png);
   background-position: 0px 0px;
   width: 37px;
   height: 37px;
 }
-.icon-photo_4 {
+.icon-photo_3 {
   background-image: url(../img/sprite.png);
   background-position: -37px 0px;
   width: 37px;
   height: 37px;
 }
-.icon-photo_5 {
+.icon-photo_4 {
   background-image: url(../img/sprite.png);
   background-position: 0px -37px;
   width: 37px;
   height: 37px;
 }
-.icon-photo_6 {
+.icon-photo_5 {
   background-image: url(../img/sprite.png);
   background-position: -37px -37px;
   width: 37px;
   height: 37px;
 }
-.icon-photo_7 {
+.icon-photo_6 {
   background-image: url(../img/sprite.png);
   background-position: -74px 0px;
+  width: 37px;
+  height: 37px;
+}
+.icon-photo_7 {
+  background-image: url(../img/sprite.png);
+  background-position: -74px -37px;
+  width: 37px;
+  height: 37px;
+}
+.icon-photo_9 {
+  background-image: url(../img/sprite.png);
+  background-position: 0px -74px;
   width: 37px;
   height: 37px;
 }

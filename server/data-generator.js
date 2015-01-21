@@ -215,9 +215,9 @@ function getDataFromDb() {
                                     cssName: 'sprite.css'
                                 }));
                         spriteData.img.pipe(gulp.dest(__dirname + '/../web/img/'));
-                        console.log('[SpriteGenerator] Sprite image created at'+__dirname + '/../web/img/');
+                        console.log('[SpriteGenerator] Sprite image created in '+__dirname + '/../web/img/');
                         spriteData.css.pipe(gulp.dest(__dirname + '/../web/scss/'));
-                        console.log('[SpriteGenerator] Sprite css created at'+__dirname + '/../web/scss/');
+                        console.log('[SpriteGenerator] Sprite css created in '+__dirname + '/../web/scss/');
                     }
                     
                     function deleteFolderRecursive(path) {
@@ -240,13 +240,22 @@ function getDataFromDb() {
                     };
 
                     function removeOneFile(path) {
+                        var d = q.defer();
                         fs.exists(path, function(exists){
                             if (exists) {
                                 fs.unlinkSync(path, function(err){
-                                    console.log(err);
+                                    if (err) {
+                                        console.log(err);
+                                        d.reject(err);
+                                    } else {
+                                        d.resolve();
+                                    }
                                 });
-                            };
+                            } else {
+                                d.resolve();
+                            }
                         });
+                        return d.promise;
                     };
 
 
