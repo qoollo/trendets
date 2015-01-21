@@ -38,13 +38,6 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
         }
     }])
 
-    .service('CitationSource', ['$resource', '$q', function ($resource, $q) {
-        return $resource('/api/citation-sources/:id', { id: '@id' },
-            {
-                update: { method: 'PUT' }
-            });
-    }])
-
     .service('RestClient', ['$resource', '$cacheFactory', function ($resource, $cacheFactory) {
         
         var cache = $cacheFactory('RestClient');
@@ -217,12 +210,6 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             i.occuranceDate = new Date(i.occuranceDate);
             i.targetDate = new Date(i.targetDate);
         });
-        //$scope.rest.items.$promise.then(function (items) {
-        //    for (var i = 0; i < items.length; i++) {
-        //        items[i].occuranceDate = new Date(items[i].occuranceDate);
-        //        items[i].targetDate = new Date(items[i].targetDate);
-        //    }
-        //})
     }])
 
     .controller('PeopleController', ['$scope', 'RestClient', function ($scope, RestClient) {
