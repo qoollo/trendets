@@ -1,6 +1,11 @@
 @import url(http://fonts.googleapis.com/css?family=Noto+Sans);
+@import "sprite.css";
 
 $forecastColor: #3181C3;
+
+h1 {
+    font-size: 10px;
+}
 
 body {
     margin: 0;

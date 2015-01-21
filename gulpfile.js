@@ -78,7 +78,7 @@ var getName = function () {
 }
 
 gulp.task('css', function () {
-    return gulp.src('./web/scss/*.scss')
+    return gulp.src('./web/scss/*')
                .pipe(sass({ onError: function (e) { console.log(e); } }))
                .pipe(autoprefixer("last 2 versions", "> 1%", "ie 8"))
                .pipe(prettify())

@@ -211,7 +211,7 @@ function getDataFromDb() {
                         var spriteData = 
                             gulp.src(__dirname + "/temp_images/*.png")
                                 .pipe(spritesmith({
-                                    imgName: 'sprite.png',
+                                    imgName: '../img/sprite.png',
                                     cssName: 'sprite.css'
                                 }));
                         spriteData.img.pipe(gulp.dest(__dirname + '/../web/img/'));
@@ -219,7 +219,7 @@ function getDataFromDb() {
                     }
                     
                     function deleteFolderRecursive(path) {
-                        // var d = q.defer();
+                        // var d = require('q').defer();
                         fs.exists(path, function(exists) {
                             if (exists) {
                                 rimraf.sync(path, function(err) {
@@ -227,7 +227,7 @@ function getDataFromDb() {
                                 });
                             }
                         });
-
+                        // d.resolve(true);
                         // return d.promise;
                     };
 
