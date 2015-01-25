@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var prettify = require('gulp-jsbeautifier');
 var gulpif = require('gulp-if');
+var argv = require('yargs').argv;
 
 //  for 'javascript' task
 var browserify = require('browserify');
@@ -25,6 +26,7 @@ var TrendetsDb = require('./server/db');
 var quotesRetriever = require('./server/quotes-retriever');
 require('date-utils');
 var q = require('q');
+//var DbMigrator = require('./server/db-migrator/db-migrator.js');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
@@ -140,6 +142,11 @@ gulp.task('data', function () {
                               console.log('Generating data file.');
                               return dataGenerator.generate('./web/js/data.js', true);
                           }, console.error);
+});
+
+gulp.task('create-migration', function () {
+    var migrator = new TrendetsDb().getMigrator();
+    migrator.createMigration(argv.name);
 });
 
 gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {

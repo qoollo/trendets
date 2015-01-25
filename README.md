@@ -52,6 +52,7 @@ This task also starts server and opens admin page in your browser.
 Migrations are managed with [db-migrate](https://www.npmjs.com/package/db-migrate). To install it run
 ```sh
 $ npm install -g db-migrate
+$ npm install -g sqlite3
 ```
 
 Create, up and down migrations using following commands:

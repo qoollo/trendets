@@ -19,6 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Compile Include="server\data-generator.js" />
+    <Compile Include="server\db-migrator\db-migrator.js" />
+    <Compile Include="server\db-migrator\drivers\sqlite3.js" />
+    <Compile Include="server\db-migrator\index.js" />
+    <Compile Include="server\db-migrator\migration-file-content.js" />
+    <Compile Include="server\db-migrator\migration-file.js" />
+    <Compile Include="server\db-migrator\migration-files-manager.js" />
+    <Compile Include="server\db-migrator\migration-history.js" />
     <Compile Include="server\db.js" />
     <Compile Include="server\quotes-retriever.js" />
     <Compile Include="server\server.js" />
@@ -47,6 +54,7 @@
     <Content Include="web\admin\html\admin.html" />
     <Content Include="web\admin\html\citation-sources.html" />
     <Content Include="web\admin\html\forecasts.html" />
+    <Content Include="web\admin\html\quotes.html" />
     <Content Include="web\admin\html\people.html" />
     <Content Include="web\css\main.css" />
     <Content Include="web\img\central_bank.jpg" />
@@ -61,6 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="server\" />
+    <Folder Include="server\db-migrator\" />
+    <Folder Include="server\db-migrator\drivers\" />
     <Folder Include="web\" />
     <Folder Include="web\.sass-cache\" />
     <Folder Include="web\.sass-cache\ce2bc8ac43b2ae6c10540462629c2393fbdb2a98\" />
