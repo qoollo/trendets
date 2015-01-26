@@ -13,9 +13,13 @@ function MigrationFile(runnerFilePath, logger) {
         fs.writeFileSync(upFilePath, '/*    SQL migration code here     */');
         fs.writeFileSync(downFilePath, '/*    SQL migration rollback code here     */');
     }
-    this.up = function up(driver) {
+    this.up = function up(driver, force) {
         logger.info('Applying migration ' + self.name);
-        return require(self.path).up(driver);
+        return require(self.path).up(driver)
+            .catch(function () {
+                logger.debug('Migration ' + self.name + ' failed to apply, but "force" flag was supplied so that it will be assumed success.');
+                return true;
+            });
     }
     this.down = function down(driver) {
         logger.info('Rolling back migration ' + self.name);

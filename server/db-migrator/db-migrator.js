@@ -22,24 +22,30 @@ function DbMigrator(config) {
         return migrationsManager.createMigration(migrationName);
     }
     
-    function updateDatabase() {
+    function updateDatabase(targetMigration, force) {
         return getPendingMigrations()
             .then(function (migrations) {
+                if (targetMigration) {
+                    var match = migrations.filter(function (e) { return e.name == targetMigration })[0],
+                        index = migrations.indexOf(match);
+                    if (index !== -1)
+                        migrations = migrations.slice(0, index + 1);
+                }
                 if (migrations.length)
-                    return applyMigrations(migrations);
-                return logger.info('Databse is up to date. No pending migrations to apply.');
+                    return applyMigrations(migrations, force);
+                return logger.info('Database is up to date. No pending migrations to apply.');
             });
     }
     
-    function applyMigrations(migrations, deferred) {
+    function applyMigrations(migrations, force, deferred) {
         var m = migrations.shift(),
             d = deferred || Q.defer();
         if (m) {
-            m.up(driver)
+            m.up(driver, force)
                 .then(function (appliedScript) {
                     return migrationHistory.addToHistory({ name: m.name, script: appliedScript })
                         .then(function () {
-                            return applyMigrations(migrations, d);
+                            return applyMigrations(migrations, force, d);
                         }, function () {
                             d.reject('Failed to apply migration ' + m.name + ': ' + err);
                         });
