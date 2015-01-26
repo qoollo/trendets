@@ -16,9 +16,12 @@ function MigrationFile(runnerFilePath, logger) {
     this.up = function up(driver, force) {
         logger.info('Applying migration ' + self.name);
         return require(self.path).up(driver)
-            .catch(function () {
-                logger.debug('Migration ' + self.name + ' failed to apply, but "force" flag was supplied so that it will be assumed success.');
-                return true;
+            .catch(function (err) {
+                if (force) {
+                    logger.debug('Migration ' + self.name + ' failed to apply, but "force" flag was supplied so that it will be assumed success.');
+                    return true;
+                }
+                else throw new Error(err);
             });
     }
     this.down = function down(driver) {
