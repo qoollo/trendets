@@ -15,11 +15,20 @@ function SqliteDriver(config, logger) {
         return new TransactionDatabase(new sqlite3.Database(config.filename));
     }
     
+    function disconnect(db) {
+        logger.trace('Closing connection to SQLite database at ' + config.filename + '...')
+        db.close(function (err) {
+            if (err)
+                logger.error('Failed to close connection to SQLite database at ' + config.filename + '.')
+            logger.trace('Connection to SQLite database at ' + config.filename + ' closed.')
+        });
+    }
+    
     function all(query) {
         var db = connect(),
             d = Q.defer();
         db.all(query, function (err, rows) {
-            db.close();
+            disconnect(db);
             if (err) {
                 logger.error(err);
                 d.reject(err)
@@ -35,7 +44,7 @@ function SqliteDriver(config, logger) {
             args = Array.prototype.slice.call(arguments, 1);
         args.unshift(query);
         args.push(function (err, res) {
-            db.close();
+            disconnect(db);
             if (err) {
                 logger.error(err);
                 d.reject(err)
@@ -57,12 +66,12 @@ function SqliteDriver(config, logger) {
             } 
             transaction.exec(query, function (err, rows) {
                 if (err) {
-                    db.close();
+                    disconnect(db);
                     logger.error(err);
                     return d.reject(err);
                 } 
                 transaction.commit(function (err) {
-                    db.close();
+                    disconnect(db);
                     if (err) {
                         logger.error('Failed to commit transaction: ' + err);
                         return d.reject(err);
@@ -81,7 +90,7 @@ function SqliteDriver(config, logger) {
             d = Q.defer();
         logger.trace('Checking if table ' + tableName + ' exists...');
         db.get(query, function (err, row) {
-            db.close();
+            disconnect(db);
             if (err) {
                 logger.error('Failed to check whether table exists' + err);
                 d.reject(err);
@@ -110,12 +119,13 @@ function SqliteDriver(config, logger) {
         query = query.substring(0, query.length - 2) + ');';
         logger.trace('Creating table ' + name + '...');
         db.run(query, function (err) {
-            db.close();
+            disconnect(db);
             if (err) {
                 logger.error('Failed to create table: ' + err);
                 d.reject(err);
             } else {
                 logger.trace('Table ' + name + ' created.');
+                d.resolve();
             }
         });
         return d.promise;

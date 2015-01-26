@@ -61,7 +61,7 @@ function TrendetsDb(dbPath) {
                 filename: dbPath
             },
             logger: {
-                level: 'trace'
+                level: 'debug'
             }
         });
 
