@@ -105,7 +105,7 @@ gulp.task('img', function () {
                .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('data', function () {
+gulp.task('data', ['update-database'], function () {
     var db = new TrendetsDb(),
         startPromise = db.exists() ? 'ok' : db.create();
     //db.delete();
