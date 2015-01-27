@@ -7,12 +7,15 @@
                 <select ng-model="rest.toAdd.personId" ng-options="p.id as p.name for p in rest.people" class="form-control"></select>
             </div>
         </div>
-        <div class="form-group">
-            <label for="toadd-source" class="col-sm-2 control-label">Источник</label>
-            <div class="col-sm-10">
+		<div class="form-group">
+			<label for="toadd-title" class="col-sm-2 control-label">Ссылка</label>
+			<div class="col-sm-7">
+				<input type="text" ng-model="rest.toAdd.citationLink" class="form-control" ng-change="onCitationLinkChanged(rest.toAdd)" />
+			</div>
+            <div class="col-sm-3">
                 <select ng-model="rest.toAdd.citationSourceId" ng-options="s.id as s.name for s in rest['citation-sources']" class="form-control"></select>
             </div>
-        </div>
+		</div>
         <div class="form-group">
             <label for="toadd-title" class="col-sm-2 control-label">Заголовок</label>
             <div class="col-sm-10">
@@ -20,15 +23,9 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="toadd-shortcite" class="col-sm-2 control-label">Краткая цитата</label>
+            <label for="toadd-cite" class="col-sm-2 control-label">Цитата</label>
             <div class="col-sm-10">
-                <input type="text" ng-model="rest.toAdd.shortCite" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="toadd-cite" class="col-sm-2 control-label">Полная цитата</label>
-            <div class="col-sm-10">
-                <textarea ng-model="rest.toAdd.cite" class="form-control" />
+                <textarea ng-model="rest.toAdd.cite" class="form-control" placeholder="Цитата"/>
             </div>
         </div>
         <div class="form-group">
@@ -68,7 +65,6 @@
                 <th>Дата</th>
                 <th>Прогнозируемая дата</th>
                 <th>Человек</th>
-                <th>Источник</th>
                 <th>Заголовок</th>
                 <th class="col-md-2"></th>
             </tr>
@@ -91,10 +87,6 @@
                     <select ng-show="rest.isActive(src) && rest.isInEditMode()" ng-model="src.personId" ng-options="p.id as p.shortName for p in rest.people" class="form-control"></select>
                 </td>
                 <td>
-                    <span ng-show="!rest.isInEditMode() || !rest.isActive(src)">{{rest['citation-sources'].find({id:src.citationSourceId})[0].name}}</span>
-                    <select ng-show="rest.isActive(src) && rest.isInEditMode()" ng-model="src.citationSourceId" ng-options="s.id as s.name for s in rest['citation-sources']" class="form-control"></select>
-                </td>
-                <td>
                     <span ng-show="!rest.isInEditMode() || !rest.isActive(src)">{{src.title}}</span>
                     <input ng-show="rest.isActive(src) && rest.isInEditMode()" type="text" class="form-control" ng-model="src.title" placeholder="Заголовок"/>
                 </td>
@@ -111,15 +103,21 @@
                 </td>
             </tr>
             <tr ng-show="rest.isActive(src) && rest.isInEditMode()" ng-class="{active: rest.isActive(src)}">
-                <td colspan="3">
-                    <label>Краткая цитата:</label>
-                    <input type="text" class="form-control" ng-model="src.shortCite" placeholder="Краткая цитата" />
+                <td colspan="5">
+                    <label>Ссылка:</label>
+                    <input type="url" class="form-control" ng-model="src.citationLink" placeholder="Ссылка" />
                 </td>
-                <td colspan="4">
-                    <label>Полная цитата:</label>
-                    <textarea class="form-control" ng-model="src.cite" placeholder="Полная цитата" />
-                </td>
+				<td>
+					<label>Источник:</label>
+					<select ng-model="src.citationSourceId" ng-options="s.id as s.name for s in rest['citation-sources']" class="form-control"></select>
+				</td>
             </tr>
+			<tr ng-show="rest.isActive(src) && rest.isInEditMode()" ng-class="{active: rest.isActive(src)}">
+				<td colspan="6">
+					<label>Цитата:</label>
+					<textarea class="form-control" ng-model="src.cite" placeholder="Цитата" />
+				</td>
+			</tr>
             <tr ng-repeat="e in rest.getErrors(src)">
                 <td colspan="100">
                     <div class="alert alert-danger" role="alert">

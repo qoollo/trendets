@@ -138,9 +138,9 @@ function TrendetsDb(dbPath) {
             targetDate: { type: 'date' },
             personId: { type: 'number' },
             citationSourceId: { type: 'number' },
+            citationLink: { type: 'text' },
             title: { type: 'text' },
             cite: { type: 'text' },
-            shortCite: { type: 'text' },
         }));
 
         Forecasts.hasOne('person', People, { field: 'personId' });
