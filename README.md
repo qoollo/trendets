@@ -43,3 +43,28 @@ Also you can use
 $ gulp develop
 ```
 This task also starts server and opens admin page in your browser.
+
+
+## Database
+
+### Migrations
+
+**Add Migration**
+
+Migrations are sql-based. To add to migration run the following command
+```sh
+$ gulp add-migration --name MIGRATION_NAME
+```
+New migration will be generated. Migration consists of 3 files: up (sql), down (sql) and runner (js).
+Having 'add-migration' task executed you will see generated files paths in terminal. Write migration
+sql to up file and that's it.
+
+
+**Update Database**
+
+Update database to the latest version by executing 
+```sh
+$ gulp update-database
+```
+This task is executed during 'data' task therefore database you don't need to do it unless you want to debug 
+migration I guess.

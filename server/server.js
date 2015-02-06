@@ -5,6 +5,7 @@ var express = require('express'),
     TrendetsDb = require('./db');
 
 console.log('Starting Express server...');
+require('./db.js');
 
 var app = express(),
     router = express.Router();

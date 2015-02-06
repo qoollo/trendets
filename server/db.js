@@ -3,6 +3,7 @@ var path = require('path');
 var sqlite3 = require('sqlite3').verbose();
 var orm = require("orm");
 var q = require('q');
+var DbMigrator = require('./db-migrator');
 
 var defaultDbPath = path.join(__dirname, 'trendets.db');
 
@@ -10,7 +11,8 @@ function TrendetsDb(dbPath) {
 
     dbPath = dbPath || defaultDbPath;
 
-    var self = this;
+    var self = this,
+        connection = null;
 
     this.connect = function () {
         var d = q.defer();
@@ -52,10 +54,33 @@ function TrendetsDb(dbPath) {
             console.info('Database at ' + dbPath + ' not found - nothing to delete.');
     }
 
+    this.getMigrator = function getMigrator() {
+        return new DbMigrator({
+            migrationsDir: path.join(__dirname, 'migrations'),
+            database: {
+                filename: dbPath
+            },
+            logger: {
+                level: 'debug'
+            }
+        });
+
+        //return connect().then(function (db) {
+        //    return new TrendetsDbMigrator(db);
+        //});
+    }
+
     function connect() {
         var d = q.defer();
+        if (connection !== null) {
+            d.resolve(connection);
+            return d.promise;
+        }
         orm.connect('sqlite://' + dbPath, resolveDeferred(d));
-        return d.promise.then(turnForeignKeysOn);
+        return d.promise.then(function (db) {
+            connection = db;
+            return db;
+        }).then(turnForeignKeysOn);
     }
 
     function turnForeignKeysOn(db) {
@@ -68,7 +93,9 @@ function TrendetsDb(dbPath) {
     function disconnect(db) {
         var d = q.defer();
         db.close(resolveDeferred(d));
-        return d.promise;
+        return d.promise.then(function () {
+            connection = null;
+        });
     }
 
     function createTables(db) {
@@ -111,9 +138,9 @@ function TrendetsDb(dbPath) {
             targetDate: { type: 'date' },
             personId: { type: 'number' },
             citationSourceId: { type: 'number' },
+            citationLink: { type: 'text' },
             title: { type: 'text' },
             cite: { type: 'text' },
-            shortCite: { type: 'text' },
         }));
 
         Forecasts.hasOne('person', People, { field: 'personId' });
@@ -245,16 +272,6 @@ function TrendetsDb(dbPath) {
         return d.promise;
     }
 
-    function resolveDeferred(deferred, resolveValue) {
-        return function (err, res) {
-            if (err) {
-                console.error(err);
-                deferred.reject(err);
-            } else
-                deferred.resolve(resolveValue || res);
-        }
-    }
-
     function promisifyModel(model) {
         promisifyFunc(model, 'one');
         promisifyFunc(model, 'get');
@@ -276,5 +293,51 @@ function TrendetsDb(dbPath) {
         }
     }
 }
+
+function TrendetsDbMigrator(db) {
+
+    db = db.driver ? db.driver.db : db;
+
+    var self = this;
+
+    this.getVersion = function getVersion() {
+        var d = q.defer();
+        db.get('PRAGMA user_version;', resolveDeferred(d));
+        return d.promise.then(function (res) {
+            return res.user_version;
+        });
+    }
+
+    this.migrate = function migrate() {
+        self.getVersion()
+            .then(function (v) {
+            })
+    }
+}
+
+function resolveDeferred(deferred, resolveValue) {
+    return function (err, res) {
+        if (err) {
+            console.error(err);
+            deferred.reject(err);
+        } else
+            deferred.resolve(resolveValue || res);
+    }
+}
+
+//new TrendetsDb()
+//    .getMigrator()
+//    .updateDatabase()
+//    .then(function (res) {
+//        console.log('>>>>', res);
+//    }, function (res) {
+//        console.error('>>>>', res);
+//    })
+//    .then(function (migrator) {
+//        return migrator.getVersion()
+//    })
+//    .then(function (v) {
+//        console.log(v);
+//    });
 
 module.exports = TrendetsDb;

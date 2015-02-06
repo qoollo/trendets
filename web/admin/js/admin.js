@@ -210,6 +210,25 @@ angular.module('Qoollo.Trendets.Admin', ['ng', 'ngRoute', 'ngResource', 'ngAnima
             i.occuranceDate = new Date(i.occuranceDate);
             i.targetDate = new Date(i.targetDate);
         });
+
+        $scope.onCitationLinkChanged = function (forecast) {
+        	var source = findCitationSource($scope.rest['citation-sources'], forecast.citationLink);
+        	forecast.citationSourceId = source ? source.id : null;
+        }
+
+        function findCitationSource(allSources, linkInSource) {
+        	linkInSource = normalizeUrl(linkInSource);
+        	return allSources.filter(function (e) { return linkInSource.indexOf(normalizeUrl(e.website)) !== -1 })[0];
+        }
+
+        function normalizeUrl(url) {
+        	if (url.indexOf('http://') !== 0) {
+        		if (url.indexOf('www.') !== 0)
+        			url = 'www.' + url;
+        		url = 'http://' + url;
+        	}
+        	return url;
+        }
     }])
 
     .controller('PeopleController', ['$scope', 'RestClient', function ($scope, RestClient) {

@@ -191,7 +191,8 @@ function getDataFromDb() {
                             s = citationSources.filter(function (e) { return e.id == c.citationSourceId })[0],
                             source = s ? {
                                 name: s.name,
-                                link: s.website
+                                link: c.citationLink,
+                                homepage: s.website,
                             } : null,
                             f = {
                                 id: c.id,
@@ -200,7 +201,6 @@ function getDataFromDb() {
                                     date: c.occuranceDate,
                                     personId: c.personId,
                                     title: c.title,
-                                    shortCite: c.shortCite,
                                     cite: c.cite,
                                     source: source
                                 },
@@ -208,7 +208,6 @@ function getDataFromDb() {
                                     date: c.targetDate,
                                     personId: c.personId,
                                     title: c.title,
-                                    shortCite: c.shortCite,
                                     cite: c.cite,
                                     source: source
                                 }

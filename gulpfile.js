@@ -3,6 +3,8 @@
 var gulp = require('gulp');
 var prettify = require('gulp-jsbeautifier');
 var gulpif = require('gulp-if');
+var argv = require('yargs').argv;
+var colors = require('colors');
 
 //  for 'javascript' task
 var browserify = require('browserify');
@@ -25,6 +27,7 @@ var TrendetsDb = require('./server/db');
 var quotesRetriever = require('./server/quotes-retriever');
 require('date-utils');
 var q = require('q');
+//var DbMigrator = require('./server/db-migrator/db-migrator.js');
 
 //  for 'develop' task
 var browserSync = require('browser-sync');
@@ -102,7 +105,7 @@ gulp.task('img', function () {
                .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('data', function () {
+gulp.task('data', ['update-database'], function () {
     var db = new TrendetsDb(),
         startPromise = db.exists() ? 'ok' : db.create();
     //db.delete();
@@ -140,6 +143,23 @@ gulp.task('data', function () {
                               console.log('Generating data file.');
                               return dataGenerator.generate('./web/js/data.js', true);
                           }, console.error);
+});
+
+gulp.task('add-migration', function () {
+    if (!argv.name) {
+        console.error(colors.red('Error. Migration name not specified. Command syntax:'));
+        return console.error('\t$ gulp add-migration ' + colors.green('--name ChangeSomething'));
+    }
+    var migrator = new TrendetsDb().getMigrator(),
+        migration = migrator.createMigration(argv.name);
+    console.log(colors.green('Created migration at ' + migration.path));
+    console.log('Write migration SQL code in ' + migration.upPath);
+    console.log('Write migration rollback SQL code in ' + migration.downPath);
+});
+
+gulp.task('update-database', function () {
+    var migrator = new TrendetsDb().getMigrator();
+    return migrator.updateDatabase();
 });
 
 gulp.task('develop', ['html', 'javascript', 'css', 'img', 'data'], function () {

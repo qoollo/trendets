@@ -1,0 +1,6 @@
+{
+    "dev": {
+        "filename": "./server/trendets.db",
+        "driver":  "sqlite3"
+    }
+}
