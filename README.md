@@ -49,15 +49,22 @@ This task also starts server and opens admin page in your browser.
 
 ### Migrations
 
-Migrations are managed with [db-migrate](https://www.npmjs.com/package/db-migrate). To install it run
-```sh
-$ npm install -g db-migrate
-$ npm install -g sqlite3
-```
+**Add Migration**
 
-Create, up and down migrations using following commands:
+Migrations are sql-based. To add to migration run the following command
+```sh
+$ gulp add-migration --name MIGRATION_NAME
 ```
-$ db-migrate create MIGRATION_NAME --sql-file --config=./server/database.json --migrations-dir=./server/migrations
-$ db-migrate up
-$ db-migrate down
+New migration will be generated. Migration consists of 3 files: up (sql), down (sql) and runner (js).
+Having 'add-migration' task executed you will see generated files paths in terminal. Write migration
+sql to up file and that's it.
+
+
+**Update Database**
+
+Update database to the latest version by executing 
+```sh
+$ gulp update-database
 ```
+This task is executed during 'data' task therefore database you don't need to do it unless you want to debug 
+migration I guess.
