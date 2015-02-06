@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Trendets</title>
+        <!-- inject:css -->
+        <!-- endinject -->
+        <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="svgContainer">
+            <svg xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
+                    <!-- <filter id="gauss-blur" x="-2" y="-2" width="20" height="20">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
+                        <feBlend  in="SourceGraphic"/>
+                    </filter> -->
+                    <linearGradient id="footprint-gradient" x1="100%" y1="50%" x2="0%" y2="50%" > 
+                        <stop offset="0%" style="stop-color:#AA00FF;stop-opacity:0.1" />
+                        <stop offset="100%" style="stop-color:#6A1B9A;stop-opacity:0" />
+                    </linearGradient>
+                    <filter id="darknessFilter" >
+                        <feComponentTransfer>
+                            <feFuncR type="linear" slope="0.5"/>
+                            <feFuncG type="linear" slope="0.5"/>
+                            <feFuncB type="linear" slope="0.5"/>
+                        </feComponentTransfer>
+                    </filter>
+                </defs>
+                <g id="static">
+                    <g id="background"></g>
+                    <g id="graphBgGrid"></g>
+                    <g id="backTimeScale"></g>
+                </g>
+                <g id="everything">
+                    <g id="graphics">
+                        <g id="lines"></g>
+                        <g id="boobies"></g>
+                        <g id="dotted_lines"></g>
+                        <g id="rects"></g>
+                    </g>
+                    <g id="timeScale"></g>
+                    <g id="today"></g>
+                    <g id="bottom">
+                        <g id="forecasts">
+                            <g id="lines"></g>
+                            <g id="photos"></g>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div id="forecastDetails">
+            <div class="start">
+                <div class="date">12 декабря 2014</div>
+                <div class="name">Герман Греф</div>
+                <div class="title">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <div class="cite">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <a href="#" class="link">РБК Политика</a>
+            </div>
+            <div class="result">
+                <div class="date">12 декабря 2014</div>
+                <div class="name">Герман Греф</div>
+                <div class="title">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <div class="cite">Полиция поручила всем начальникам разобраться в деталях машин</div>
+                <a href="#" class="link">РБК Политика</a>
+            </div>
+            <div id="hideDetails">Скрыть</div>
+        </div>
+        <div id="forecastHoverBubble" class="forecastBubble">
+            <span class="date">12 декабря 2014</span>
+            <span class="name">Герман Греф</span>
+            <div class="shortCite"></div>
+        </div>
+	<div id="contact-us">
+		<span>Contact us: </span><a hreg="mailto:info@qoollo.com">info@qoollo.com</a>
+	</div>
+
+        <!-- inject:js -->
+        <!-- endinject -->
+		<!-- Yandex.Metrika counter -->
+		<script type="text/javascript">
+		(function (d, w, c) {
+			(w[c] = w[c] || []).push(function() {
+				try {
+					w.yaCounter27934938 = new Ya.Metrika({id:27934938,
+							webvisor:true,
+							clickmap:true,
+							trackLinks:true,
+							accurateTrackBounce:true});
+				} catch(e) { }
+			});
+
+			var n = d.getElementsByTagName("script")[0],
+				s = d.createElement("script"),
+				f = function () { n.parentNode.insertBefore(s, n); };
+			s.type = "text/javascript";
+			s.async = true;
+			s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+			if (w.opera == "[object Opera]") {
+				d.addEventListener("DOMContentLoaded", f, false);
+			} else { f(); }
+		})(document, window, "yandex_metrika_callbacks");
+		</script>
+		<noscript><div><img src="//mc.yandex.ru/watch/27934938" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+		<!-- /Yandex.Metrika counter -->
+		
+    </body>
+</html>

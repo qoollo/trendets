@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3cb996a8-e8ff-43d5-a7b3-97710a78e625}</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
+    <ProjectView>ProjectFiles</ProjectView>
+    <StartupFile>server\server.js</StartupFile>
+    <WorkingDirectory>../</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <StartWebBrowser>True</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Compile Include="server\data-generator.js" />
+    <Compile Include="server\db-migrator\db-migrator.js" />
+    <Compile Include="server\db-migrator\drivers\sqlite3.js" />
+    <Compile Include="server\db-migrator\index.js" />
+    <Compile Include="server\db-migrator\migration-file-content.js" />
+    <Compile Include="server\db-migrator\migration-file.js" />
+    <Compile Include="server\db-migrator\migration-files-manager.js" />
+    <Compile Include="server\db-migrator\migration-history.js" />
+    <Compile Include="server\db.js" />
+    <Compile Include="server\quotes-retriever.js" />
+    <Compile Include="server\server.js" />
+    <Compile Include="server\settings.js" />
+    <Compile Include="web\admin\js\admin.js" />
+    <Compile Include="web\js\coordinator.js" />
+    <Compile Include="web\js\data.js" />
+    <Compile Include="web\js\dataprovider.js" />
+    <Compile Include="web\js\dom.js" />
+    <Compile Include="web\js\draw.js" />
+    <Compile Include="web\js\drawing\bubble.js" />
+    <Compile Include="web\js\drawing\forecast.js" />
+    <Compile Include="web\js\events.js" />
+    <Compile Include="web\js\libs\d3.js" />
+    <Compile Include="web\js\libs\d3.min.js" />
+    <Compile Include="web\js\libs\require.js" />
+    <Compile Include="web\js\main.js" />
+    <Compile Include="web\js\settings.js" />
+    <Content Include="server\real-data.txt" />
+    <Content Include="server\tables.sql" />
+    <Content Include="server\trendets - Copy.db" />
+    <Content Include="server\trendets.db" />
+    <Content Include="server\triggers.sql" />
+    <Content Include="web\.sass-cache\ce2bc8ac43b2ae6c10540462629c2393fbdb2a98\main.scssc" />
+    <Content Include="web\admin\css\admin.css" />
+    <Content Include="web\admin\html\admin.html" />
+    <Content Include="web\admin\html\citation-sources.html" />
+    <Content Include="web\admin\html\forecasts.html" />
+    <Content Include="web\admin\html\quotes.html" />
+    <Content Include="web\admin\html\people.html" />
+    <Content Include="web\css\main.css" />
+    <Content Include="web\img\central_bank.jpg" />
+    <Content Include="web\img\danske_bank.jpg" />
+    <Content Include="web\img\gref.jpg" />
+    <Content Include="web\img\kudrin.jpg" />
+    <Content Include="web\img\mineconom.jpg" />
+    <Content Include="web\img\standard_poors.jpg" />
+    <Content Include="web\img\yakunun.jpg" />
+    <Content Include="web\index.html" />
+    <Content Include="web\scss\main.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="server\" />
+    <Folder Include="server\db-migrator\" />
+    <Folder Include="server\db-migrator\drivers\" />
+    <Folder Include="web\" />
+    <Folder Include="web\.sass-cache\" />
+    <Folder Include="web\.sass-cache\ce2bc8ac43b2ae6c10540462629c2393fbdb2a98\" />
+    <Folder Include="web\admin\" />
+    <Folder Include="web\admin\css\" />
+    <Folder Include="web\admin\html\" />
+    <Folder Include="web\admin\js\" />
+    <Folder Include="web\css\" />
+    <Folder Include="web\img\" />
+    <Folder Include="web\js\" />
+    <Folder Include="web\js\drawing\" />
+    <Folder Include="web\js\libs\" />
+    <Folder Include="web\scss\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

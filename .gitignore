@@ -1,0 +1,11 @@
+node_modules
+dist
+*.log
+web/js/data.js
+*~
+*.db
+
+bin/
+obj/
+*.suo
+.ntvs_analysis.dat

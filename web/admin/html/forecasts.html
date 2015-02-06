@@ -1,0 +1,140 @@
+<div>
+    <form class="form-horizontal" name="form">
+
+        <div class="form-group">
+            <label for="toadd-person" class="col-sm-2 control-label">Человек</label>
+            <div class="col-sm-10">
+                <select ng-model="rest.toAdd.personId" ng-options="p.id as p.name for p in rest.people" class="form-control"></select>
+            </div>
+        </div>
+		<div class="form-group">
+			<label for="toadd-title" class="col-sm-2 control-label">Ссылка</label>
+			<div class="col-sm-7">
+				<input type="text" ng-model="rest.toAdd.citationLink" class="form-control" ng-change="onCitationLinkChanged(rest.toAdd)" />
+			</div>
+            <div class="col-sm-3">
+                <select ng-model="rest.toAdd.citationSourceId" ng-options="s.id as s.name for s in rest['citation-sources']" class="form-control"></select>
+            </div>
+		</div>
+        <div class="form-group">
+            <label for="toadd-title" class="col-sm-2 control-label">Заголовок</label>
+            <div class="col-sm-10">
+                <input type="text" ng-model="rest.toAdd.title" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toadd-cite" class="col-sm-2 control-label">Цитата</label>
+            <div class="col-sm-10">
+                <textarea ng-model="rest.toAdd.cite" class="form-control" placeholder="Цитата"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toadd-date" class="col-sm-2 control-label">Дата</label>
+            <div class="col-sm-2">
+                <input type="date" ng-model="rest.toAdd.occuranceDate" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toadd-targetdate" class="col-sm-2 control-label">Прогнозируемая дата</label>
+            <div class="col-sm-2">
+                <input type="date" ng-model="rest.toAdd.targetDate" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default" ng-click="rest.addItem(rest.toAdd)" ng-disabled="!form.$valid">Добавить</button>
+            </div>
+        </div>
+
+        <div class="progress" ng-show="rest.isInProgress(rest.toAdd)">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only">In progress...</span>
+            </div>
+        </div>
+        <div ng-repeat="e in rest.getErrors(rest.toAdd)" class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="rest.removeError(rest.toAdd, e)"><span aria-hidden="true">&times;</span></button>
+            {{e.time|date:'HH:mm:ss'}} {{e.error}}
+        </div>
+    </form>
+
+    <table class="table table-stripped table-hover table-clickable">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Дата</th>
+                <th>Прогнозируемая дата</th>
+                <th>Человек</th>
+                <th>Заголовок</th>
+                <th class="col-md-2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat-start="src in rest.items"
+                ng-click="rest.selectItem(src)"
+                ng-class="{active: rest.isActive(src)}">
+                <td>{{src.id}}</td>
+                <td>
+                    <span ng-show="!rest.isInEditMode() || !rest.isActive(src)">{{src.occuranceDate|date:'dd.MM.yyyy'}}</span>
+                    <input ng-show="rest.isActive(src) && rest.isInEditMode()" type="date" class="form-control" ng-model="src.occuranceDate" />
+                </td>
+                <td>
+                    <span ng-show="!rest.isInEditMode() || !rest.isActive(src)">{{src.targetDate|date:'dd.MM.yyyy'}}</span>
+                    <input ng-show="rest.isActive(src) && rest.isInEditMode()" type="date" class="form-control" ng-model="src.targetDate" />
+                </td>
+                <td>
+                    <span ng-show="!rest.isInEditMode() || !rest.isActive(src)">{{rest.people.find({id:src.personId})[0].shortName}}</span>
+                    <select ng-show="rest.isActive(src) && rest.isInEditMode()" ng-model="src.personId" ng-options="p.id as p.shortName for p in rest.people" class="form-control"></select>
+                </td>
+                <td>
+                    <span ng-show="!rest.isInEditMode() || !rest.isActive(src)">{{src.title}}</span>
+                    <input ng-show="rest.isActive(src) && rest.isInEditMode()" type="text" class="form-control" ng-model="src.title" placeholder="Заголовок"/>
+                </td>
+                <td>
+                    <button class="btn btn-xs btn-warning" ng-show="rest.isActive(src) && rest.isInNormalMode()" ng-click="rest.toggleEditMode(src)">Редактировать</button>
+                    <button class="btn btn-xs btn-danger" ng-show="rest.isActive(src) && rest.isInNormalMode()" ng-click="rest.toggleDeleteMode(src)">Удалить</button>
+
+                    <button class="btn btn-xs btn-success" ng-show="rest.isActive(src) && rest.isInEditMode()" ng-click="rest.editItem(src)">Сохранить</button>
+                    <button class="btn btn-xs btn-default" ng-show="rest.isActive(src) && rest.isInEditMode()" ng-click="rest.toggleEditMode()">Отмена</button>
+
+                    <button class="btn btn-xs btn-danger" ng-show="rest.isActive(src) && rest.isInDeleteMode()" ng-click="rest.deleteItem(src)">Удалить</button>
+                    <button class="btn btn-xs btn-default" ng-show="rest.isActive(src) && rest.isInDeleteMode()" ng-click="rest.toggleDeleteMode()">Отмена</button>
+
+                </td>
+            </tr>
+            <tr ng-show="rest.isActive(src) && rest.isInEditMode()" ng-class="{active: rest.isActive(src)}">
+                <td colspan="5">
+                    <label>Ссылка:</label>
+                    <input type="url" class="form-control" ng-model="src.citationLink" placeholder="Ссылка" />
+                </td>
+				<td>
+					<label>Источник:</label>
+					<select ng-model="src.citationSourceId" ng-options="s.id as s.name for s in rest['citation-sources']" class="form-control"></select>
+				</td>
+            </tr>
+			<tr ng-show="rest.isActive(src) && rest.isInEditMode()" ng-class="{active: rest.isActive(src)}">
+				<td colspan="6">
+					<label>Цитата:</label>
+					<textarea class="form-control" ng-model="src.cite" placeholder="Цитата" />
+				</td>
+			</tr>
+            <tr ng-repeat="e in rest.getErrors(src)">
+                <td colspan="100">
+                    <div class="alert alert-danger" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="rest.removeError(src, e)"><span aria-hidden="true">&times;</span></button>
+                        {{e.time|date:'HH:mm:ss'}} {{e.error}}
+                    </div>
+                </td>
+            </tr>
+            <tr ng-repeat-end ng-show="rest.isInProgress(src)">
+                <td colspan="100">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                            <span class="sr-only">In progress...</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
